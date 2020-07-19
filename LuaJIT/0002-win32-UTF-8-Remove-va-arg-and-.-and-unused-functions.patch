@@ -1,0 +1,123 @@
+From 5d297d70eb941a7ba7a3aefda76e1ad7f15a08b8 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 28 May 2020 15:25:41 +0000
+Subject: [PATCH 2/2] win32 UTF-8: Remove va arg and ... and unused functions
+
+---
+ src/lj_fs_io.c         | 43 ------------------------------------------
+ src/lj_fs_io.h         |  2 --
+ src/lj_fs_io_replace.h | 22 ++++++++++-----------
+ 3 files changed, 10 insertions(+), 57 deletions(-)
+
+diff --git a/src/lj_fs_io.c b/src/lj_fs_io.c
+index b69f391..d5eb225 100644
+--- a/src/lj_fs_io.c
++++ b/src/lj_fs_io.c
+@@ -450,49 +450,6 @@ int lin_closedir(DIR *dir)
+     return res;
+ }
+ 
+-int lin_mkdir(const char *path, int mode)
+-{
+-    wchar_t *wpath = lin_utf8_to_winchar(path);
+-    if (!wpath)
+-        return -1;
+-    int res = _wmkdir(wpath);
+-    free(wpath);
+-    return res;
+-}
+-
+-char *lin_getcwd(char *buf, size_t size)
+-{
+-    if (size >= SIZE_MAX / 3 - 1) {
+-        errno = ENOMEM;
+-        return NULL;
+-    }
+-    size_t wbuffer = size * 3 + 1;
+-    wchar_t *wres = malloc(sizeof(wchar_t) * wbuffer);
+-    if (!wres) {
+-        errno = ENOMEM;
+-        return NULL;
+-    }
+-    DWORD wlen = GetFullPathNameW(L".", wbuffer, wres, NULL);
+-    if (wlen >= wbuffer || wlen == 0) {
+-        free(wres);
+-        errno = wlen ? ERANGE : ENOENT;
+-        return NULL;
+-    }
+-    char *t = lin_winchar_to_utf8(wres);
+-    free_keep_err(wres);
+-    if (!t)
+-        return NULL;
+-    size_t st = strlen(t);
+-    if (st >= size) {
+-        free(t);
+-        errno = ERANGE;
+-        return NULL;
+-    }
+-    memcpy(buf, t, st + 1);
+-    free(t);
+-    return buf;
+-}
+-
+ off_t lin_lseek(int fd, off_t offset, int whence)
+ {
+     HANDLE h = (HANDLE)_get_osfhandle(fd);
+diff --git a/src/lj_fs_io.h b/src/lj_fs_io.h
+index 0bdcd20..2b2aa27 100644
+--- a/src/lj_fs_io.h
++++ b/src/lj_fs_io.h
+@@ -20,8 +20,6 @@ FILE *lin_fopen(const char *filename, const char *mode);
+ DIR *lin_opendir(const char *path);
+ struct dirent *lin_readdir(DIR *dir);
+ int lin_closedir(DIR *dir);
+-int lin_mkdir(const char *path, int mode);
+-char *lin_getcwd(char *buf, size_t size);
+ off_t lin_lseek(int fd, off_t offset, int whence);
+ 
+ // lin_stat types. MSVCRT's dev_t and ino_t are way too short to be unique.
+diff --git a/src/lj_fs_io_replace.h b/src/lj_fs_io_replace.h
+index 604e279..fac7691 100644
+--- a/src/lj_fs_io_replace.h
++++ b/src/lj_fs_io_replace.h
+@@ -10,27 +10,25 @@
+ #define dev_t lin_dev_t
+ #define ino_t lin_ino_t
+ 
+-#define open(...) lin_open(__VA_ARGS__)
+-#define creat(...) lin_creat(__VA_ARGS__)
+-#define fopen(...) lin_fopen(__VA_ARGS__)
+-#define opendir(...) lin_opendir(__VA_ARGS__)
+-#define readdir(...) lin_readdir(__VA_ARGS__)
+-#define closedir(...) lin_closedir(__VA_ARGS__)
+-#define mkdir(...) lin_mkdir(__VA_ARGS__)
+-#define getcwd(...) lin_getcwd(__VA_ARGS__)
+-#define getenv(...) lin_getenv(__VA_ARGS__)
++#define open lin_open
++#define creat lin_creat
++#define fopen lin_fopen
++#define opendir lin_opendir
++#define readdir lin_readdir
++#define closedir lin_closedir
++#define getenv lin_getenv
+ 
+ #undef lseek
+-#define lseek(...) lin_lseek(__VA_ARGS__)
++#define lseek lin_lseek
+ 
+ // Affects both "stat()" and "struct stat".
+ #undef stat
+ #define stat lin_stat
+ 
+ #undef fstat
+-#define fstat(...) lin_fstat(__VA_ARGS__)
++#define fstat lin_fstat
+ 
+-#define utime(...) _utime(__VA_ARGS__)
++#define utime _utime
+ #define utimbuf _utimbuf
+ 
+ #ifndef O_BINARY
+-- 
+2.25.1
+
