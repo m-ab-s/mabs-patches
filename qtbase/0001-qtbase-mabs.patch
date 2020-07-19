@@ -1,0 +1,62 @@
+From bdc09937f541b974339f2968eb75f4968ab0e933 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Wed, 26 Feb 2020 05:14:13 +0000
+Subject: [PATCH] qtbase mabs
+
+---
+ configure.json                    |  3 +--
+ mkspecs/features/qt_functions.prf |  1 +
+ mkspecs/features/win32/ccache.prf | 15 +++++++++++++++
+ 3 files changed, 17 insertions(+), 2 deletions(-)
+ create mode 100644 mkspecs/features/win32/ccache.prf
+
+diff --git a/configure.json b/configure.json
+index d11fa18bf1..79c5be5d43 100644
+--- a/configure.json
++++ b/configure.json
+@@ -1526,8 +1526,7 @@
+                 },
+                 {
+                     "type": "feature",
+-                    "args": "ccache",
+-                    "condition": "config.unix"
++                    "args": "ccache"
+                 },
+                 {
+                     "message": "Linker",
+diff --git a/mkspecs/features/qt_functions.prf b/mkspecs/features/qt_functions.prf
+index 7777e615bd..985d518540 100644
+--- a/mkspecs/features/qt_functions.prf
++++ b/mkspecs/features/qt_functions.prf
+@@ -167,6 +167,7 @@ defineTest(qtAddToolEnv) {
+         batch_name = wrapper
+         !isEmpty(QT_TOOL_NAME): batch_name = $${QT_TOOL_NAME}_wrapper
+         cmd = $$eval($$1)
++        cmd = $$system(cygpath -m "$$cmd")
+         !isEmpty(cmd): cmd = "$$cmd "
+         equals(ds, /) {
+             batch_name = $${batch_name}.sh
+diff --git a/mkspecs/features/win32/ccache.prf b/mkspecs/features/win32/ccache.prf
+new file mode 100644
+index 0000000000..87de162eef
+--- /dev/null
++++ b/mkspecs/features/win32/ccache.prf
+@@ -0,0 +1,15 @@
++ccache_prefix = ccache
++
++precompile_header {
++    CCACHE_SLOPPINESS += pch_defines time_macros
++
++    ccache_prefix = \
++        CCACHE_SLOPPINESS=\"$$join(CCACHE_SLOPPINESS, ',')\$${CCACHE_SLOPPINESS+,\$$CCACHE_SLOPPINESS}\" \
++        # Make sure we build sources directly, not from their preprocessed version,
++        # otherwise precompiled headers will not be used during cache misses.
++        CCACHE_CPP2=true \
++        $$ccache_prefix
++}
++
++for(tool, $$list(QMAKE_CC QMAKE_CXX QMAKE_LINK QMAKE_LINK_SHLIB QMAKE_LINK_C)): \
++    $$tool = $$ccache_prefix $$eval($$tool)
+--
+2.25.1
+
