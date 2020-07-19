@@ -1,0 +1,35 @@
+From f81786081878856c2a0e90af43fab9305c853520 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 4 Apr 2020 15:40:10 +0000
+Subject: [PATCH 2/2] configure: Only add std=c89 if not-mingw because of clang
+
+---
+ configure.ac | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 98dd0a0..64e9995 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -42,7 +42,7 @@ AC_SUBST(OP_LT_REVISION)
+ AC_SUBST(OP_LT_AGE)
+ 
+ CC_CHECK_CFLAGS_APPEND(
+-  [-std=c89 -pedantic -Wall -Wextra -Wno-parentheses -Wno-long-long])
++  [-pedantic -Wall -Wextra -Wno-parentheses -Wno-long-long])
+ 
+ # Platform-specific tweaks
+ case $host in
+@@ -57,6 +57,9 @@ case $host in
+      [We need at least WindowsXP for getaddrinfo/freeaddrinfo])
+     host_mingw=true
+     ;;
++  *)
++    CC_CHECK_CFLAGS_APPEND([-std=c89])
++    ;;
+ esac
+ AM_CONDITIONAL(OP_WIN32, [test "$host_mingw" = "true"])
+ 
+-- 
+2.20.1
+
