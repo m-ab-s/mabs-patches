@@ -1,0 +1,77 @@
+From 33fab3d67c7b181893dd44a96ea767aa701515d9 Mon Sep 17 00:00:00 2001
+From: Ricardo Constantino <wiiaboo@gmail.com>
+Date: Tue, 4 Dec 2018 23:01:30 +0000
+Subject: [PATCH 2/3] cmake: allow installing apps
+
+---
+ CMakeLists.txt                               | 2 ++
+ source/App/DecoderAnalyserApp/CMakeLists.txt | 1 +
+ source/App/DecoderApp/CMakeLists.txt         | 1 +
+ source/App/EncoderApp/CMakeLists.txt         | 1 +
+ source/App/Parcat/CMakeLists.txt             | 1 +
+ source/App/SEIRemovalApp/CMakeLists.txt      | 1 +
+ 6 files changed, 7 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index eedbcd95..c040ac74 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -8,6 +8,8 @@ else()
+   project( NextSoftware )
+ endif()
+ 
++include( GNUInstallDirs )
++
+ # use ccache
+ find_program( CCACHE_FOUND ccache )
+ if( CCACHE_FOUND )
+diff --git a/source/App/DecoderAnalyserApp/CMakeLists.txt b/source/App/DecoderAnalyserApp/CMakeLists.txt
+index ad272ca1..f973f0d1 100644
+--- a/source/App/DecoderAnalyserApp/CMakeLists.txt
++++ b/source/App/DecoderAnalyserApp/CMakeLists.txt
+@@ -84,3 +84,4 @@ source_group( "Natvis Files" FILES ${NATVIS_FILES} )
+ 
+ # set the folder where to place the projects
+ set_target_properties( ${EXE_NAME}          PROPERTIES FOLDER app LINKER_LANGUAGE CXX )
++install(TARGETS ${EXE_NAME} DESTINATION "${CMAKE_INSTALL_BINDIR}")
+diff --git a/source/App/DecoderApp/CMakeLists.txt b/source/App/DecoderApp/CMakeLists.txt
+index 4e71c5c1..4790c8ec 100644
+--- a/source/App/DecoderApp/CMakeLists.txt
++++ b/source/App/DecoderApp/CMakeLists.txt
+@@ -82,3 +82,4 @@ source_group( "Natvis Files" FILES ${NATVIS_FILES} )
+ 
+ # set the folder where to place the projects
+ set_target_properties( ${EXE_NAME}  PROPERTIES FOLDER app LINKER_LANGUAGE CXX )
++install(TARGETS ${EXE_NAME} DESTINATION "${CMAKE_INSTALL_BINDIR}")
+diff --git a/source/App/EncoderApp/CMakeLists.txt b/source/App/EncoderApp/CMakeLists.txt
+index dd87e52d..d16ea9be 100644
+--- a/source/App/EncoderApp/CMakeLists.txt
++++ b/source/App/EncoderApp/CMakeLists.txt
+@@ -92,4 +92,5 @@ source_group( "Natvis Files" FILES ${NATVIS_FILES} )
+ 
+ # set the folder where to place the projects
+ set_target_properties( ${EXE_NAME}  PROPERTIES FOLDER app LINKER_LANGUAGE CXX )
++install(TARGETS ${EXE_NAME} DESTINATION "${CMAKE_INSTALL_BINDIR}")
+ 
+diff --git a/source/App/Parcat/CMakeLists.txt b/source/App/Parcat/CMakeLists.txt
+index 12edc317..553d4329 100644
+--- a/source/App/Parcat/CMakeLists.txt
++++ b/source/App/Parcat/CMakeLists.txt
+@@ -31,4 +31,5 @@ endif()
+ 
+ # set the folder where to place the projects
+ set_target_properties( ${EXE_NAME}  PROPERTIES FOLDER app LINKER_LANGUAGE CXX )
++install(TARGETS ${EXE_NAME} DESTINATION "${CMAKE_INSTALL_BINDIR}")
+ 
+diff --git a/source/App/SEIRemovalApp/CMakeLists.txt b/source/App/SEIRemovalApp/CMakeLists.txt
+index cb783adf..7d43d18f 100644
+--- a/source/App/SEIRemovalApp/CMakeLists.txt
++++ b/source/App/SEIRemovalApp/CMakeLists.txt
+@@ -82,3 +82,4 @@ source_group( "Natvis Files" FILES ${NATVIS_FILES} )
+ 
+ # set the folder where to place the projects
+ set_target_properties( ${EXE_NAME}         PROPERTIES FOLDER app LINKER_LANGUAGE CXX )
++install(TARGETS ${EXE_NAME} DESTINATION "${CMAKE_INSTALL_BINDIR}")
+-- 
+2.25.1
+
