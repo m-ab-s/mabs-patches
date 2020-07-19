@@ -1,0 +1,44 @@
+From 0efa9d92c5f2e16b6ca802867e1e6bb1a61911a6 Mon Sep 17 00:00:00 2001
+From: Ricardo Constantino <wiiaboo@gmail.com>
+Date: Wed, 20 Dec 2017 00:52:24 +0000
+Subject: [PATCH] ffmsindex: fix linking issues
+
+---
+ Makefile.am  | 1 +
+ configure.ac | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index db4577e..ea0f615 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -49,6 +49,7 @@ include_HEADERS = $(top_srcdir)/include/ffms.h $(top_srcdir)/include/ffmscompat.
+ bin_PROGRAMS = src/index/ffmsindex
+ src_index_ffmsindex_SOURCES = src/index/ffmsindex.cpp
+ src_index_ffmsindex_LDADD = src/core/libffms2.la
++src_index_ffmsindex_LDFLAGS = @src_index_ffmsindex_LDFLAGS@
+ 
+ .PHONY: test test-build test-clean test-sync test-run
+ clean-local: test-clean
+diff --git a/configure.ac b/configure.ac
+index f06c008..617cfea 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -140,12 +140,13 @@ AC_MSG_RESULT($bsymbolic)
+ 
+ if echo "$host" | $GREP "mingw" >/dev/null 2>&1; then
+     LTUNDEF="-no-undefined"
++    src_index_ffmsindex_LDFLAGS="$src_index_ffmsindex_LDFLAGS -municode"
+ fi
+ AC_SUBST([LTUNDEF])
++AC_SUBST([src_index_ffmsindex_LDFLAGS])
+ 
+ AC_CONFIG_FILES([
+ Makefile
+ ffms2.pc
+ ])
+ AC_OUTPUT
+-
+-- 
+2.20.1
+
