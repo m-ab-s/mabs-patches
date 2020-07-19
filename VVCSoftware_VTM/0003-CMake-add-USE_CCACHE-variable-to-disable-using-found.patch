@@ -1,0 +1,27 @@
+From f3608ce7fbf624353263d76ce92ad4031b44ed71 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 7 Sep 2019 21:13:53 -0400
+Subject: [PATCH 3/3] CMake: add USE_CCACHE variable to disable using found
+ ccache
+
+---
+ CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c040ac74..da7c12dd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -12,7 +12,8 @@ include( GNUInstallDirs )
+ 
+ # use ccache
+ find_program( CCACHE_FOUND ccache )
+-if( CCACHE_FOUND )
++option( USE_CCACHE "Use ccache if found" ON )
++if( USE_CCACHE AND CCACHE_FOUND )
+   message( STATUS "ccache found. using it." )
+   set_property( GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache )
+   set_property( GLOBAL PROPERTY RULE_LAUNCH_LINK ccache )
+-- 
+2.25.1
+
