@@ -1,0 +1,30 @@
+From 8829f052219f72115f75bd0ae1948429ef0d3da5 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sun, 26 Jul 2020 19:11:31 +0000
+Subject: [PATCH] tools/find_sts_main.c: Include windows.h before defining
+ const out
+
+Fixes issues where a function's declaration no longer matches the builtin version in clang
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ tools/find_sts_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tools/find_sts_main.c b/tools/find_sts_main.c
+index 3c94449..eaf0dd0 100644
+--- a/tools/find_sts_main.c
++++ b/tools/find_sts_main.c
+@@ -40,6 +40,9 @@
+ #include <stdio.h>
+ #include <math.h>
+ #include <string.h>
++#ifdef _WIN32
++#include <windows.h>
++#endif
+ 
+ /* To allow some normally const fields to manipulated during building */
+ #define const
+-- 
+2.25.1
+
