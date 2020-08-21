@@ -1,4 +1,4 @@
-From 4f65df72e7738316e461a8308c11105cb2a0b76c Mon Sep 17 00:00:00 2001
+From 8399ae06da8546c270826e6244a364c79a0c7fd4 Mon Sep 17 00:00:00 2001
 From: Helenerineium <photosynthesis2728@gmail.com>
 Date: Mon, 14 Oct 2019 22:07:16 +0800
 Subject: [PATCH] openal: use check_pkg_config
@@ -8,10 +8,10 @@ Subject: [PATCH] openal: use check_pkg_config
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index f97cad0298..c5abc6e25d 100755
+index 6faff9bc7b..ad031bfd07 100755
 --- a/configure
 +++ b/configure
-@@ -6436,8 +6436,7 @@ enabled mmal              && { check_lib mmal interface/mmal/mmal.h mmal_port_co
+@@ -6477,8 +6477,7 @@ enabled mmal              && { check_lib mmal interface/mmal/mmal.h mmal_port_co
                                   check_lib mmal interface/mmal/mmal.h mmal_port_connect -lmmal_core -lmmal_util -lmmal_vc_client -lbcm_host; } ||
                                 die "ERROR: mmal not found" &&
                                 check_func_headers interface/mmal/mmal.h "MMAL_PARAMETER_VIDEO_MAX_NUM_CALLBACKS"; }
