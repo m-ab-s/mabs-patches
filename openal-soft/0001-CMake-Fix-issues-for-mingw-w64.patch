@@ -1,64 +1,38 @@
-From ad6920225ef6ebc5ea9fafa2b3672fcdd8a3ac6f Mon Sep 17 00:00:00 2001
+From abca475d7be2aad4c343eb8e1c8d77be36b0a6e4 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 19 Jul 2020 18:49:51 +0000
 Subject: [PATCH] CMake: Fix issues for mingw-w64
 
-- Disable oss on windows
 - Fix winmm inclusion in pkgconfig
 - Don't use windows' naming scheme with mingw-w64
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- CMakeLists.txt | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f02dc89a..e988f18a 100644
+index 9584b8bf..5aa276bb 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -794,6 +794,7 @@ endif()
- 
- # Check OSS backend
- option(ALSOFT_REQUIRE_OSS "Require OSS backend" OFF)
-+IF(NOT WIN32)
- find_package(OSS)
- if(OSS_FOUND)
-     option(ALSOFT_BACKEND_OSS "Enable OSS backend" ON)
-@@ -810,7 +811,7 @@ endif()
- if(ALSOFT_REQUIRE_OSS AND NOT HAVE_OSS)
-     message(FATAL_ERROR "Failed to enabled required OSS backend")
- endif()
--
-+endif()
- # Check Solaris backend
- option(ALSOFT_REQUIRE_SOLARIS "Require Solaris backend" OFF)
- find_package(AudioIO)
-@@ -867,7 +868,11 @@ if(WIN32)
+@@ -855,7 +855,7 @@ if(WIN32)
              set(HAVE_WINMM 1)
              set(BACKENDS  "${BACKENDS} WinMM,")
              set(ALC_OBJS  ${ALC_OBJS} alc/backends/winmm.cpp alc/backends/winmm.h)
 -            set(EXTRA_LIBS ${WINMM_LIBRARY} ${EXTRA_LIBS})
-+            if(MINGW)
-+                SET(EXTRA_LIBS -lwinmm ${EXTRA_LIBS})
-+            ELSE()
-+                SET(EXTRA_LIBS ${WINMM_LIBRARY} ${EXTRA_LIBS})
-+            ENDIF()
++            SET(EXTRA_LIBS winmm ${EXTRA_LIBS})
          endif()
      endif()
  
-@@ -1127,7 +1132,11 @@ endif()
- if(NOT WIN32)
-     set(LIBNAME "openal")
- else()
--    set(LIBNAME "OpenAL32")
-+    IF(MINGW)
-+        SET(LIBNAME "openal")
-+    ELSE()
-+        SET(LIBNAME "OpenAL32")
-+    ENDIF()
+@@ -1112,7 +1112,7 @@ if(ALSOFT_EXAMPLES)
+     endif()
  endif()
  
- # Needed for openal.pc.in
+-if(NOT WIN32)
++if(NOT MSVC)
+     set(LIBNAME "openal")
+ else()
+     set(LIBNAME "OpenAL32")
 -- 
 2.25.1
 
