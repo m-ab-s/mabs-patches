@@ -1,0 +1,48 @@
+From 3dfbba3663ec64541f65fa51c52764e77f51904c Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 8 Sep 2020 21:29:30 +0000
+Subject: [PATCH] sox_version: fold function into sox_version_info
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ src/libsox.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
+
+diff --git a/src/libsox.c b/src/libsox.c
+index 8e9ebad6..2d42acaa 100644
+--- a/src/libsox.c
++++ b/src/libsox.c
+@@ -21,17 +21,6 @@
+ #include "sox_i.h"
+ #include <string.h>
+ 
+-const char *sox_version(void)
+-{
+-  static char versionstr[20];
+-
+-  sprintf(versionstr, "%d.%d.%d",
+-          (SOX_LIB_VERSION_CODE & 0xff0000) >> 16,
+-          (SOX_LIB_VERSION_CODE & 0x00ff00) >> 8,
+-          (SOX_LIB_VERSION_CODE & 0x0000ff));
+-  return(versionstr);
+-}
+-
+ sox_version_info_t const * sox_version_info(void)
+ {
+ #define STRINGIZE1(x) #x
+@@ -89,7 +78,11 @@ sox_version_info_t const * sox_version_info(void)
+ 
+     if (!info.version)
+     {
+-        info.version = sox_version();
++        static char versionstr[20] = NULL;
++        sprintf(versionstr, "%d.%d.%d", (SOX_LIB_VERSION_CODE & 0xff0000) >> 16,
++                (SOX_LIB_VERSION_CODE & 0x00ff00) >> 8,
++                (SOX_LIB_VERSION_CODE & 0x0000ff));
++        info.version = versionstr;
+     }
+ 
+     if (!info.arch)
+-- 
+2.25.1
+
