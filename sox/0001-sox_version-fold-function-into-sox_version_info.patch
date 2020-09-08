@@ -1,4 +1,4 @@
-From 3dfbba3663ec64541f65fa51c52764e77f51904c Mon Sep 17 00:00:00 2001
+From d0b59dd75e9fef5008c4d57b9f2ad2d8223b9e6d Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Sep 2020 21:29:30 +0000
 Subject: [PATCH] sox_version: fold function into sox_version_info
@@ -9,7 +9,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 5 insertions(+), 12 deletions(-)
 
 diff --git a/src/libsox.c b/src/libsox.c
-index 8e9ebad6..2d42acaa 100644
+index 8e9ebad6..a6af80e6 100644
 --- a/src/libsox.c
 +++ b/src/libsox.c
 @@ -21,17 +21,6 @@
@@ -35,7 +35,7 @@ index 8e9ebad6..2d42acaa 100644
      if (!info.version)
      {
 -        info.version = sox_version();
-+        static char versionstr[20] = NULL;
++        static char versionstr[20];
 +        sprintf(versionstr, "%d.%d.%d", (SOX_LIB_VERSION_CODE & 0xff0000) >> 16,
 +                (SOX_LIB_VERSION_CODE & 0x00ff00) >> 8,
 +                (SOX_LIB_VERSION_CODE & 0x0000ff));
