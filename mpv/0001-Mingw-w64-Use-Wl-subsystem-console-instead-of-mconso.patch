@@ -1,0 +1,26 @@
+From 49abd0703aeca72a940d0fc0fc6415e5dbcc85e1 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 10 Sep 2020 17:56:26 +0000
+Subject: [PATCH] Mingw-w64: Use -Wl,--subsystem,console instead of mconsole
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ wscript_build.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/wscript_build.py b/wscript_build.py
+index e8428fa9dc..4de6bdbf27 100644
+--- a/wscript_build.py
++++ b/wscript_build.py
+@@ -628,7 +628,7 @@ def build(ctx):
+             )
+ 
+             wrapctx.env.cprogram_PATTERN = "%s.com"
+-            wrapflags = ['-municode', '-mconsole']
++            wrapflags = ['-municode', '-Wl,--subsystem,console']
+             wrapctx.env.CFLAGS = ctx.env.CFLAGS + wrapflags
+             wrapctx.env.LAST_LINKFLAGS = ctx.env.LAST_LINKFLAGS + wrapflags
+ 
+-- 
+2.25.1
+
