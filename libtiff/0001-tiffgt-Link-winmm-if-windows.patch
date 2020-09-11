@@ -1,7 +1,7 @@
-From c618703ca43ac47c4761899823af895b6efc05fe Mon Sep 17 00:00:00 2001
+From 7db1b95c95c9ef695fdac7ccabbeb97c6b9b2ca1 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 9 Mar 2020 03:38:24 +0000
-Subject: [PATCH] tiffgt: Link winmm if windows
+Subject: [PATCH 1/2] tiffgt: Link winmm if windows
 
 ---
  tools/CMakeLists.txt | 3 +++
@@ -22,5 +22,5 @@ index 886d4549..fb2c576d 100644
    install(TARGETS tiffgt
            RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_BINDIR}")
 -- 
-2.20.1
+2.25.1
 
