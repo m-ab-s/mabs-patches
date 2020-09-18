@@ -1,0 +1,45 @@
+From e426fa82d11ca8c208b06b90fe48acd561acac45 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 18 Sep 2020 19:18:26 +0000
+Subject: [PATCH 4/4] libass: Use ass_set_pixel_aspect instead of
+ ass_set_aspect_ratio
+
+fixes
+
+```c
+../../modules/codec/libass.c: In function 'SubpictureValidate':
+../../modules/codec/libass.c:434:9: warning: 'ass_set_aspect_ratio' is deprecated: use 'ass_set_pixel_aspect' instead [-Wdeprecated-declarations]
+  434 |         ass_set_aspect_ratio( p_sys->p_renderer, dst_ratio / src_ratio, 1 );
+      |         ^~~~~~~~~~~~~~~~~~~~
+In file included from ../../modules/codec/libass.c:42:
+D:/media-autobuild_suite/local32/include/ass/ass.h:421:59: note: declared here
+  421 | ASS_DEPRECATED("use 'ass_set_pixel_aspect' instead") void ass_set_aspect_ratio(ASS_Renderer *priv, double dar, double sar);
+      |                                                           ^~~~~~~~~~~~~~~~~~~~
+```
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ modules/codec/libass.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/modules/codec/libass.c b/modules/codec/libass.c
+index dbaa5f5c4c..44e2d45734 100644
+--- a/modules/codec/libass.c
++++ b/modules/codec/libass.c
+@@ -431,7 +431,7 @@ static int SubpictureValidate( subpicture_t *p_subpic,
+         ass_set_frame_size( p_sys->p_renderer, fmt.i_visible_width, fmt.i_visible_height );
+         const double src_ratio = (double)p_fmt_src->i_visible_width / p_fmt_src->i_visible_height;
+         const double dst_ratio = (double)p_fmt_dst->i_visible_width / p_fmt_dst->i_visible_height;
+-        ass_set_aspect_ratio( p_sys->p_renderer, dst_ratio / src_ratio, 1 );
++        ass_set_pixel_aspect( p_sys->p_renderer, dst_ratio / src_ratio );
+         p_sys->fmt = fmt;
+     }
+ 
+@@ -745,4 +745,3 @@ static void RegionDraw( subpicture_region_t *p_region, ASS_Image *p_img )
+ #undef P
+ #endif
+ }
+-
+-- 
+2.25.1
+
