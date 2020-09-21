@@ -1,0 +1,394 @@
+From 9bd54a7fe15e0f5a867418c1d26b4194c9f433a1 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 21 Sep 2020 16:18:29 -0400
+Subject: [PATCH 2/2] Remove wine prefix before fxc2
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ mkspecs/features/qt_module.prf            |   2 +-
+ src/3rdparty/angle/src/libANGLE/Debug.cpp | 327 ----------------------
+ src/angle/src/common/gles_common.pri      |   4 +-
+ src/gui/configure.pri                     |   2 +-
+ 4 files changed, 4 insertions(+), 331 deletions(-)
+ delete mode 100644 src/3rdparty/angle/src/libANGLE/Debug.cpp
+
+diff --git a/mkspecs/features/qt_module.prf b/mkspecs/features/qt_module.prf
+index a9c3572676..4db5e36501 100644
+--- a/mkspecs/features/qt_module.prf
++++ b/mkspecs/features/qt_module.prf
+@@ -304,7 +304,7 @@ load(qt_targets)
+     QMAKE_PKGCONFIG_INSTALL_REPLACE += pclib_replace
+ }
+ !lib_bundle:unix {
+-    CONFIG += create_libtool
++    CONFIG += -create_libtool
+     host_build: \
+         QMAKE_LIBTOOL_LIBDIR = $$[QT_HOST_LIBS]
+     else: \
+diff --git a/src/3rdparty/angle/src/libANGLE/Debug.cpp b/src/3rdparty/angle/src/libANGLE/Debug.cpp
+deleted file mode 100644
+index 96f30df98c..0000000000
+--- a/src/3rdparty/angle/src/libANGLE/Debug.cpp
++++ /dev/null
+@@ -1,327 +0,0 @@
+-//
+-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+-// Use of this source code is governed by a BSD-style license that can be
+-// found in the LICENSE file.
+-//
+-
+-// Debug.cpp: Defines debug state used for GL_KHR_debug
+-
+-#include "libANGLE/Debug.h"
+-
+-#include "common/debug.h"
+-
+-#include <algorithm>
+-#include <tuple>
+-
+-namespace gl
+-{
+-
+-Debug::Control::Control()
+-{
+-}
+-
+-Debug::Control::~Control()
+-{
+-}
+-
+-Debug::Control::Control(const Control &other) = default;
+-
+-Debug::Group::Group()
+-{
+-}
+-
+-Debug::Group::~Group()
+-{
+-}
+-
+-Debug::Group::Group(const Group &other) = default;
+-
+-Debug::Debug()
+-    : mOutputEnabled(false),
+-      mCallbackFunction(nullptr),
+-      mCallbackUserParam(nullptr),
+-      mMessages(),
+-      mMaxLoggedMessages(0),
+-      mOutputSynchronous(false),
+-      mGroups()
+-{
+-    pushDefaultGroup();
+-}
+-
+-Debug::~Debug()
+-{
+-}
+-
+-void Debug::setMaxLoggedMessages(GLuint maxLoggedMessages)
+-{
+-    mMaxLoggedMessages = maxLoggedMessages;
+-}
+-
+-void Debug::setOutputEnabled(bool enabled)
+-{
+-    mOutputEnabled = enabled;
+-}
+-
+-bool Debug::isOutputEnabled() const
+-{
+-    return mOutputEnabled;
+-}
+-
+-void Debug::setOutputSynchronous(bool synchronous)
+-{
+-    mOutputSynchronous = synchronous;
+-}
+-
+-bool Debug::isOutputSynchronous() const
+-{
+-    return mOutputSynchronous;
+-}
+-
+-void Debug::setCallback(GLDEBUGPROCKHR callback, const void *userParam)
+-{
+-    mCallbackFunction  = callback;
+-    mCallbackUserParam = userParam;
+-}
+-
+-GLDEBUGPROCKHR Debug::getCallback() const
+-{
+-    return mCallbackFunction;
+-}
+-
+-const void *Debug::getUserParam() const
+-{
+-    return mCallbackUserParam;
+-}
+-
+-void Debug::insertMessage(GLenum source,
+-                          GLenum type,
+-                          GLuint id,
+-                          GLenum severity,
+-                          const std::string &message)
+-{
+-    std::string messageCopy(message);
+-    insertMessage(source, type, id, severity, std::move(messageCopy));
+-}
+-
+-void Debug::insertMessage(GLenum source,
+-                          GLenum type,
+-                          GLuint id,
+-                          GLenum severity,
+-                          std::string &&message)
+-{
+-    if (!isMessageEnabled(source, type, id, severity))
+-    {
+-        return;
+-    }
+-
+-    if (mCallbackFunction != nullptr)
+-    {
+-        // TODO(geofflang) Check the synchronous flag and potentially flush messages from another
+-        // thread.
+-        mCallbackFunction(source, type, id, severity, static_cast<GLsizei>(message.length()),
+-                          message.c_str(), mCallbackUserParam);
+-    }
+-    else
+-    {
+-        if (mMessages.size() >= mMaxLoggedMessages)
+-        {
+-            // Drop messages over the limit
+-            return;
+-        }
+-
+-        Message m;
+-        m.source   = source;
+-        m.type     = type;
+-        m.id       = id;
+-        m.severity = severity;
+-        m.message  = std::move(message);
+-
+-        mMessages.push_back(std::move(m));
+-    }
+-}
+-
+-size_t Debug::getMessages(GLuint count,
+-                          GLsizei bufSize,
+-                          GLenum *sources,
+-                          GLenum *types,
+-                          GLuint *ids,
+-                          GLenum *severities,
+-                          GLsizei *lengths,
+-                          GLchar *messageLog)
+-{
+-    size_t messageCount       = 0;
+-    size_t messageStringIndex = 0;
+-    while (messageCount <= count && !mMessages.empty())
+-    {
+-        const Message &m = mMessages.front();
+-
+-        if (messageLog != nullptr)
+-        {
+-            // Check that this message can fit in the message buffer
+-            if (messageStringIndex + m.message.length() + 1 > static_cast<size_t>(bufSize))
+-            {
+-                break;
+-            }
+-
+-            std::copy(m.message.begin(), m.message.end(), messageLog + messageStringIndex);
+-            messageStringIndex += m.message.length();
+-
+-            messageLog[messageStringIndex] = '\0';
+-            messageStringIndex += 1;
+-        }
+-
+-        if (sources != nullptr)
+-        {
+-            sources[messageCount] = m.source;
+-        }
+-
+-        if (types != nullptr)
+-        {
+-            types[messageCount] = m.type;
+-        }
+-
+-        if (ids != nullptr)
+-        {
+-            ids[messageCount] = m.id;
+-        }
+-
+-        if (severities != nullptr)
+-        {
+-            severities[messageCount] = m.severity;
+-        }
+-
+-        if (lengths != nullptr)
+-        {
+-            lengths[messageCount] = static_cast<GLsizei>(m.message.length());
+-        }
+-
+-        mMessages.pop_front();
+-
+-        messageCount++;
+-    }
+-
+-    return messageCount;
+-}
+-
+-size_t Debug::getNextMessageLength() const
+-{
+-    return mMessages.empty() ? 0 : mMessages.front().message.length();
+-}
+-
+-size_t Debug::getMessageCount() const
+-{
+-    return mMessages.size();
+-}
+-
+-void Debug::setMessageControl(GLenum source,
+-                              GLenum type,
+-                              GLenum severity,
+-                              std::vector<GLuint> &&ids,
+-                              bool enabled)
+-{
+-    Control c;
+-    c.source   = source;
+-    c.type     = type;
+-    c.severity = severity;
+-    c.ids      = std::move(ids);
+-    c.enabled  = enabled;
+-
+-    auto &controls = mGroups.back().controls;
+-    controls.push_back(std::move(c));
+-}
+-
+-void Debug::pushGroup(GLenum source, GLuint id, std::string &&message)
+-{
+-    insertMessage(source, GL_DEBUG_TYPE_PUSH_GROUP, id, GL_DEBUG_SEVERITY_NOTIFICATION,
+-                  std::string(message));
+-
+-    Group g;
+-    g.source  = source;
+-    g.id      = id;
+-    g.message = std::move(message);
+-    mGroups.push_back(std::move(g));
+-}
+-
+-void Debug::popGroup()
+-{
+-    // Make sure the default group is not about to be popped
+-    ASSERT(mGroups.size() > 1);
+-
+-    Group g = mGroups.back();
+-    mGroups.pop_back();
+-
+-    insertMessage(g.source, GL_DEBUG_TYPE_POP_GROUP, g.id, GL_DEBUG_SEVERITY_NOTIFICATION,
+-                  g.message);
+-}
+-
+-size_t Debug::getGroupStackDepth() const
+-{
+-    return mGroups.size();
+-}
+-
+-bool Debug::isMessageEnabled(GLenum source, GLenum type, GLuint id, GLenum severity) const
+-{
+-    if (!mOutputEnabled)
+-    {
+-        return false;
+-    }
+-
+-    for (auto groupIter = mGroups.rbegin(); groupIter != mGroups.rend(); groupIter++)
+-    {
+-        const auto &controls = groupIter->controls;
+-        for (auto controlIter = controls.rbegin(); controlIter != controls.rend(); controlIter++)
+-        {
+-            const auto &control = *controlIter;
+-
+-            if (control.source != GL_DONT_CARE && control.source != source)
+-            {
+-                continue;
+-            }
+-
+-            if (control.type != GL_DONT_CARE && control.type != type)
+-            {
+-                continue;
+-            }
+-
+-            if (control.severity != GL_DONT_CARE && control.severity != severity)
+-            {
+-                continue;
+-            }
+-
+-            if (!control.ids.empty() &&
+-                std::find(control.ids.begin(), control.ids.end(), id) == control.ids.end())
+-            {
+-                continue;
+-            }
+-
+-            return control.enabled;
+-        }
+-    }
+-
+-    return true;
+-}
+-
+-void Debug::pushDefaultGroup()
+-{
+-    Group g;
+-    g.source  = GL_NONE;
+-    g.id      = 0;
+-    g.message = "";
+-
+-    Control c0;
+-    c0.source   = GL_DONT_CARE;
+-    c0.type     = GL_DONT_CARE;
+-    c0.severity = GL_DONT_CARE;
+-    c0.enabled = true;
+-    g.controls.push_back(std::move(c0));
+-
+-    Control c1;
+-    c1.source   = GL_DONT_CARE;
+-    c1.type     = GL_DONT_CARE;
+-    c1.severity = GL_DEBUG_SEVERITY_LOW;
+-    c1.enabled = false;
+-    g.controls.push_back(std::move(c1));
+-
+-    mGroups.push_back(std::move(g));
+-}
+-}  // namespace gl
+diff --git a/src/angle/src/common/gles_common.pri b/src/angle/src/common/gles_common.pri
+index 70b65dd4cc..34747d356c 100644
+--- a/src/angle/src/common/gles_common.pri
++++ b/src/angle/src/common/gles_common.pri
+@@ -1,4 +1,4 @@
+-CONFIG += simd no_batch object_parallel_to_source
++CONFIG += simd no_batch
+ include(common.pri)
+
+ INCLUDEPATH += \
+@@ -159,7 +159,7 @@ SOURCES += \
+     $$ANGLE_DIR/src/libANGLE/Config.cpp \
+     $$ANGLE_DIR/src/libANGLE/Context.cpp \
+     $$ANGLE_DIR/src/libANGLE/ContextState.cpp \
+-    $$ANGLE_DIR/src/libANGLE/Debug.cpp \
++    $$ANGLE_DIR/src/libANGLE/libANGLEDebug.cpp \
+     $$ANGLE_DIR/src/libANGLE/Device.cpp \
+     $$ANGLE_DIR/src/libANGLE/Display.cpp \
+     $$ANGLE_DIR/src/libANGLE/Error.cpp \
+diff --git a/src/gui/configure.pri b/src/gui/configure.pri
+index 9f3ea8c9e3..b113c5c391 100644
+--- a/src/gui/configure.pri
++++ b/src/gui/configure.pri
+@@ -24,7 +24,7 @@ defineTest(qtConfLibrary_freetype) {
+ # DXSDK_DIR variable. Starting with Windows Kit 8, it is included in
+ # the Windows SDK.
+ defineTest(qtConfTest_fxc) {
+-	fxc = wine "$$(DXSDK_DIR)/fxc2.exe"
++	fxc = "$$(DXSDK_DIR)/fxc2.exe"
+
+     !isEmpty(fxc) {
+         $${1}.value = $$clean_path($$fxc)
+--
+2.27.0
