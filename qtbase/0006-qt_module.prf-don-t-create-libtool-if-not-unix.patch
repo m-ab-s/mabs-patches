@@ -1,0 +1,26 @@
+From c08145cfc9d1601b239679e3654f63cc86ef6047 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 24 Sep 2020 03:37:24 +0000
+Subject: [PATCH 6/6] qt_module.prf: don't create libtool if not unix
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ mkspecs/features/qt_module.prf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mkspecs/features/qt_module.prf b/mkspecs/features/qt_module.prf
+index a9c3572676..4db5e36501 100644
+--- a/mkspecs/features/qt_module.prf
++++ b/mkspecs/features/qt_module.prf
+@@ -304,7 +304,7 @@ load(qt_targets)
+     QMAKE_PKGCONFIG_INSTALL_REPLACE += pclib_replace
+ }
+ !lib_bundle:unix {
+-    CONFIG += create_libtool
++    CONFIG += -create_libtool
+     host_build: \
+         QMAKE_LIBTOOL_LIBDIR = $$[QT_HOST_LIBS]
+     else: \
+-- 
+2.25.1
+
