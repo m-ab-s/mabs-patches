@@ -1,19 +1,19 @@
-From 6dcf11ab444460a462f91740efa7abd6fdd4ef32 Mon Sep 17 00:00:00 2001
+From ad71528392fc228146db4f8afdd5302191d2addc Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Sun, 16 Aug 2020 13:52:15 +0800
 Subject: [PATCH] loader: cross-compile & static linking hacks
 
 ---
- loader/CMakeLists.txt       | 29 +++++++++++------------------
+ loader/CMakeLists.txt       | 18 +++++++-----------
  loader/loader.c             |  6 +++++-
  loader/loader.h             |  3 +++
  loader/loader.rc            |  5 ++++-
  loader/vk_loader_platform.h | 16 ++++++++++++++++
  loader/vulkan.pc.in         |  4 ++--
- 6 files changed, 41 insertions(+), 22 deletions(-)
+ 6 files changed, 37 insertions(+), 15 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index f16c014ed..69b4aa326 100644
+index f16c014ed..c9660eb06 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -65,7 +65,7 @@ endif()
@@ -25,29 +25,16 @@ index f16c014ed..69b4aa326 100644
      # Use static MSVCRT libraries
      foreach(configuration
              in
-@@ -134,16 +134,13 @@ set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} the stack frame for certain calls. If th
+@@ -132,7 +132,7 @@ set(ASM_FAILURE_MSG "The build will fall back on building with C code\n")
+ set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG}Note that this may be unsafe, as the C code requires tail-call optimizations to remove")
+ set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} the stack frame for certain calls. If the compiler does not do this, then unknown device")
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} extensions will suffer from a corrupted stack.")
- if(WIN32)
+-if(WIN32)
++if(MSVC)
      if(MINGW)
--        find_program(JWASM_FOUND jwasm)
-+        find_program(JWASM_FOUND NAMES jwasm uasm)
+         find_program(JWASM_FOUND jwasm)
          if (JWASM_FOUND)
-             set(CMAKE_ASM_MASM_COMPILER ${JWASM_FOUND})
--            execute_process(COMMAND ${CMAKE_C_COMPILER} --version OUTPUT_VARIABLE COMPILER_VERSION_OUTPUT)
--            if (COMPILER_VERSION_OUTPUT)
--                if (COMPILER_VERSION_OUTPUT MATCHES "x86_64")
--                    set(JWASM_FLAGS -win64)
--                else()
--                    set(JWASM_FLAGS -coff)
--                endif()
-+            if (CMAKE_SIZEOF_VOID_P STREQUAL "8")
-+                set(JWASM_FLAGS /win64)
-+            else()
-+                set(JWASM_FLAGS /coff)
-             endif()
-         endif()
-     endif()
-@@ -198,7 +195,7 @@ else(UNIX AND NOT APPLE) # i.e.: Linux
+@@ -198,7 +198,7 @@ else(UNIX AND NOT APPLE) # i.e.: Linux
      endif()
  endif()
  
@@ -56,7 +43,7 @@ index f16c014ed..69b4aa326 100644
      add_library(loader-norm OBJECT ${NORMAL_LOADER_SRCS} dirent_on_windows.c)
      target_compile_options(loader-norm PUBLIC "$<$<CONFIG:DEBUG>:${LOCAL_C_FLAGS_DBG}>")
      target_compile_options(loader-norm PUBLIC ${MSVC_LOADER_COMPILE_OPTIONS})
-@@ -243,17 +240,15 @@ else()
+@@ -243,17 +243,15 @@ else()
          set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-typedef-redefinition")
      endif()
  
@@ -77,7 +64,7 @@ index f16c014ed..69b4aa326 100644
      target_link_libraries(vulkan ${CMAKE_DL_LIBS} pthread m)
      target_link_libraries(vulkan Vulkan::Headers)
      if(APPLE)
-@@ -316,9 +311,7 @@ else()
+@@ -316,9 +314,7 @@ else()
          include(FindPkgConfig QUIET)
          if(PKG_CONFIG_FOUND)
              set(VK_API_VERSION "${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}")
