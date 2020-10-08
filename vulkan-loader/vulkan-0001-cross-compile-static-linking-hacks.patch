@@ -83,7 +83,7 @@ index f16c014ed..c2514440a 100644
                  set(PRIVATE_LIBS "${PRIVATE_LIBS} -l${LIB}")
              endforeach()
 +            else(NOT MINGW)
-+                set(PRIVATE_LIBS -lshlwapi -lcfgmgr32)
++                set(PRIVATE_LIBS "${PRIVATE_LIBS} -lshlwapi -lcfgmgr32")
 +            endif()
              configure_file("vulkan.pc.in" "vulkan.pc" @ONLY)
              install(FILES "${CMAKE_CURRENT_BINARY_DIR}/vulkan.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
