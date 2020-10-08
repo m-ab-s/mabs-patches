@@ -1,0 +1,33 @@
+From eb665b2c40860337c1fda5a66537a29a1f95dba6 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 21 Sep 2020 15:16:32 +0000
+Subject: [PATCH] get_cabac_inline_x86: Don't inline if 32-bit clang on windows
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ libavcodec/x86/cabac.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/libavcodec/x86/cabac.h b/libavcodec/x86/cabac.h
+index cfd3b759c9..db27b1e720 100644
+--- a/libavcodec/x86/cabac.h
++++ b/libavcodec/x86/cabac.h
+@@ -175,8 +175,13 @@
+ 
+ #if HAVE_7REGS && !BROKEN_COMPILER
+ #define get_cabac_inline get_cabac_inline_x86
+-static av_always_inline int get_cabac_inline_x86(CABACContext *c,
+-                                                 uint8_t *const state)
++static
++#if defined(_WIN32) && !defined(_WIN64) && defined(__clang__)
++av_noinline
++#else
++av_always_inline
++#endif
++int get_cabac_inline_x86(CABACContext *c, uint8_t *const state)
+ {
+     int bit, tmp;
+ #ifdef BROKEN_RELOCATIONS
+-- 
+2.25.1
+
