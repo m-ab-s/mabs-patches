@@ -1,19 +1,20 @@
-From ad71528392fc228146db4f8afdd5302191d2addc Mon Sep 17 00:00:00 2001
-From: shinchiro <shinchiro@users.noreply.github.com>
-Date: Sun, 16 Aug 2020 13:52:15 +0800
+From a4a4680668accc4f6efc45626993651638b536b0 Mon Sep 17 00:00:00 2001
+From: Ricardo Constantino <wiiaboo@gmail.com>
+Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH] loader: cross-compile & static linking hacks
 
+From: shinchiro <shinchiro@users.noreply.github.com>
 ---
- loader/CMakeLists.txt       | 18 +++++++-----------
+ loader/CMakeLists.txt       | 16 +++++++++++-----
  loader/loader.c             |  6 +++++-
  loader/loader.h             |  3 +++
  loader/loader.rc            |  5 ++++-
  loader/vk_loader_platform.h | 16 ++++++++++++++++
  loader/vulkan.pc.in         |  4 ++--
- 6 files changed, 37 insertions(+), 15 deletions(-)
+ 6 files changed, 41 insertions(+), 9 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index f16c014ed..c9660eb06 100644
+index f16c014ed..c2514440a 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -65,7 +65,7 @@ endif()
@@ -30,10 +31,19 @@ index f16c014ed..c9660eb06 100644
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} the stack frame for certain calls. If the compiler does not do this, then unknown device")
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} extensions will suffer from a corrupted stack.")
 -if(WIN32)
-+if(MSVC)
++if(WIN32 AND NOT USE_UNSAFE_C_GEN)
      if(MINGW)
          find_program(JWASM_FOUND jwasm)
          if (JWASM_FOUND)
+@@ -169,7 +169,7 @@ if(WIN32)
+         target_compile_options(loader-unknown-chain PUBLIC "$<$<CONFIG:DEBUG>:${LOCAL_C_FLAGS_REL}>")
+         target_compile_options(loader-unknown-chain PUBLIC ${MSVC_LOADER_COMPILE_OPTIONS})
+     endif()
+-elseif(APPLE)
++elseif(USE_UNSAFE_C_GEN OR APPLE)
+     # For MacOS, use the C code and force the compiler's tail-call optimization instead of using assembly code.
+     set(OPT_LOADER_SRCS ${OPT_LOADER_SRCS} unknown_ext_chain.c)
+     set_source_files_properties(${OPT_LOADER_SRCS} PROPERTIES COMPILE_FLAGS -O)
 @@ -198,7 +198,7 @@ else(UNIX AND NOT APPLE) # i.e.: Linux
      endif()
  endif()
@@ -43,18 +53,18 @@ index f16c014ed..c9660eb06 100644
      add_library(loader-norm OBJECT ${NORMAL_LOADER_SRCS} dirent_on_windows.c)
      target_compile_options(loader-norm PUBLIC "$<$<CONFIG:DEBUG>:${LOCAL_C_FLAGS_DBG}>")
      target_compile_options(loader-norm PUBLIC ${MSVC_LOADER_COMPILE_OPTIONS})
-@@ -243,17 +243,15 @@ else()
+@@ -243,17 +243,19 @@ else()
          set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-typedef-redefinition")
      endif()
  
 -    if(APPLE AND BUILD_STATIC_LOADER)
--        add_library(vulkan STATIC ${NORMAL_LOADER_SRCS} ${OPT_LOADER_SRCS})
--    else()
--        add_library(vulkan SHARED ${NORMAL_LOADER_SRCS} ${OPT_LOADER_SRCS})
--    endif()
-+    add_library(vulkan STATIC ${NORMAL_LOADER_SRCS} ${OPT_LOADER_SRCS})
++    if(BUILD_STATIC_LOADER)
+         add_library(vulkan STATIC ${NORMAL_LOADER_SRCS} ${OPT_LOADER_SRCS})
+     else()
+         add_library(vulkan SHARED ${NORMAL_LOADER_SRCS} ${OPT_LOADER_SRCS})
+     endif()
      add_dependencies(vulkan loader_asm_gen_files)
-+    if (NOT ENABLE_STATIC_LOADER)
++    if (NOT BUILD_STATIC_LOADER)
      set_target_properties(vulkan
                            PROPERTIES SOVERSION
                                       "1"
@@ -64,19 +74,22 @@ index f16c014ed..c9660eb06 100644
      target_link_libraries(vulkan ${CMAKE_DL_LIBS} pthread m)
      target_link_libraries(vulkan Vulkan::Headers)
      if(APPLE)
-@@ -316,9 +314,7 @@ else()
+@@ -316,9 +318,13 @@ else()
          include(FindPkgConfig QUIET)
          if(PKG_CONFIG_FOUND)
              set(VK_API_VERSION "${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}")
--            foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES} ${PLATFORM_LIBS})
--                set(PRIVATE_LIBS "${PRIVATE_LIBS} -l${LIB}")
--            endforeach()
-+            set(PRIVATE_LIBS "${PRIVATE_LIBS} -lshlwapi -lcfgmgr32")
++            if(NOT MINGW)
+             foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES} ${PLATFORM_LIBS})
+                 set(PRIVATE_LIBS "${PRIVATE_LIBS} -l${LIB}")
+             endforeach()
++            else(NOT MINGW)
++                set(PRIVATE_LIBS -lshlwapi -lcfgmgr32)
++            endif()
              configure_file("vulkan.pc.in" "vulkan.pc" @ONLY)
              install(FILES "${CMAKE_CURRENT_BINARY_DIR}/vulkan.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
          endif()
 diff --git a/loader/loader.c b/loader/loader.c
-index 509f2f420..f972669d8 100644
+index 0b91cc4bd..bc659b926 100644
 --- a/loader/loader.c
 +++ b/loader/loader.c
 @@ -694,6 +694,10 @@ out:
@@ -90,7 +103,7 @@ index 509f2f420..f972669d8 100644
  VkResult loaderGetDeviceRegistryFiles(const struct loader_instance *inst, char **reg_data, PDWORD reg_data_size,
                                        LPCSTR value_name) {
      static const wchar_t *softwareComponentGUID = L"{5c4c3332-344d-483c-8739-259e934c9cc8}";
-@@ -7851,7 +7855,7 @@ out:
+@@ -7856,7 +7860,7 @@ out:
      return result;
  }
  
