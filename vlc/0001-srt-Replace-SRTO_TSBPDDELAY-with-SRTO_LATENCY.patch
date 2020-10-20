@@ -1,7 +1,7 @@
-From b25b1b13d9e378f18ae73a0775aba27d5e901bfb Mon Sep 17 00:00:00 2001
+From ce7d4a20e79620f06ce379af57df0f7cd5ac37e2 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 16 Sep 2020 01:26:21 +0000
-Subject: [PATCH 1/4] srt: Replace SRTO_TSBPDDELAY with SRTO_LATENCY
+Subject: [PATCH 01/12] srt: Replace SRTO_TSBPDDELAY with SRTO_LATENCY
 
 SRTO_TSBPDDELAY was completely removed in
 https://github.com/Haivision/srt/commit/0e2201aff6b379979cec43fee5e8f162717f6346

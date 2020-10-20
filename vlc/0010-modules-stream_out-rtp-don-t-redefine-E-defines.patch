@@ -1,0 +1,36 @@
+From e1a0ca6278917dd98cc5e343753685b6626d4765 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 20 Oct 2020 22:26:17 +0000
+Subject: [PATCH 10/12] modules/stream_out/rtp: don't redefine E* defines
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ modules/stream_out/rtp.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/modules/stream_out/rtp.c b/modules/stream_out/rtp.c
+index 68ff34b953..3b6ed4e7ab 100644
+--- a/modules/stream_out/rtp.c
++++ b/modules/stream_out/rtp.c
+@@ -1325,9 +1325,15 @@ static int  HttpCallback( httpd_file_sys_t *p_args,
+ static void* ThreadSend( void *data )
+ {
+ #ifdef _WIN32
+-# define ENOBUFS      WSAENOBUFS
+-# define EAGAIN       WSAEWOULDBLOCK
+-# define EWOULDBLOCK  WSAEWOULDBLOCK
++# ifndef ENOBUFS
++#  define ENOBUFS      WSAENOBUFS
++# endif
++# ifndef EAGAIN
++#   define EAGAIN       WSAEWOULDBLOCK
++# endif
++# ifndef EWOULDBLOCK
++#   define EWOULDBLOCK  WSAEWOULDBLOCK
++# endif
+ #endif
+     sout_stream_id_sys_t *id = data;
+     vlc_tick_t i_caching = id->i_caching;
+-- 
+2.25.1
+

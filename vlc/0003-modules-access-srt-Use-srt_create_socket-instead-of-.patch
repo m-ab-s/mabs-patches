@@ -1,7 +1,8 @@
-From ec7aebf0cba86755b31d7f2412f6f4fd73bcc5ed Mon Sep 17 00:00:00 2001
+From 354a5bd0f11a46a9e4229072b41ee321a9ed5e21 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 18 Sep 2020 19:16:34 +0000
-Subject: [PATCH 3/4] srt.c: Use srt_create_socket instead of srt_socket
+Subject: [PATCH 03/12] modules/access/srt: Use srt_create_socket instead of
+ srt_socket
 
 fixes
 

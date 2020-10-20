@@ -1,0 +1,38 @@
+From 9a63e3bf314e5ddd5a2bd02574690510d3613e44 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 20 Oct 2020 22:23:39 +0000
+Subject: [PATCH 09/12] configure.ac: check if _WIN32_IE is already defined
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ configure.ac | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 28a09d2b2a..7effd53bd2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -285,7 +285,19 @@ case "${host_os}" in
+       AC_MSG_RESULT([yes])
+       VLC_ADD_LIBS([libvlccore], [-lsynchronization])
+     ])
+-    AC_DEFINE([_WIN32_IE], [0x0600], [Define to '0x0600' for IE 6.0 (and shell) APIs.])
++    AC_PREPROC_IFELSE([AC_LANG_PROGRAM(
++      [[#ifdef _WIN32_IE
++       # error _WIN32_IE already defined
++       #else
++       # include <windows.h>
++       # if defined(_WIN32_IE) && _WIN32_IE >= 0x0600
++       #  error _WIN32_IE API high enough
++       # endif
++       #endif
++      ]],[[;]])
++    ],[
++      AC_DEFINE([_WIN32_IE], [0x0600], [Define to '0x0600' for IE 6.0 (and shell) APIs.])
++    ])
+     AC_DEFINE([UNICODE], [1], [Define to 1 for Unicode (Wide Chars) APIs.])
+     AC_DEFINE([_ISOC99_SOURCE], [1], [Extensions to ISO C89 from ISO C99.])
+     AC_DEFINE([_ISOC11_SOURCE], [1], [Extensions to ISO C99 from ISO C11.])
+-- 
+2.25.1
+

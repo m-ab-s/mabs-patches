@@ -1,7 +1,7 @@
-From 33208930257a7b501e6f236b039d8cabd90a97a0 Mon Sep 17 00:00:00 2001
+From 2e9678f4b222656b38198c34243b18c4c41b965a Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 16 Sep 2020 01:37:53 +0000
-Subject: [PATCH 2/4] recv(): Cast to char * for recv()
+Subject: [PATCH 02/12] recv(): Cast to char * for recv()
 
 fixes
 

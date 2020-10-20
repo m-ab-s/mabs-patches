@@ -1,0 +1,25 @@
+From 2f1f1da49e135002b4dca3d0469cdc696a3c6f5a Mon Sep 17 00:00:00 2001
+From: Martell Malone <martellmalone@gmail.com>
+Date: Tue, 25 Nov 2014 21:20:09 +0000
+Subject: [PATCH 06/12] Use libdir for plugins on msys2
+
+---
+ modules/gui/skins2/win32/win32_factory.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/modules/gui/skins2/win32/win32_factory.cpp b/modules/gui/skins2/win32/win32_factory.cpp
+index 7cd90f2de5..c35054e200 100644
+--- a/modules/gui/skins2/win32/win32_factory.cpp
++++ b/modules/gui/skins2/win32/win32_factory.cpp
+@@ -237,6 +237,8 @@ bool Win32Factory::init()
+     datadir = config_GetSysPath(VLC_PKG_DATA_DIR, NULL);
+     m_resourcePath.push_back( (std::string)datadir + "\\skins" );
+     m_resourcePath.push_back( (std::string)datadir + "\\skins2" );
++    m_resourcePath.push_back( (std::string)datadir + "\\vlc\\skins");
++    m_resourcePath.push_back( (std::string)datadir + "\\vlc\\skins2");
+     m_resourcePath.push_back( (std::string)datadir + "\\share\\skins" );
+     m_resourcePath.push_back( (std::string)datadir + "\\share\\skins2" );
+     free( datadir );
+-- 
+2.25.1
+
