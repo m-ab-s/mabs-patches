@@ -1,0 +1,34 @@
+From f9fd2acc4de6052919cd46acc41ae88bbe0f3510 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Wed, 21 Oct 2020 01:00:50 +0000
+Subject: [PATCH 2/2] loader/vulkan.pc.in: use the normal prefix and
+ exec_prefix variables
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ loader/vulkan.pc.in | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/loader/vulkan.pc.in b/loader/vulkan.pc.in
+index f1588c412..28578de75 100644
+--- a/loader/vulkan.pc.in
++++ b/loader/vulkan.pc.in
+@@ -1,7 +1,7 @@
+ prefix=@CMAKE_INSTALL_PREFIX@
+-exec_prefix=@CMAKE_INSTALL_PREFIX@
+-libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+-includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
++exec_prefix=${prefix}
++libdir=${exec_prefix}/lib
++includedir=${prefix}/include
+ 
+ Name: @CMAKE_PROJECT_NAME@
+ Description: Vulkan Loader
+@@ -9,4 +9,3 @@ Version: @VK_API_VERSION@
+ Libs: -L${libdir} -lvulkan
+ Libs.private: @PRIVATE_LIBS@
+ Cflags: -I${includedir}
+-
+-- 
+2.25.1
+

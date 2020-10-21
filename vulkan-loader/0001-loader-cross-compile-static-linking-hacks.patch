@@ -1,20 +1,18 @@
-From a4a4680668accc4f6efc45626993651638b536b0 Mon Sep 17 00:00:00 2001
-From: Ricardo Constantino <wiiaboo@gmail.com>
-Date: Thu, 8 Oct 2020 18:46:50 +0100
-Subject: [PATCH] loader: cross-compile & static linking hacks
-
+From 22e9144d522715ad4f158ad593cb729abb8f2364 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
+Date: Thu, 8 Oct 2020 18:46:50 +0100
+Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
+
 ---
  loader/CMakeLists.txt       | 16 +++++++++++-----
  loader/loader.c             |  6 +++++-
  loader/loader.h             |  3 +++
  loader/loader.rc            |  5 ++++-
  loader/vk_loader_platform.h | 16 ++++++++++++++++
- loader/vulkan.pc.in         |  4 ++--
- 6 files changed, 41 insertions(+), 9 deletions(-)
+ 5 files changed, 39 insertions(+), 7 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index f16c014ed..c2514440a 100644
+index 7341403e7..17828bfff 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -65,7 +65,7 @@ endif()
@@ -89,10 +87,10 @@ index f16c014ed..c2514440a 100644
              install(FILES "${CMAKE_CURRENT_BINARY_DIR}/vulkan.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
          endif()
 diff --git a/loader/loader.c b/loader/loader.c
-index 0b91cc4bd..bc659b926 100644
+index 7c7e1cdfd..658416e7f 100644
 --- a/loader/loader.c
 +++ b/loader/loader.c
-@@ -694,6 +694,10 @@ out:
+@@ -696,6 +696,10 @@ out:
  //
  // *reg_data contains a string list of filenames as pointer.
  // When done using the returned string list, the caller should free the pointer.
@@ -103,7 +101,7 @@ index 0b91cc4bd..bc659b926 100644
  VkResult loaderGetDeviceRegistryFiles(const struct loader_instance *inst, char **reg_data, PDWORD reg_data_size,
                                        LPCSTR value_name) {
      static const wchar_t *softwareComponentGUID = L"{5c4c3332-344d-483c-8739-259e934c9cc8}";
-@@ -7856,7 +7860,7 @@ out:
+@@ -7865,7 +7869,7 @@ out:
      return result;
  }
  
@@ -144,10 +142,10 @@ index 18eb5e6c1..cdb9793c1 100755
  #define VER_FILE_VERSION            VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILDNO
  
 diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index e227bf07b..b7664f50a 100644
+index abf078c28..36698f7fa 100644
 --- a/loader/vk_loader_platform.h
 +++ b/loader/vk_loader_platform.h
-@@ -368,9 +368,25 @@ typedef HANDLE loader_platform_thread;
+@@ -392,9 +392,25 @@ typedef HANDLE loader_platform_thread;
  // The once init functionality is not used when building a DLL on Windows. This is because there is no way to clean up the
  // resources allocated by anything allocated by once init. This isn't a problem for static libraries, but it is for dynamic
  // ones. When building a DLL, we use DllMain() instead to allow properly cleaning up resources.
@@ -173,19 +171,6 @@ index e227bf07b..b7664f50a 100644
  
  // Thread IDs:
  typedef DWORD loader_platform_thread_id;
-diff --git a/loader/vulkan.pc.in b/loader/vulkan.pc.in
-index 2ce5aea43..6e897033f 100644
---- a/loader/vulkan.pc.in
-+++ b/loader/vulkan.pc.in
-@@ -1,6 +1,6 @@
- prefix=@CMAKE_INSTALL_PREFIX@
--exec_prefix=@CMAKE_INSTALL_PREFIX@
--libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
-+exec_prefix=${prefix}
-+libdir=${exec_prefix}/lib
- includedir=${prefix}/include
- 
- Name: @CMAKE_PROJECT_NAME@
 -- 
-2.27.0
+2.25.1
 
