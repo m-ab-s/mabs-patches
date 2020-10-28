@@ -1,4 +1,4 @@
-From 8c788fff1c2bb52cf9c9cd2b151ba2e1b8287757 Mon Sep 17 00:00:00 2001
+From 1d1113f9a31123e993dbd546cd50ab64b5e8713b Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 21 Aug 2020 18:39:36 +0000
 Subject: [PATCH] CMake: Use the import libraries and the proper variables
@@ -9,14 +9,14 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index df8c538..4ea8e20 100644
+index d1db54c..3c9d811 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -323,13 +323,13 @@ if(AVIF_BUILD_APPS)
+@@ -412,13 +412,13 @@ if(AVIF_BUILD_APPS)
      if(AVIF_LOCAL_LIBGAV1)
          set_target_properties(avifenc PROPERTIES LINKER_LANGUAGE "CXX")
      endif()
--    target_link_libraries(avifenc avif ${AVIF_PLATFORM_LIBRARIES} ${ZLIB_LIBRARY} ${PNG_LIBRARY} ${JPEG_LIBRARY})
+-    target_link_libraries(avifenc avif ${AVIF_PLATFORM_LIBRARIES} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
 +    target_link_libraries(avifenc avif ${AVIF_PLATFORM_LIBRARIES} PNG::PNG ZLIB::ZLIB ${JPEG_LIBRARIES})
      target_include_directories(avifenc
                                 PRIVATE
@@ -29,11 +29,11 @@ index df8c538..4ea8e20 100644
                                     ${JPEG_INCLUDE_DIR})
      add_executable(avifdec
          apps/avifdec.c
-@@ -343,15 +343,14 @@ if(AVIF_BUILD_APPS)
+@@ -432,15 +432,14 @@ if(AVIF_BUILD_APPS)
      if(AVIF_LOCAL_LIBGAV1)
          set_target_properties(avifdec PROPERTIES LINKER_LANGUAGE "CXX")
      endif()
--    target_link_libraries(avifdec avif ${AVIF_PLATFORM_LIBRARIES} ${ZLIB_LIBRARY} ${PNG_LIBRARY} ${JPEG_LIBRARY})
+-    target_link_libraries(avifdec avif ${AVIF_PLATFORM_LIBRARIES} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
 +    target_link_libraries(avifdec avif ${AVIF_PLATFORM_LIBRARIES} PNG::PNG ZLIB::ZLIB ${JPEG_LIBRARIES})
      target_include_directories(avifdec
                                 PRIVATE
