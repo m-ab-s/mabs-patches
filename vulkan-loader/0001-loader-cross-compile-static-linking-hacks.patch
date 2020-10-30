@@ -1,18 +1,18 @@
-From 22e9144d522715ad4f158ad593cb729abb8f2364 Mon Sep 17 00:00:00 2001
+From 2a2108de9a03143327e69c592bb0b4a55ab8df26 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
 
 ---
- loader/CMakeLists.txt       | 16 +++++++++++-----
+ loader/CMakeLists.txt       | 12 +++++++-----
  loader/loader.c             |  6 +++++-
  loader/loader.h             |  3 +++
  loader/loader.rc            |  5 ++++-
  loader/vk_loader_platform.h | 16 ++++++++++++++++
- 5 files changed, 39 insertions(+), 7 deletions(-)
+ 5 files changed, 35 insertions(+), 7 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 7341403e7..17828bfff 100644
+index 6983c93c2..8d2d40fe6 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -65,7 +65,7 @@ endif()
@@ -33,7 +33,7 @@ index 7341403e7..17828bfff 100644
      if(MINGW)
          find_program(JWASM_FOUND jwasm)
          if (JWASM_FOUND)
-@@ -169,7 +169,7 @@ if(WIN32)
+@@ -172,7 +172,7 @@ if(WIN32)
          target_compile_options(loader-unknown-chain PUBLIC "$<$<CONFIG:DEBUG>:${LOCAL_C_FLAGS_REL}>")
          target_compile_options(loader-unknown-chain PUBLIC ${MSVC_LOADER_COMPILE_OPTIONS})
      endif()
@@ -42,7 +42,7 @@ index 7341403e7..17828bfff 100644
      # For MacOS, use the C code and force the compiler's tail-call optimization instead of using assembly code.
      set(OPT_LOADER_SRCS ${OPT_LOADER_SRCS} unknown_ext_chain.c)
      set_source_files_properties(${OPT_LOADER_SRCS} PROPERTIES COMPILE_FLAGS -O)
-@@ -198,7 +198,7 @@ else(UNIX AND NOT APPLE) # i.e.: Linux
+@@ -201,7 +201,7 @@ else(UNIX AND NOT APPLE) # i.e.: Linux
      endif()
  endif()
  
@@ -51,7 +51,7 @@ index 7341403e7..17828bfff 100644
      add_library(loader-norm OBJECT ${NORMAL_LOADER_SRCS} dirent_on_windows.c)
      target_compile_options(loader-norm PUBLIC "$<$<CONFIG:DEBUG>:${LOCAL_C_FLAGS_DBG}>")
      target_compile_options(loader-norm PUBLIC ${MSVC_LOADER_COMPILE_OPTIONS})
-@@ -243,17 +243,19 @@ else()
+@@ -246,17 +246,19 @@ else()
          set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-typedef-redefinition")
      endif()
  
@@ -72,20 +72,6 @@ index 7341403e7..17828bfff 100644
      target_link_libraries(vulkan ${CMAKE_DL_LIBS} pthread m)
      target_link_libraries(vulkan Vulkan::Headers)
      if(APPLE)
-@@ -316,9 +318,13 @@ else()
-         include(FindPkgConfig QUIET)
-         if(PKG_CONFIG_FOUND)
-             set(VK_API_VERSION "${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}")
-+            if(NOT MINGW)
-             foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES} ${PLATFORM_LIBS})
-                 set(PRIVATE_LIBS "${PRIVATE_LIBS} -l${LIB}")
-             endforeach()
-+            else(NOT MINGW)
-+                set(PRIVATE_LIBS "${PRIVATE_LIBS} -lshlwapi -lcfgmgr32")
-+            endif()
-             configure_file("vulkan.pc.in" "vulkan.pc" @ONLY)
-             install(FILES "${CMAKE_CURRENT_BINARY_DIR}/vulkan.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
-         endif()
 diff --git a/loader/loader.c b/loader/loader.c
 index 7c7e1cdfd..658416e7f 100644
 --- a/loader/loader.c
@@ -111,10 +97,10 @@ index 7c7e1cdfd..658416e7f 100644
      switch (reason) {
          case DLL_PROCESS_ATTACH:
 diff --git a/loader/loader.h b/loader/loader.h
-index 621eb0be3..a3c1f6b63 100644
+index 4779f8e08..efec34bb0 100644
 --- a/loader/loader.h
 +++ b/loader/loader.h
-@@ -428,6 +428,9 @@ static inline void loader_init_dispatch(void *obj, const void *data) {
+@@ -431,6 +431,9 @@ static inline void loader_init_dispatch(void *obj, const void *data) {
  // Global variables used across files
  extern struct loader_struct loader;
  extern THREAD_LOCAL_DECL struct loader_instance *tls_instance;
