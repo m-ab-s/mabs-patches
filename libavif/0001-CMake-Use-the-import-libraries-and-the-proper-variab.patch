@@ -1,18 +1,18 @@
-From 1d1113f9a31123e993dbd546cd50ab64b5e8713b Mon Sep 17 00:00:00 2001
+From 71c7d132a77458cafebdfd29db79d2abf5e209e3 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 21 Aug 2020 18:39:36 +0000
 Subject: [PATCH] CMake: Use the import libraries and the proper variables
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- CMakeLists.txt | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ CMakeLists.txt | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index d1db54c..3c9d811 100644
+index bad3320..369b95a 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -412,13 +412,13 @@ if(AVIF_BUILD_APPS)
+@@ -440,12 +440,13 @@ if(AVIF_BUILD_APPS)
      if(AVIF_LOCAL_LIBGAV1)
          set_target_properties(avifenc PROPERTIES LINKER_LANGUAGE "CXX")
      endif()
@@ -22,14 +22,13 @@ index d1db54c..3c9d811 100644
                                 PRIVATE
                                     $<TARGET_PROPERTY:avif,INTERFACE_INCLUDE_DIRECTORIES>
                                     ${CMAKE_CURRENT_SOURCE_DIR}/apps/shared
--                                   ${ZLIB_INCLUDE_DIR}
 -                                   ${PNG_PNG_INCLUDE_DIR}
 +                                   ${ZLIB_INCLUDE_DIRS}
 +                                   ${PNG_INCLUDE_DIRS}
                                     ${JPEG_INCLUDE_DIR})
      add_executable(avifdec
          apps/avifdec.c
-@@ -432,15 +432,14 @@ if(AVIF_BUILD_APPS)
+@@ -459,14 +460,14 @@ if(AVIF_BUILD_APPS)
      if(AVIF_LOCAL_LIBGAV1)
          set_target_properties(avifdec PROPERTIES LINKER_LANGUAGE "CXX")
      endif()
@@ -39,7 +38,6 @@ index d1db54c..3c9d811 100644
                                 PRIVATE
                                     $<TARGET_PROPERTY:avif,INTERFACE_INCLUDE_DIRECTORIES>
                                     ${CMAKE_CURRENT_SOURCE_DIR}/apps/shared
--                                   ${ZLIB_INCLUDE_DIR}
 -                                   ${PNG_PNG_INCLUDE_DIR}
 +                                   ${ZLIB_INCLUDE_DIRS}
 +                                   ${PNG_INCLUDE_DIRS}
