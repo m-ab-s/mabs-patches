@@ -1,0 +1,68 @@
+From bb720772e02cb2171fbd5ff3ab091f0b86fd4878 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 24 Oct 2020 21:49:00 +0000
+Subject: [PATCH] pixman/pixman-mmx: fix redefinition of _mm_mulhi_pu16 and
+ _mm_shuffle_pi16
+
+clang mingw-w64 32-bit on Windows errors out with those
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ pixman/pixman-mmx.c | 42 +-----------------------------------------
+ 1 file changed, 1 insertion(+), 41 deletions(-)
+
+diff --git a/pixman/pixman-mmx.c b/pixman/pixman-mmx.c
+index d7cf265..89b9dd7 100644
+--- a/pixman/pixman-mmx.c
++++ b/pixman/pixman-mmx.c
+@@ -60,47 +60,7 @@ _mm_empty (void)
+ #endif
+
+ #ifdef USE_X86_MMX
+-# if (defined(__SUNPRO_C) || defined(_MSC_VER) || defined(_WIN64))
+-#  include <xmmintrin.h>
+-# else
+-/* We have to compile with -msse to use xmmintrin.h, but that causes SSE
+- * instructions to be generated that we don't want. Just duplicate the
+- * functions we want to use.  */
+-extern __inline int __attribute__((__gnu_inline__, __always_inline__, __artificial__))
+-_mm_movemask_pi8 (__m64 __A)
+-{
+-    int ret;
+-
+-    asm ("pmovmskb %1, %0\n\t"
+-	: "=r" (ret)
+-	: "y" (__A)
+-    );
+-
+-    return ret;
+-}
+-
+-extern __inline __m64 __attribute__((__gnu_inline__, __always_inline__, __artificial__))
+-_mm_mulhi_pu16 (__m64 __A, __m64 __B)
+-{
+-    asm ("pmulhuw %1, %0\n\t"
+-	: "+y" (__A)
+-	: "y" (__B)
+-    );
+-    return __A;
+-}
+-
+-# define _mm_shuffle_pi16(A, N)						\
+-    ({									\
+-	__m64 ret;							\
+-									\
+-	asm ("pshufw %2, %1, %0\n\t"					\
+-	     : "=y" (ret)						\
+-	     : "y" (A), "K" ((const int8_t)N)				\
+-	);								\
+-									\
+-	ret;								\
+-    })
+-# endif
++#include <xmmintrin.h>
+ #endif
+
+ #ifndef _MSC_VER
+--
+2.25.1
