@@ -1,0 +1,28 @@
+From 215e00358e045d3bc36c9d7e40f91e7660b7e2fd Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 24 Nov 2020 14:40:22 +0000
+Subject: [PATCH] src/google/protobuf/stubs/mutex: remove constexpr
+
+mingw-w64 gcc does not seem to provide std::mutex constexpr
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ src/google/protobuf/stubs/mutex.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/google/protobuf/stubs/mutex.h b/src/google/protobuf/stubs/mutex.h
+index 53bb25d69..06345c45e 100644
+--- a/src/google/protobuf/stubs/mutex.h
++++ b/src/google/protobuf/stubs/mutex.h
+@@ -116,7 +116,7 @@ class CallOnceInitializedMutex {
+ // mutexes.
+ class GOOGLE_PROTOBUF_CAPABILITY("mutex") PROTOBUF_EXPORT WrappedMutex {
+  public:
+-  constexpr WrappedMutex() = default;
++  WrappedMutex() = default;
+   void Lock() GOOGLE_PROTOBUF_ACQUIRE() { mu_.lock(); }
+   void Unlock() GOOGLE_PROTOBUF_RELEASE() { mu_.unlock(); }
+   // Crash if this Mutex is not held exclusively by this thread.
+-- 
+2.25.1
+
