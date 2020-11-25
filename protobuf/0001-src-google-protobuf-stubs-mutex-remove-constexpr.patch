@@ -1,4 +1,4 @@
-From 215e00358e045d3bc36c9d7e40f91e7660b7e2fd Mon Sep 17 00:00:00 2001
+From 69ce67485d3a5001970aa60748b8d2f3f980baae Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 24 Nov 2020 14:40:22 +0000
 Subject: [PATCH] src/google/protobuf/stubs/mutex: remove constexpr
