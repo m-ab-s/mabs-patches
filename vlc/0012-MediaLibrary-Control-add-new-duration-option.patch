@@ -1,0 +1,26 @@
+From 43856800f5b2f054720b1239598808944e28ad02 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Wed, 2 Dec 2020 15:53:00 +0000
+Subject: [PATCH 12/12] MediaLibrary::Control: add new duration option
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ modules/misc/medialibrary/medialib.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/modules/misc/medialibrary/medialib.cpp b/modules/misc/medialibrary/medialib.cpp
+index 5f3c2fc493..e4f07f279b 100644
+--- a/modules/misc/medialibrary/medialib.cpp
++++ b/modules/misc/medialibrary/medialib.cpp
+@@ -575,7 +575,7 @@ int MediaLibrary::Control( int query, va_list args )
+         case VLC_ML_NEW_EXTERNAL_MEDIA:
+         {
+             auto mrl = va_arg( args, const char* );
+-            auto media = m_ml->addExternalMedia( mrl );
++            auto media = m_ml->addExternalMedia( mrl , -1 );
+             if ( media == nullptr )
+                 return VLC_EGENERIC;
+             *va_arg( args, vlc_ml_media_t**) = CreateAndConvert<vlc_ml_media_t>( media.get() );
+-- 
+2.25.1
+

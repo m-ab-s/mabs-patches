@@ -1,7 +1,7 @@
-From 769fd51fcc8ddc76c7fe130b30e1cbbdf3fff675 Mon Sep 17 00:00:00 2001
+From 7aa377866a5ffa287f5121abb38c3cf983e6f895 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:28:51 +0000
-Subject: [PATCH 11/12] include/vlc_codecs.h: don't redefine WAVE_FORMAT_PCM
+Subject: [PATCH 10/12] include/vlc_codecs.h: don't redefine WAVE_FORMAT_PCM
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 2 insertions(+)
 
 diff --git a/include/vlc_codecs.h b/include/vlc_codecs.h
-index bb02853b18..9531ad7305 100644
+index 9da69a3192..df8382c506 100644
 --- a/include/vlc_codecs.h
 +++ b/include/vlc_codecs.h
 @@ -186,7 +186,9 @@ ATTR_PACKED

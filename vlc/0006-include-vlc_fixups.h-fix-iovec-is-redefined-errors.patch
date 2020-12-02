@@ -1,7 +1,7 @@
-From aa0e3a33d1a6046ad6e9c4596b52c30e2ec1f4e3 Mon Sep 17 00:00:00 2001
+From 33f1b1c4288d50bd49836f01ec5de996273b98e1 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:13:27 +0000
-Subject: [PATCH 07/12] include/vlc_fixups.h: fix iovec is redefined errors
+Subject: [PATCH 06/12] include/vlc_fixups.h: fix iovec is redefined errors
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---

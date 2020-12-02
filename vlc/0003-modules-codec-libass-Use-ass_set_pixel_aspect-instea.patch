@@ -1,7 +1,7 @@
-From 4e20d3a276a6cad51e96a528eb3a94148658f7b9 Mon Sep 17 00:00:00 2001
+From fd5a84f31389bbf8ed609942b144137d3a92722e Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 18 Sep 2020 19:18:26 +0000
-Subject: [PATCH 04/12] modules/codec/libass: Use ass_set_pixel_aspect instead
+Subject: [PATCH 03/12] modules/codec/libass: Use ass_set_pixel_aspect instead
  of ass_set_aspect_ratio
 
 fixes
@@ -23,7 +23,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/modules/codec/libass.c b/modules/codec/libass.c
-index dbaa5f5c4c..44e2d45734 100644
+index 9d3ce5c1d2..e10d15b3fb 100644
 --- a/modules/codec/libass.c
 +++ b/modules/codec/libass.c
 @@ -431,7 +431,7 @@ static int SubpictureValidate( subpicture_t *p_subpic,

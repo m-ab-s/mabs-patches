@@ -1,7 +1,7 @@
-From e1a0ca6278917dd98cc5e343753685b6626d4765 Mon Sep 17 00:00:00 2001
+From 472c6fd7686bc36fcd9f2edca3625768513f4d16 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:26:17 +0000
-Subject: [PATCH 10/12] modules/stream_out/rtp: don't redefine E* defines
+Subject: [PATCH 09/12] modules/stream_out/rtp: don't redefine E* defines
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -9,10 +9,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/modules/stream_out/rtp.c b/modules/stream_out/rtp.c
-index 68ff34b953..3b6ed4e7ab 100644
+index 1a0ebbd2df..0599c96fe7 100644
 --- a/modules/stream_out/rtp.c
 +++ b/modules/stream_out/rtp.c
-@@ -1325,9 +1325,15 @@ static int  HttpCallback( httpd_file_sys_t *p_args,
+@@ -1330,9 +1330,15 @@ static int  HttpCallback( httpd_file_sys_t *p_args,
  static void* ThreadSend( void *data )
  {
  #ifdef _WIN32
