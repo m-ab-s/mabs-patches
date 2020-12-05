@@ -1,0 +1,29 @@
+From 9f9b3146f508a43c3110836d11946532915222ec Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 16 Nov 2020 17:59:52 -0500
+Subject: [PATCH] ScaleAddRow_SSE2: only use if MSVC is defined
+
+matches what is used in scale_win.cc file
+
+Change-Id: I183124a2522af58eeb8137c7903737b3438cf7e4
+---
+ third_party/libyuv/include/libyuv/scale_row.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/third_party/libyuv/include/libyuv/scale_row.h b/third_party/libyuv/include/libyuv/scale_row.h
+index a46b5ce69..703c7aecb 100644
+--- a/third_party/libyuv/include/libyuv/scale_row.h
++++ b/third_party/libyuv/include/libyuv/scale_row.h
+@@ -57,7 +57,8 @@ extern "C" {
+ #endif
+ 
+ // The following are available on Visual C:
+-#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && !defined(__clang__)
++#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && defined(_MSC_VER) && \
++    !defined(__clang__)
+ #define HAS_SCALEADDROW_SSE2
+ #endif
+ 
+-- 
+2.25.1
+
