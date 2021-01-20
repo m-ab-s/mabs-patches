@@ -1,30 +1,20 @@
-From abca475d7be2aad4c343eb8e1c8d77be36b0a6e4 Mon Sep 17 00:00:00 2001
+From 5a630d635ba7f57926bc4d22df7b0a3c2030cd8f Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 19 Jul 2020 18:49:51 +0000
 Subject: [PATCH] CMake: Fix issues for mingw-w64
 
-- Fix winmm inclusion in pkgconfig
 - Don't use windows' naming scheme with mingw-w64
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- CMakeLists.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9584b8bf..5aa276bb 100644
+index 9eb7aa07..633e5087 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -855,7 +855,7 @@ if(WIN32)
-             set(HAVE_WINMM 1)
-             set(BACKENDS  "${BACKENDS} WinMM,")
-             set(ALC_OBJS  ${ALC_OBJS} alc/backends/winmm.cpp alc/backends/winmm.h)
--            set(EXTRA_LIBS ${WINMM_LIBRARY} ${EXTRA_LIBS})
-+            SET(EXTRA_LIBS winmm ${EXTRA_LIBS})
-         endif()
-     endif()
- 
-@@ -1112,7 +1112,7 @@ if(ALSOFT_EXAMPLES)
+@@ -1166,7 +1166,7 @@ if(ALSOFT_EXAMPLES)
      endif()
  endif()
  
