@@ -1,7 +1,7 @@
-From 492581de6825457c5d6a7103642a8824c6571671 Mon Sep 17 00:00:00 2001
+From e9242b9f6460353042da932a186259409daee98c Mon Sep 17 00:00:00 2001
 From: Helenerineium <photosynthesis2728@gmail.com>
 Date: Sun, 30 Jun 2019 20:13:49 +0800
-Subject: [PATCH] Add Alternative VapourSynth demuxer
+Subject: [PATCH 1/2] Add Alternative VapourSynth demuxer
 
 Usage: ffmpeg -f vapoursynth_alt
 ---
@@ -13,10 +13,10 @@ Usage: ffmpeg -f vapoursynth_alt
  create mode 100644 libavformat/vapoursynth_alt.c
 
 diff --git a/configure b/configure
-index f97cad0298..2eecabd3c4 100755
+index df298b4b9b..658b4316c2 100755
 --- a/configure
 +++ b/configure
-@@ -3263,6 +3263,7 @@ libxavs2_encoder_deps="libxavs2"
+@@ -3293,6 +3293,7 @@ libxavs2_encoder_deps="libxavs2"
  libxvid_encoder_deps="libxvid"
  libzvbi_teletext_decoder_deps="libzvbi"
  vapoursynth_demuxer_deps="vapoursynth"
@@ -25,10 +25,10 @@ index f97cad0298..2eecabd3c4 100755
  videotoolbox_deps="corefoundation coremedia corevideo"
  videotoolbox_encoder_deps="videotoolbox VTCompressionSessionPrepareToEncodeFrames"
 diff --git a/libavformat/Makefile b/libavformat/Makefile
-index fa325d2320..e6c7e50e5e 100644
+index 3a8fbcbe5f..8763b37e12 100644
 --- a/libavformat/Makefile
 +++ b/libavformat/Makefile
-@@ -584,6 +584,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
+@@ -603,6 +603,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
  OBJS-$(CONFIG_LIBMODPLUG_DEMUXER)        += libmodplug.o
  OBJS-$(CONFIG_LIBOPENMPT_DEMUXER)        += libopenmpt.o
  OBJS-$(CONFIG_VAPOURSYNTH_DEMUXER)       += vapoursynth.o
@@ -37,10 +37,10 @@ index fa325d2320..e6c7e50e5e 100644
  # protocols I/O
  OBJS-$(CONFIG_ASYNC_PROTOCOL)            += async.o
 diff --git a/libavformat/allformats.c b/libavformat/allformats.c
-index 3919c9e4c1..74072db328 100644
+index 6990af55f4..d79407c933 100644
 --- a/libavformat/allformats.c
 +++ b/libavformat/allformats.c
-@@ -505,6 +505,7 @@ extern AVInputFormat  ff_libgme_demuxer;
+@@ -526,6 +526,7 @@ extern AVInputFormat  ff_libgme_demuxer;
  extern AVInputFormat  ff_libmodplug_demuxer;
  extern AVInputFormat  ff_libopenmpt_demuxer;
  extern AVInputFormat  ff_vapoursynth_demuxer;
