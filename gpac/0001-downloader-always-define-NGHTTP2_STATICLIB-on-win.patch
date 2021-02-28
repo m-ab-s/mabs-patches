@@ -1,0 +1,28 @@
+From c02b51bf0dc6aa796a99ac875f428ea32f9b97fe Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sun, 28 Feb 2021 13:02:44 -0600
+Subject: [PATCH] downloader: always define NGHTTP2_STATICLIB on win
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ src/utils/downloader.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/utils/downloader.c b/src/utils/downloader.c
+index 39708d97c..67673881b 100644
+--- a/src/utils/downloader.c
++++ b/src/utils/downloader.c
+@@ -44,8 +44,10 @@
+ #endif
+ 
+ #ifdef GPAC_HAS_HTTP2
++#if defined(_WIN32)
+ #if defined(_MSC_VER)
+ typedef SSIZE_T ssize_t;
++#endif
+ #define NGHTTP2_STATICLIB
+ #endif
+ #include <nghttp2/nghttp2.h>
+-- 
+2.25.1
+
