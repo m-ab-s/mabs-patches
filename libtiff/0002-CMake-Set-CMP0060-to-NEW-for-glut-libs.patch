@@ -1,4 +1,4 @@
-From c15bbdedb2011aea209256478e4c036838f9b0db Mon Sep 17 00:00:00 2001
+From ddd7d8affd977db6897adba7a289f5cded67683d Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 11 Sep 2020 05:01:10 +0000
 Subject: [PATCH 2/2] CMake: Set CMP0060 to NEW for glut libs
@@ -9,19 +9,19 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index ab3c1c89..9e04d6fa 100644
+index ac649217..75b40626 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -41,6 +41,9 @@ endif(POLICY CMP0053)
- if (POLICY CMP0054)
-   cmake_policy(SET CMP0054 NEW)
- endif(POLICY CMP0054)
-+if (POLICY CMP0060)
+@@ -28,6 +28,9 @@ cmake_minimum_required(VERSION 3.9.0)
+ 
+ # Default policy is from 3.9.0
+ cmake_policy(VERSION 3.9.0)
++if(POLICY CMP0060)
 +  cmake_policy(SET CMP0060 NEW)
 +endif(POLICY CMP0060)
  
- # Read version information from configure.ac.
- FILE(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/configure.ac" configure REGEX "^LIBTIFF_.*=")
+ # Find CMake modules in cmake/
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 -- 
 2.25.1
 
