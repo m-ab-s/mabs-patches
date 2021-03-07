@@ -1,4 +1,4 @@
-From ddd7d8affd977db6897adba7a289f5cded67683d Mon Sep 17 00:00:00 2001
+From b13045d63fd4f5d7ca4d2acf2643bb9692463bfa Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 11 Sep 2020 05:01:10 +0000
 Subject: [PATCH 2/2] CMake: Set CMP0060 to NEW for glut libs
