@@ -1,7 +1,7 @@
 From cf35c678e121fe8e85cccf97a96140e7fcb806fa Mon Sep 17 00:00:00 2001
 From: Romain Vimont <rom1v@videolabs.io>
 Date: Wed, 10 Feb 2021 12:00:44 +0100
-Subject: [PATCH 01/12] medialib: disable if already in use
+Subject: [PATCH 01/13] medialib: disable if already in use
 
 The medialib does not properly support multiple simultaneous clients, so
 running two VLC with medialib enabled would cause issues.

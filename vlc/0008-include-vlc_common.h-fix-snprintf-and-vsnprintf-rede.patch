@@ -1,7 +1,7 @@
 From d6d73000afcb45ba8f47da2ab6fecbe49de2a56f Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:16:42 +0000
-Subject: [PATCH 08/12] include/vlc_common.h: fix snprintf and vsnprintf
+Subject: [PATCH 08/13] include/vlc_common.h: fix snprintf and vsnprintf
  redefined warnings
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
