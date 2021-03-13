@@ -1,7 +1,7 @@
-From 15d8ce70099dfa2f04448210fe14072bd8a02467 Mon Sep 17 00:00:00 2001
+From cf480a72c762fc397d4f0977cf6e6dbdfad4115e Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 18 Sep 2020 19:16:34 +0000
-Subject: [PATCH 02/11] modules/access/srt: Use srt_create_socket instead of
+Subject: [PATCH 03/12] modules/access/srt: Use srt_create_socket instead of
  srt_socket
 
 fixes
@@ -37,5 +37,5 @@ index ae8ba2a84f..2496d8cf6d 100644
      {
          msg_Err( p_stream, "Failed to open socket." );
 -- 
-2.25.1
+2.27.0
 

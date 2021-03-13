@@ -1,7 +1,7 @@
-From 5bbdb843930e0b9fb322aa4fd38e667c86de261e Mon Sep 17 00:00:00 2001
+From 910e463754901ee0eb52407c1d0f2d9d31918c84 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:28:51 +0000
-Subject: [PATCH 10/11] include/vlc_codecs.h: don't redefine WAVE_FORMAT_PCM
+Subject: [PATCH 11/12] include/vlc_codecs.h: don't redefine WAVE_FORMAT_PCM
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -23,5 +23,5 @@ index 70945e91c7..eea4bea08b 100644
  #define WAVE_FORMAT_IEEE_FLOAT          0x0003 /* Microsoft Corporation */
  #define WAVE_FORMAT_ALAW                0x0006 /* Microsoft Corporation */
 -- 
-2.25.1
+2.27.0
 

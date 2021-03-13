@@ -1,7 +1,7 @@
-From 7b3a5ed6652f8c227d7f4e9a4536ec5ee1310280 Mon Sep 17 00:00:00 2001
+From 2ae7ea1a7b9b4aff682b8bdb47905bb28b517f9f Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 20 Sep 2020 18:34:13 +0000
-Subject: [PATCH 04/11] send(): Cast to const char * for send()
+Subject: [PATCH 05/12] send(): Cast to const char * for send()
 
 Fixes
 
@@ -74,5 +74,5 @@ index 0e699faeee..bfdd38e29e 100644
  
              if (vlc_cond_timedwait(&addr->wait, &sap_mutex, deadline) == 0)
 -- 
-2.25.1
+2.27.0
 

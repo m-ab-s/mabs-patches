@@ -1,7 +1,7 @@
-From 9e4a22a7d59e468bf62d5ad060e8d7ba7cf92a74 Mon Sep 17 00:00:00 2001
+From 53db5161403d032a943273460eb536300c6a3e90 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 16 Sep 2020 01:37:53 +0000
-Subject: [PATCH 01/11] recv(): Cast to char * for recv()
+Subject: [PATCH 02/12] recv(): Cast to char * for recv()
 
 fixes
 
@@ -73,5 +73,5 @@ index 4bb4a563aa..e9971af998 100644
  
          if (len < RTP_HEADER_SIZE) {
 -- 
-2.25.1
+2.27.0
 

@@ -1,7 +1,7 @@
-From e1cfcab67c761584f8748b8aa79bed9534432f99 Mon Sep 17 00:00:00 2001
+From 2e68ac0498a16272ea1713dbe588148871d80815 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:26:17 +0000
-Subject: [PATCH 09/11] modules/stream_out/rtp: don't redefine E* defines
+Subject: [PATCH 10/12] modules/stream_out/rtp: don't redefine E* defines
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -32,5 +32,5 @@ index 1a0ebbd2df..0599c96fe7 100644
      sout_stream_id_sys_t *id = data;
      vlc_tick_t i_caching = id->i_caching;
 -- 
-2.25.1
+2.27.0
 
