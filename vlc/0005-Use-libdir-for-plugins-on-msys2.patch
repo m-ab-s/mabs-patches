@@ -1,7 +1,7 @@
-From 6f0e701ed319186243355dc98c2e6efd692605f5 Mon Sep 17 00:00:00 2001
+From 2abad2afc80f074d1b0e2cce71c2c15117ab883e Mon Sep 17 00:00:00 2001
 From: Martell Malone <martellmalone@gmail.com>
 Date: Tue, 25 Nov 2014 21:20:09 +0000
-Subject: [PATCH 05/12] Use libdir for plugins on msys2
+Subject: [PATCH 05/11] Use libdir for plugins on msys2
 
 ---
  modules/gui/skins2/win32/win32_factory.cpp | 2 ++

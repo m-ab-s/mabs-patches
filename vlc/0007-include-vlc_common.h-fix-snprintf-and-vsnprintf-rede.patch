@@ -1,7 +1,7 @@
-From f99ec9521eb3f812a437deb63ed815004cdd9834 Mon Sep 17 00:00:00 2001
+From 199af78673094f3719022001f7fc1d033bcd8da1 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:16:42 +0000
-Subject: [PATCH 07/12] include/vlc_common.h: fix snprintf and vsnprintf
+Subject: [PATCH 07/11] include/vlc_common.h: fix snprintf and vsnprintf
  redefined warnings
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
@@ -10,7 +10,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 4 insertions(+)
 
 diff --git a/include/vlc_common.h b/include/vlc_common.h
-index d65a076d45..f8c423ec8f 100644
+index f62ff86d04..6700a12d79 100644
 --- a/include/vlc_common.h
 +++ b/include/vlc_common.h
 @@ -83,8 +83,12 @@

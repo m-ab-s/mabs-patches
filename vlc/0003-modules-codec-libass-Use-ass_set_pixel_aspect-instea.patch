@@ -1,7 +1,7 @@
-From fd5a84f31389bbf8ed609942b144137d3a92722e Mon Sep 17 00:00:00 2001
+From 1d98206450b62823789ce11d24f50c0d7cebac99 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 18 Sep 2020 19:18:26 +0000
-Subject: [PATCH 03/12] modules/codec/libass: Use ass_set_pixel_aspect instead
+Subject: [PATCH 03/11] modules/codec/libass: Use ass_set_pixel_aspect instead
  of ass_set_aspect_ratio
 
 fixes
@@ -23,10 +23,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/modules/codec/libass.c b/modules/codec/libass.c
-index 9d3ce5c1d2..e10d15b3fb 100644
+index 4f96264402..c3b27b91fa 100644
 --- a/modules/codec/libass.c
 +++ b/modules/codec/libass.c
-@@ -431,7 +431,7 @@ static int SubpictureValidate( subpicture_t *p_subpic,
+@@ -441,7 +441,7 @@ static int SubpictureValidate( subpicture_t *p_subpic,
          ass_set_frame_size( p_sys->p_renderer, fmt.i_visible_width, fmt.i_visible_height );
          const double src_ratio = (double)p_fmt_src->i_visible_width / p_fmt_src->i_visible_height;
          const double dst_ratio = (double)p_fmt_dst->i_visible_width / p_fmt_dst->i_visible_height;
@@ -35,7 +35,7 @@ index 9d3ce5c1d2..e10d15b3fb 100644
          p_sys->fmt = fmt;
      }
  
-@@ -745,4 +745,3 @@ static void RegionDraw( subpicture_region_t *p_region, ASS_Image *p_img )
+@@ -755,4 +755,3 @@ static void RegionDraw( subpicture_region_t *p_region, ASS_Image *p_img )
  #undef P
  #endif
  }

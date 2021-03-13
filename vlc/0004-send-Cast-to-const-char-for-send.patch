@@ -1,7 +1,7 @@
-From 9cc37933d6993ef4fe023a813e7f7f2043f540fc Mon Sep 17 00:00:00 2001
+From 7b3a5ed6652f8c227d7f4e9a4536ec5ee1310280 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 20 Sep 2020 18:34:13 +0000
-Subject: [PATCH 04/12] send(): Cast to const char * for send()
+Subject: [PATCH 04/11] send(): Cast to const char * for send()
 
 Fixes
 

@@ -1,7 +1,7 @@
-From fb42613cbf5e611b6ca17963986ca153288b2698 Mon Sep 17 00:00:00 2001
+From b3992187c9b05173ef648c9bb2861ddc6ef575da Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 23:15:15 +0000
-Subject: [PATCH 11/12] modules/audio_filter/channel_mixer/spatialaudio: add
+Subject: [PATCH 11/11] modules/audio_filter/channel_mixer/spatialaudio: add
  new nBlockSize argument
 
 caused by https://github.com/videolabs/libspatialaudio/commit/46e50b9cbff4d531658cb46fe726dd8fff6c90f4

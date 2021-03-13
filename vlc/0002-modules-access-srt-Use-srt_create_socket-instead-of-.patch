@@ -1,7 +1,7 @@
-From a480de82264681708799eff8e3aba0db700a1d90 Mon Sep 17 00:00:00 2001
+From 15d8ce70099dfa2f04448210fe14072bd8a02467 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 18 Sep 2020 19:16:34 +0000
-Subject: [PATCH 02/12] modules/access/srt: Use srt_create_socket instead of
+Subject: [PATCH 02/11] modules/access/srt: Use srt_create_socket instead of
  srt_socket
 
 fixes
