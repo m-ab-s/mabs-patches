@@ -1,7 +1,7 @@
 From 2e68ac0498a16272ea1713dbe588148871d80815 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:26:17 +0000
-Subject: [PATCH 10/13] modules/stream_out/rtp: don't redefine E* defines
+Subject: [PATCH 10/14] modules/stream_out/rtp: don't redefine E* defines
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---

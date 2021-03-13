@@ -1,0 +1,29 @@
+From b866ad9b003e11a209f8910f9db42e2732142de3 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 13 Mar 2021 16:38:05 -0600
+Subject: [PATCH 14/14] modules/access_output: don't put -lgpg-error for
+ livehttp
+
+it's already included in GCRYPT_LIBS if you use pkg-config
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ modules/access_output/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/modules/access_output/Makefile.am b/modules/access_output/Makefile.am
+index 5a6e82d80f..b39ea8ca7c 100644
+--- a/modules/access_output/Makefile.am
++++ b/modules/access_output/Makefile.am
+@@ -14,7 +14,7 @@ access_out_LTLIBRARIES = \
+ 
+ libaccess_output_livehttp_plugin_la_SOURCES = access_output/livehttp.c
+ libaccess_output_livehttp_plugin_la_CFLAGS = $(AM_CFLAGS) $(GCRYPT_CFLAGS)
+-libaccess_output_livehttp_plugin_la_LIBADD = $(GCRYPT_LIBS) -lgpg-error $(LIBM)
++libaccess_output_livehttp_plugin_la_LIBADD = $(GCRYPT_LIBS) $(LIBM)
+ if HAVE_GCRYPT
+ access_out_LTLIBRARIES += libaccess_output_livehttp_plugin.la
+ endif
+-- 
+2.27.0
+

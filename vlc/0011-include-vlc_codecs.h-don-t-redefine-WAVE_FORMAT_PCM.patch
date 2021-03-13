@@ -1,7 +1,7 @@
 From 910e463754901ee0eb52407c1d0f2d9d31918c84 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:28:51 +0000
-Subject: [PATCH 11/13] include/vlc_codecs.h: don't redefine WAVE_FORMAT_PCM
+Subject: [PATCH 11/14] include/vlc_codecs.h: don't redefine WAVE_FORMAT_PCM
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---

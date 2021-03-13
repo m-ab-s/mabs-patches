@@ -1,7 +1,7 @@
 From ce233acf10eaa14a57a73c536791a33f2cad94b3 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:23:39 +0000
-Subject: [PATCH 09/13] configure.ac: check if _WIN32_IE is already defined
+Subject: [PATCH 09/14] configure.ac: check if _WIN32_IE is already defined
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
