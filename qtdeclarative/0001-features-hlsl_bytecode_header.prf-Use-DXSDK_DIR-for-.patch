@@ -1,0 +1,26 @@
+From 3252370d4141b503c561e919316161b8906e2c04 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 25 Sep 2020 04:26:22 +0000
+Subject: [PATCH] features/hlsl_bytecode_header.prf: Use DXSDK_DIR for fxc2
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ features/hlsl_bytecode_header.prf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/features/hlsl_bytecode_header.prf b/features/hlsl_bytecode_header.prf
+index 0fa27a75d5..7d05b46637 100644
+--- a/features/hlsl_bytecode_header.prf
++++ b/features/hlsl_bytecode_header.prf
+@@ -1,7 +1,7 @@
+ for (SHADER, HLSL_SHADERS) {
+     INPUT = $$eval($${SHADER}.input)
+     fxc_$${SHADER}.input = $$INPUT
+-    fxc_$${SHADER}.commands = fxc.exe /nologo /E $$eval($${SHADER}.entry) /T $$eval($${SHADER}.type) /Fh ${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
++    fxc_$${SHADER}.commands = "$$(DXSDK_DIR)/fxc2.exe" -nologo -E $$eval($${SHADER}.entry) -T $$eval($${SHADER}.type) -Fh ${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
+     fxc_$${SHADER}.output = $$eval($${SHADER}.header)
+     fxc_$${SHADER}.dependency_type = TYPE_C
+     fxc_$${SHADER}.variable_out = HEADERS
+-- 
+2.25.1
+
