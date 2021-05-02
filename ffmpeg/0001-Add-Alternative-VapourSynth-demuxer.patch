@@ -1,4 +1,4 @@
-From e9242b9f6460353042da932a186259409daee98c Mon Sep 17 00:00:00 2001
+From 13070e8134d0e980848fa8251b894afb96cb1b62 Mon Sep 17 00:00:00 2001
 From: Helenerineium <photosynthesis2728@gmail.com>
 Date: Sun, 30 Jun 2019 20:13:49 +0800
 Subject: [PATCH 1/2] Add Alternative VapourSynth demuxer
@@ -13,10 +13,10 @@ Usage: ffmpeg -f vapoursynth_alt
  create mode 100644 libavformat/vapoursynth_alt.c
 
 diff --git a/configure b/configure
-index df298b4b9b..658b4316c2 100755
+index 820f719a32..4e58c3b3b2 100755
 --- a/configure
 +++ b/configure
-@@ -3293,6 +3293,7 @@ libxavs2_encoder_deps="libxavs2"
+@@ -3291,6 +3291,7 @@ libxavs2_encoder_deps="libxavs2"
  libxvid_encoder_deps="libxvid"
  libzvbi_teletext_decoder_deps="libzvbi"
  vapoursynth_demuxer_deps="vapoursynth"
@@ -25,10 +25,10 @@ index df298b4b9b..658b4316c2 100755
  videotoolbox_deps="corefoundation coremedia corevideo"
  videotoolbox_encoder_deps="videotoolbox VTCompressionSessionPrepareToEncodeFrames"
 diff --git a/libavformat/Makefile b/libavformat/Makefile
-index 3a8fbcbe5f..8763b37e12 100644
+index 85b5d8e7eb..04e39f5ac6 100644
 --- a/libavformat/Makefile
 +++ b/libavformat/Makefile
-@@ -603,6 +603,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
+@@ -607,6 +607,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
  OBJS-$(CONFIG_LIBMODPLUG_DEMUXER)        += libmodplug.o
  OBJS-$(CONFIG_LIBOPENMPT_DEMUXER)        += libopenmpt.o
  OBJS-$(CONFIG_VAPOURSYNTH_DEMUXER)       += vapoursynth.o
@@ -37,14 +37,14 @@ index 3a8fbcbe5f..8763b37e12 100644
  # protocols I/O
  OBJS-$(CONFIG_ASYNC_PROTOCOL)            += async.o
 diff --git a/libavformat/allformats.c b/libavformat/allformats.c
-index 6990af55f4..d79407c933 100644
+index 0c672ad8c8..f3f6e235c1 100644
 --- a/libavformat/allformats.c
 +++ b/libavformat/allformats.c
-@@ -526,6 +526,7 @@ extern AVInputFormat  ff_libgme_demuxer;
- extern AVInputFormat  ff_libmodplug_demuxer;
- extern AVInputFormat  ff_libopenmpt_demuxer;
- extern AVInputFormat  ff_vapoursynth_demuxer;
-+extern AVInputFormat  ff_vapoursynth_alt_demuxer;
+@@ -527,6 +527,7 @@ extern const AVInputFormat  ff_libgme_demuxer;
+ extern const AVInputFormat  ff_libmodplug_demuxer;
+ extern const AVInputFormat  ff_libopenmpt_demuxer;
+ extern const AVInputFormat  ff_vapoursynth_demuxer;
++extern const AVInputFormat  ff_vapoursynth_alt_demuxer;
  
  #include "libavformat/muxer_list.c"
  #include "libavformat/demuxer_list.c"
@@ -417,5 +417,5 @@ index 0000000000..f7e3dd8879
 +    .read_seek      = read_seek,
 +};
 -- 
-2.25.1
+2.31.1
 
