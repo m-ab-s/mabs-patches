@@ -1,0 +1,44 @@
+From 03e0289812400e9c1d66739e843560159c0c5e05 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sun, 2 May 2021 20:14:30 -0500
+Subject: [PATCH] CMake: exclude mingw-w64 from some msvc exclusive things
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9bd474de..f338b5ab 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -71,7 +71,7 @@ IF(WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+ ENDIF()
+ 
+ # overwrite some folders before GNUInstallDirs is loaded
+-IF (WIN32 AND NOT DEFINED CMAKE_INSTALL_DATAROOTDIR)
++IF (MSVC AND NOT DEFINED CMAKE_INSTALL_DATAROOTDIR)
+     SET(CMAKE_INSTALL_DATAROOTDIR "$ENV{ALLUSERSPROFILE}" CACHE PATH "read-only architecture-independent data root (share)")
+ ENDIF()
+ 
+@@ -94,7 +94,7 @@ IF(BUILD_FOR_SSE2)
+   ENDIF()
+ ENDIF()
+ 
+-IF(WIN32)
++IF(MSVC)
+   # base path for searching for glib on windows
+   IF(NOT GLIB2_BASE_DIR)
+     SET(GLIB2_BASE_DIR "${SOURCE_BASE_DIR}/glib-2.28.1" CACHE STRING "Base path of glib2 dir." FORCE)
+@@ -193,7 +193,7 @@ IF(BUILD_DOC)
+   ADD_SUBDIRECTORY(docs)
+ ENDIF()
+ 
+-IF(WIN32 AND NOT BUILD_STATIC)
++IF(MSVC AND NOT BUILD_STATIC)
+   FIND_FILE(GLIB2_DLL
+             NAMES glib-2.dll glib-2-vs9.dll
+             PATHS "${GLIB2_BASE_DIR}/bin"
+-- 
+2.31.1
+
