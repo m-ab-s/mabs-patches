@@ -1,4 +1,4 @@
-From 5d297d70eb941a7ba7a3aefda76e1ad7f15a08b8 Mon Sep 17 00:00:00 2001
+From a570f5010c340afba7b83ec50f76abc51d3039e6 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 28 May 2020 15:25:41 +0000
 Subject: [PATCH 2/2] win32 UTF-8: Remove va arg and ... and unused functions
@@ -10,7 +10,7 @@ Subject: [PATCH 2/2] win32 UTF-8: Remove va arg and ... and unused functions
  3 files changed, 10 insertions(+), 57 deletions(-)
 
 diff --git a/src/lj_fs_io.c b/src/lj_fs_io.c
-index b69f391..d5eb225 100644
+index b69f3917..d5eb2258 100644
 --- a/src/lj_fs_io.c
 +++ b/src/lj_fs_io.c
 @@ -450,49 +450,6 @@ int lin_closedir(DIR *dir)
@@ -64,7 +64,7 @@ index b69f391..d5eb225 100644
  {
      HANDLE h = (HANDLE)_get_osfhandle(fd);
 diff --git a/src/lj_fs_io.h b/src/lj_fs_io.h
-index 0bdcd20..2b2aa27 100644
+index 0bdcd207..2b2aa270 100644
 --- a/src/lj_fs_io.h
 +++ b/src/lj_fs_io.h
 @@ -20,8 +20,6 @@ FILE *lin_fopen(const char *filename, const char *mode);
@@ -77,7 +77,7 @@ index 0bdcd20..2b2aa27 100644
  
  // lin_stat types. MSVCRT's dev_t and ino_t are way too short to be unique.
 diff --git a/src/lj_fs_io_replace.h b/src/lj_fs_io_replace.h
-index 604e279..fac7691 100644
+index 604e279f..fac7691a 100644
 --- a/src/lj_fs_io_replace.h
 +++ b/src/lj_fs_io_replace.h
 @@ -10,27 +10,25 @@
@@ -119,5 +119,5 @@ index 604e279..fac7691 100644
  
  #ifndef O_BINARY
 -- 
-2.25.1
+2.31.1
 
