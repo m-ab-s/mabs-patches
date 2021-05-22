@@ -1,0 +1,29 @@
+From c1281c73e99f282d078db6f4f695199aeda0c487 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 22 May 2021 18:38:13 -0500
+Subject: [PATCH 3/3] deps: link libtiff first
+
+libtiff sometimes depends on libjpeg etc and linking it last
+will cause linking issues even if the others are loaded manually
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ cmake/deps.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/deps.cmake b/cmake/deps.cmake
+index e00611f6..70e69a9c 100644
+--- a/cmake/deps.cmake
++++ b/cmake/deps.cmake
+@@ -73,7 +73,7 @@ endif()
+ # Find the standard image libraries.
+ set(WEBP_DEP_IMG_LIBRARIES)
+ set(WEBP_DEP_IMG_INCLUDE_DIRS)
+-foreach(I_LIB PNG JPEG TIFF)
++foreach(I_LIB TIFF PNG JPEG)
+   find_package(${I_LIB})
+   set(WEBP_HAVE_${I_LIB} ${${I_LIB}_FOUND})
+   if(${I_LIB}_FOUND)
+-- 
+2.31.1
+
