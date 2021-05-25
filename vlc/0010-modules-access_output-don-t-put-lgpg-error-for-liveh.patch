@@ -1,7 +1,7 @@
-From 831d06b5add1350d92644e979c757b9977926457 Mon Sep 17 00:00:00 2001
+From ebb6e3b2c547ce9fb2cb50f31313e5e087e6b41a Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 13 Mar 2021 16:38:05 -0600
-Subject: [PATCH 12/12] modules/access_output: don't put -lgpg-error for
+Subject: [PATCH 10/10] modules/access_output: don't put -lgpg-error for
  livehttp
 
 it's already included in GCRYPT_LIBS if you use pkg-config
