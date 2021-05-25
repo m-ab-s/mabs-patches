@@ -1,7 +1,7 @@
-From 172b6c0e1f53d148d97ac0bfe402da5d28923f1b Mon Sep 17 00:00:00 2001
+From d3da3c3fa899fce389bf09ce2056016a02eb5953 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 18 Sep 2020 19:18:26 +0000
-Subject: [PATCH 04/14] modules/codec/libass: Use ass_set_pixel_aspect instead
+Subject: [PATCH 03/12] modules/codec/libass: Use ass_set_pixel_aspect instead
  of ass_set_aspect_ratio
 
 fixes
@@ -41,5 +41,5 @@ index 4f96264402..c3b27b91fa 100644
  }
 -
 -- 
-2.27.0
+2.31.1
 

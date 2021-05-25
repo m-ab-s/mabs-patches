@@ -1,7 +1,7 @@
-From b866ad9b003e11a209f8910f9db42e2732142de3 Mon Sep 17 00:00:00 2001
+From 831d06b5add1350d92644e979c757b9977926457 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 13 Mar 2021 16:38:05 -0600
-Subject: [PATCH 14/14] modules/access_output: don't put -lgpg-error for
+Subject: [PATCH 12/12] modules/access_output: don't put -lgpg-error for
  livehttp
 
 it's already included in GCRYPT_LIBS if you use pkg-config
@@ -25,5 +25,5 @@ index 5a6e82d80f..b39ea8ca7c 100644
  access_out_LTLIBRARIES += libaccess_output_livehttp_plugin.la
  endif
 -- 
-2.27.0
+2.31.1
 

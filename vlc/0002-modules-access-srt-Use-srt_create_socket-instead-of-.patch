@@ -1,7 +1,7 @@
-From cf480a72c762fc397d4f0977cf6e6dbdfad4115e Mon Sep 17 00:00:00 2001
+From fd86386e67b754703d1913f55705b6a348fb205f Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 18 Sep 2020 19:16:34 +0000
-Subject: [PATCH 03/14] modules/access/srt: Use srt_create_socket instead of
+Subject: [PATCH 02/12] modules/access/srt: Use srt_create_socket instead of
  srt_socket
 
 fixes
@@ -24,7 +24,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/modules/access/srt.c b/modules/access/srt.c
-index ae8ba2a84f..2496d8cf6d 100644
+index a411db1a1c..c983366e54 100644
 --- a/modules/access/srt.c
 +++ b/modules/access/srt.c
 @@ -127,7 +127,7 @@ static bool srt_schedule_reconnect(stream_t *p_stream)
@@ -37,5 +37,5 @@ index ae8ba2a84f..2496d8cf6d 100644
      {
          msg_Err( p_stream, "Failed to open socket." );
 -- 
-2.27.0
+2.31.1
 

@@ -1,7 +1,7 @@
-From 6617a54d6db9f7b806f99f6b44558fbf6bded681 Mon Sep 17 00:00:00 2001
+From ad07b3af2abf20de94b9b1cd74288f55172b81d9 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 23:15:15 +0000
-Subject: [PATCH 12/14] modules/audio_filter/channel_mixer/spatialaudio: add
+Subject: [PATCH 11/12] modules/audio_filter/channel_mixer/spatialaudio: add
  new nBlockSize argument
 
 caused by https://github.com/videolabs/libspatialaudio/commit/46e50b9cbff4d531658cb46fe726dd8fff6c90f4
@@ -12,10 +12,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/modules/audio_filter/channel_mixer/spatialaudio.cpp b/modules/audio_filter/channel_mixer/spatialaudio.cpp
-index c8cda9175d..22d8f40eff 100644
+index 02195ef8ac..27d2e3d244 100644
 --- a/modules/audio_filter/channel_mixer/spatialaudio.cpp
 +++ b/modules/audio_filter/channel_mixer/spatialaudio.cpp
-@@ -542,7 +542,7 @@ static int Open(vlc_object_t *p_this)
+@@ -536,7 +536,7 @@ static int Open(vlc_object_t *p_this)
          return VLC_EGENERIC;
      }
  
@@ -25,5 +25,5 @@ index c8cda9175d..22d8f40eff 100644
          msg_Err(p_filter, "Error creating the ambisonic zoomer.");
          delete p_sys;
 -- 
-2.27.0
+2.31.1
 

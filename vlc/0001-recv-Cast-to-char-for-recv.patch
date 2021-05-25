@@ -1,7 +1,7 @@
-From 53db5161403d032a943273460eb536300c6a3e90 Mon Sep 17 00:00:00 2001
+From 3528db0ae99bf42279773adb8179de3bd681b2db Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 16 Sep 2020 01:37:53 +0000
-Subject: [PATCH 02/14] recv(): Cast to char * for recv()
+Subject: [PATCH 01/12] recv(): Cast to char * for recv()
 
 fixes
 
@@ -26,10 +26,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  3 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/modules/access/amt.c b/modules/access/amt.c
-index 52bf0271ef..c64d5668a2 100644
+index 505b6022ac..a3a2e0bf2b 100644
 --- a/modules/access/amt.c
 +++ b/modules/access/amt.c
-@@ -591,7 +591,7 @@ static block_t *BlockAMT(stream_t *p_access, bool *restrict eof)
+@@ -589,7 +589,7 @@ static block_t *BlockAMT(stream_t *p_access, bool *restrict eof)
      if( sys->tryAMT )
      {
          /* AMT is a wrapper for UDP streams, so recv is used. */
@@ -60,7 +60,7 @@ index c524b22816..d2d709898b 100644
      }
  
 diff --git a/modules/access/satip.c b/modules/access/satip.c
-index 4bb4a563aa..e9971af998 100644
+index 20e2a74424..85c6cee80a 100644
 --- a/modules/access/satip.c
 +++ b/modules/access/satip.c
 @@ -506,7 +506,7 @@ static void *satip_thread(void *data) {
@@ -73,5 +73,5 @@ index 4bb4a563aa..e9971af998 100644
  
          if (len < RTP_HEADER_SIZE) {
 -- 
-2.27.0
+2.31.1
 

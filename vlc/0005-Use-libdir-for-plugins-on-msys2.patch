@@ -1,7 +1,7 @@
-From b91d1897f3d660fb1bea58495cd34940922da8f7 Mon Sep 17 00:00:00 2001
+From a92374cf7856e522e1ae259caa00e984d7e977cf Mon Sep 17 00:00:00 2001
 From: Martell Malone <martellmalone@gmail.com>
 Date: Tue, 25 Nov 2014 21:20:09 +0000
-Subject: [PATCH 06/14] Use libdir for plugins on msys2
+Subject: [PATCH 05/12] Use libdir for plugins on msys2
 
 ---
  modules/gui/skins2/win32/win32_factory.cpp | 2 ++
@@ -21,5 +21,5 @@ index 7cd90f2de5..c35054e200 100644
      m_resourcePath.push_back( (std::string)datadir + "\\share\\skins2" );
      free( datadir );
 -- 
-2.27.0
+2.31.1
 

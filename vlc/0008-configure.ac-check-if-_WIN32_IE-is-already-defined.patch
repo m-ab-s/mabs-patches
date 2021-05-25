@@ -1,7 +1,7 @@
-From ce233acf10eaa14a57a73c536791a33f2cad94b3 Mon Sep 17 00:00:00 2001
+From cc9eedba17f4f7d848e80b0c13b36508185c1381 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 20 Oct 2020 22:23:39 +0000
-Subject: [PATCH 09/14] configure.ac: check if _WIN32_IE is already defined
+Subject: [PATCH 08/12] configure.ac: check if _WIN32_IE is already defined
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index a82c956c70..33ec34351c 100644
+index c7de27e7fd..f975a2510a 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -286,7 +286,19 @@ case "${host_os}" in
@@ -34,5 +34,5 @@ index a82c956c70..33ec34351c 100644
      AC_DEFINE([_ISOC99_SOURCE], [1], [Extensions to ISO C89 from ISO C99.])
      AC_DEFINE([_ISOC11_SOURCE], [1], [Extensions to ISO C99 from ISO C11.])
 -- 
-2.27.0
+2.31.1
 
