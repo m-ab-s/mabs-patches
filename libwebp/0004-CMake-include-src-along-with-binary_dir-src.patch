@@ -1,0 +1,89 @@
+From 0da81d691632241748519e2e3bcd998462f83548 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 8 Jun 2021 11:00:02 -0500
+Subject: [PATCH 4/4] CMake: include src along with binary_dir/src
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index af10f1bc..d8a37ad6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -443,7 +443,7 @@ if(WEBP_BUILD_DWEBP)
+   parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "DWEBP_SRCS" "dwebp")
+   add_executable(dwebp ${DWEBP_SRCS})
+   target_link_libraries(dwebp exampleutil imagedec imageenc)
+-  target_include_directories(dwebp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(dwebp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+   install(TARGETS dwebp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+@@ -452,7 +452,7 @@ if(WEBP_BUILD_CWEBP)
+   parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "CWEBP_SRCS" "cwebp")
+   add_executable(cwebp ${CWEBP_SRCS})
+   target_link_libraries(cwebp exampleutil imagedec webp)
+-  target_include_directories(cwebp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(cwebp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+   install(TARGETS cwebp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+@@ -486,7 +486,7 @@ if(WEBP_BUILD_GIF2WEBP)
+                         webp
+                         libwebpmux
+                         ${WEBP_DEP_GIF_LIBRARIES})
+-  target_include_directories(gif2webp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(gif2webp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+   install(TARGETS gif2webp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+@@ -502,7 +502,7 @@ if(WEBP_BUILD_IMG2WEBP)
+                         imageioutil
+                         webp
+                         libwebpmux)
+-  target_include_directories(img2webp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(img2webp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+   install(TARGETS img2webp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+@@ -544,7 +544,7 @@ if(WEBP_BUILD_WEBPINFO)
+                     "webpinfo")
+   add_executable(webpinfo ${WEBPINFO_SRCS})
+   target_link_libraries(webpinfo exampleutil imageioutil)
+-  target_include_directories(webpinfo PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(webpinfo PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+   install(TARGETS webpinfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+@@ -554,7 +554,7 @@ if(WEBP_BUILD_WEBPMUX)
+                     "webpmux")
+   add_executable(webpmux ${WEBPMUX_SRCS})
+   target_link_libraries(webpmux exampleutil imageioutil libwebpmux webp)
+-  target_include_directories(webpmux PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(webpmux PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+   install(TARGETS webpmux RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+@@ -642,7 +642,7 @@ if(WEBP_BUILD_ANIM_UTILS)
+                         libwebpmux
+                         webpdemux
+                         ${WEBP_DEP_GIF_LIBRARIES})
+-  target_include_directories(anim_diff PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(anim_diff PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+ 
+   # anim_dump
+   include_directories(${WEBP_DEP_IMG_INCLUDE_DIRS} ${WEBP_DEP_GIF_INCLUDE_DIRS})
+@@ -658,7 +658,7 @@ if(WEBP_BUILD_ANIM_UTILS)
+                         libwebpmux
+                         webpdemux
+                         ${WEBP_DEP_GIF_LIBRARIES})
+-  target_include_directories(anim_dump PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(anim_dump PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+ endif()
+ 
+ # Install the different headers and libraries.
+-- 
+2.31.1
+
