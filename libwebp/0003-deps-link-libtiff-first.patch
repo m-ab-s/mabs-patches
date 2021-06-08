@@ -1,7 +1,7 @@
-From 0116ff4f920173ed1ad51699d12e2084f3f16d05 Mon Sep 17 00:00:00 2001
+From 539f9730ddc373f8e1f966c5c4aff3ff5fb60492 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 22 May 2021 18:38:13 -0500
-Subject: [PATCH 3/3] deps: link libtiff first
+Subject: [PATCH 3/4] deps: link libtiff first
 
 libtiff sometimes depends on libjpeg etc and linking it last
 will cause linking issues even if the others are loaded manually

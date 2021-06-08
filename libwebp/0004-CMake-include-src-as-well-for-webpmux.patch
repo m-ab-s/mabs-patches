@@ -1,0 +1,26 @@
+From 2fe97e043d275f34a0e4444497a7a6848b20be20 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 8 Jun 2021 11:00:02 -0500
+Subject: [PATCH 4/4] CMake: include src as well for webpmux
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index af10f1bc..02c5f018 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -554,7 +554,7 @@ if(WEBP_BUILD_WEBPMUX)
+                     "webpmux")
+   add_executable(webpmux ${WEBPMUX_SRCS})
+   target_link_libraries(webpmux exampleutil imageioutil libwebpmux webp)
+-  target_include_directories(webpmux PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(webpmux PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src src)
+   install(TARGETS webpmux RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+-- 
+2.31.1
+

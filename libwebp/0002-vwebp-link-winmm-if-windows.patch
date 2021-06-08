@@ -1,7 +1,7 @@
-From 16ec6030299887c28f280da19b26ac1ee24abfb2 Mon Sep 17 00:00:00 2001
+From 6455c520eb01d8e31d7ca77a415fabd569d4cf6a Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 22 May 2021 17:53:54 -0500
-Subject: [PATCH 2/3] vwebp: link winmm if windows
+Subject: [PATCH 2/4] vwebp: link winmm if windows
 
 static libglut.a requires winmm but cmake's FindGLUT.cmake doesn't
 recognize this.
