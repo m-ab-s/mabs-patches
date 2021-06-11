@@ -1,0 +1,70 @@
+From da2dde75a7ff9cb0dd923697cd3d39b068f44446 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 12 Jun 2021 00:50:16 -0500
+Subject: [PATCH 6/6] FindJPEG: Use pkg-config for finding dependencies
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ Modules/FindJPEG.cmake | 32 ++++++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
+
+diff --git a/Modules/FindJPEG.cmake b/Modules/FindJPEG.cmake
+index add2486c36..90d886a7bb 100644
+--- a/Modules/FindJPEG.cmake
++++ b/Modules/FindJPEG.cmake
+@@ -56,6 +56,25 @@ Obsolete variables
+   where to find the JPEG library.
+ #]=======================================================================]
+ 
++function(_FIND_JPEG_PKG_CONFIG)
++  find_package(PkgConfig)
++  if(NOT PKG_CONFIG_FOUND)
++      return()
++  endif()
++  pkg_check_modules(JPEG QUIET libjpeg)
++  if(NOT JPEG_FOUND)
++      return()
++  endif()
++  set(JPEG_FOUND ${JPEG_FOUND} PARENT_SCOPE)
++  set(JPEG_INCLUDE_DIR ${JPEG_INCLUDEDIR} PARENT_SCOPE)
++  set(JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIRS} PARENT_SCOPE)
++  set(JPEG_LIBRARIES ${JPEG_LIBRARIES} PARENT_SCOPE)
++  list(GET JPEG_LINK_LIBRARIES 0 JPEG_LIBRARY)
++  set(JPEG_LIBRARY ${JPEG_LIBRARY} PARENT_SCOPE)
++endfunction()
++
++_FIND_JPEG_PKG_CONFIG()
++
+ find_path(JPEG_INCLUDE_DIR jpeglib.h)
+ 
+ set(jpeg_names ${JPEG_NAMES} jpeg jpeg-static libjpeg libjpeg-static turbojpeg turbojpeg-static)
+@@ -108,8 +127,10 @@ find_package_handle_standard_args(JPEG
+   VERSION_VAR JPEG_VERSION)
+ 
+ if(JPEG_FOUND)
+-  set(JPEG_LIBRARIES ${JPEG_LIBRARY})
+-  set(JPEG_INCLUDE_DIRS "${JPEG_INCLUDE_DIR}")
++  list(APPEND JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
++  list(REMOVE_DUPLICATES JPEG_INCLUDE_DIRS)
++  list(APPEND JPEG_LIBRARIES ${JPEG_LIBRARY})
++  list(REMOVE_DUPLICATES JPEG_LIBRARIES)
+ 
+   if(NOT TARGET JPEG::JPEG)
+     add_library(JPEG::JPEG UNKNOWN IMPORTED)
+@@ -136,6 +157,13 @@ if(JPEG_FOUND)
+         IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "C"
+         IMPORTED_LOCATION_DEBUG "${JPEG_LIBRARY_DEBUG}")
+     endif()
++    if(JPEG_LDFLAGS)
++      target_link_options(JPEG::JPEG INTERFACE ${JPEG_LDFLAGS})
++      target_link_libraries(JPEG::JPEG INTERFACE ${JPEG_LDFLAGS})
++    endif()
++    if(JPEG_CFLAGS)
++      target_compile_options(JPEG::JPEG INTERFACE ${JPEG_CFLAGS})
++    endif()
+   endif()
+ endif()
+ 
+-- 
+2.31.1
+

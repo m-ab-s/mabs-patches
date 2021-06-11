@@ -1,0 +1,32 @@
+From 443b1811adfdcd837e7959b4cd9f0eb7be97d4ac Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 11 Jun 2021 15:17:39 -0500
+Subject: [PATCH 1/6] FindPkgConfig: split args if loaded from environment
+
+it's not uncommon to add default pkg-config/pkgconf arguments through
+the PKG_CONFIG environment variable, but this breaks FindPkgConfig
+becase it uses it as argv0 instead of splitting it.
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ Modules/FindPkgConfig.cmake | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Modules/FindPkgConfig.cmake b/Modules/FindPkgConfig.cmake
+index 3bc9dba167..98ac1c06b2 100644
+--- a/Modules/FindPkgConfig.cmake
++++ b/Modules/FindPkgConfig.cmake
+@@ -32,6 +32,10 @@ if((NOT PKG_CONFIG_EXECUTABLE) AND (NOT "$ENV{PKG_CONFIG}" STREQUAL ""))
+   set(PKG_CONFIG_EXECUTABLE "$ENV{PKG_CONFIG}" CACHE FILEPATH "pkg-config executable")
+ endif()
+ 
++if(PKG_CONFIG_EXECUTABLE)
++  separate_arguments(PKG_CONFIG_EXECUTABLE NATIVE_COMMAND PROGRAM SEPARATE_ARGS "${PKG_CONFIG_EXECUTABLE}")
++endif()
++
+ set(PKG_CONFIG_NAMES "pkg-config")
+ if(CMAKE_HOST_WIN32)
+   list(PREPEND PKG_CONFIG_NAMES "pkg-config.bat")
+-- 
+2.31.1
+

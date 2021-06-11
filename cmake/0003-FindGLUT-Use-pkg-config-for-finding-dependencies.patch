@@ -1,0 +1,106 @@
+From aef7b0dc3a486930a4e153fd077333560e836aec Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 11 Jun 2021 15:38:44 -0500
+Subject: [PATCH 3/6] FindGLUT: Use pkg-config for finding dependencies
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ Modules/FindGLUT.cmake | 68 +++++++++++++++++++++++++++++-------------
+ 1 file changed, 47 insertions(+), 21 deletions(-)
+
+diff --git a/Modules/FindGLUT.cmake b/Modules/FindGLUT.cmake
+index 2770c604de..334da66646 100644
+--- a/Modules/FindGLUT.cmake
++++ b/Modules/FindGLUT.cmake
+@@ -42,24 +42,42 @@ Also defined, but not for general use are:
+ 
+ include(${CMAKE_CURRENT_LIST_DIR}/SelectLibraryConfigurations.cmake)
+ 
+-if (WIN32)
+-  find_path( GLUT_INCLUDE_DIR NAMES GL/glut.h
+-    PATHS  ${GLUT_ROOT_PATH}/include )
+-  find_library( GLUT_glut_LIBRARY_RELEASE NAMES glut glut32 freeglut
+-    PATHS
+-    ${OPENGL_LIBRARY_DIR}
+-    ${GLUT_ROOT_PATH}/Release
+-    )
+-  find_library( GLUT_glut_LIBRARY_DEBUG NAMES freeglutd
+-    PATHS
+-    ${OPENGL_LIBRARY_DIR}
+-    ${GLUT_ROOT_PATH}/Debug
+-    )
+-  mark_as_advanced(GLUT_glut_LIBRARY_RELEASE GLUT_glut_LIBRARY_DEBUG)
+-  select_library_configurations(GLUT_glut)
+-else ()
+-
+-  if (APPLE)
++function(_FIND_GLUT_PKG_CONFIG)
++  find_package(PkgConfig)
++  if(NOT PKG_CONFIG_FOUND)
++      return()
++  endif()
++  pkg_check_modules(GLUT QUIET glut)
++  if(NOT GLUT_FOUND)
++      return()
++  endif()
++  set(GLUT_FOUND ${GLUT_FOUND} PARENT_SCOPE)
++  set(GLUT_INCLUDE_DIR ${GLUT_INCLUDEDIR} PARENT_SCOPE)
++  set(GLUT_INCLUDE_DIRS ${GLUT_INCLUDE_DIRS} PARENT_SCOPE)
++  set(GLUT_LIBRARIES ${GLUT_LIBRARIES} PARENT_SCOPE)
++  list(GET GLUT_LINK_LIBRARIES 0 GLUT_glut_LIBRARY)
++  set(GLUT_glut_LIBRARY ${GLUT_glut_LIBRARY} PARENT_SCOPE)
++endfunction()
++
++_FIND_GLUT_PKG_CONFIG()
++
++if(NOT GLUT_FOUND)
++  if (WIN32)
++    find_path( GLUT_INCLUDE_DIR NAMES GL/glut.h
++      PATHS  ${GLUT_ROOT_PATH}/include )
++    find_library( GLUT_glut_LIBRARY_RELEASE NAMES glut glut32 freeglut
++      PATHS
++      ${OPENGL_LIBRARY_DIR}
++      ${GLUT_ROOT_PATH}/Release
++      )
++    find_library( GLUT_glut_LIBRARY_DEBUG NAMES freeglutd
++      PATHS
++      ${OPENGL_LIBRARY_DIR}
++      ${GLUT_ROOT_PATH}/Debug
++      )
++    mark_as_advanced(GLUT_glut_LIBRARY_RELEASE GLUT_glut_LIBRARY_DEBUG)
++    select_library_configurations(GLUT_glut)
++  elseif (APPLE)
+     find_path(GLUT_INCLUDE_DIR glut.h ${OPENGL_LIBRARY_DIR})
+     find_library(GLUT_glut_LIBRARY GLUT DOC "GLUT library for OSX")
+     find_library(GLUT_cocoa_LIBRARY Cocoa DOC "Cocoa framework for OSX")
+@@ -141,9 +159,10 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLUT REQUIRED_VARS GLUT_glut_LIBRARY GLUT_INCL
+ if (GLUT_FOUND)
+   # Is -lXi and -lXmu required on all platforms that have it?
+   # If not, we need some way to figure out what platform we are on.
+-  set( GLUT_LIBRARIES
+-    ${GLUT_glut_LIBRARY}
+-    )
++  if(NOT GLUT_LIBRARIES)
++    set(GLUT_LIBRARIES ${GLUT_glut_LIBRARY})
++  endif()
++
+   foreach(v GLUT_Xmu_LIBRARY GLUT_Xi_LIBRARY GLUT_cocoa_LIBRARY)
+     if(${v})
+       list(APPEND GLUT_LIBRARIES ${${v}})
+@@ -196,6 +215,13 @@ if (GLUT_FOUND)
+       set_property(TARGET GLUT::GLUT APPEND
+         PROPERTY INTERFACE_LINK_LIBRARIES GLUT::Cocoa)
+     endif()
++    if(GLUT_LDFLAGS)
++      target_link_options(GLUT::GLUT INTERFACE ${GLUT_LDFLAGS})
++      target_link_libraries(GLUT::GLUT INTERFACE ${GLUT_LDFLAGS})
++    endif()
++    if(GLUT_CFLAGS)
++      target_compile_options(GLUT::GLUT INTERFACE ${GLUT_CFLAGS})
++    endif()
+   endif()
+ 
+   #The following deprecated settings are for backwards compatibility with CMake1.4
+-- 
+2.31.1
+

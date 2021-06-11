@@ -1,0 +1,72 @@
+From fb2bb149ad6ec58c55d67e2516ad5983968413d2 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 12 Jun 2021 00:49:39 -0500
+Subject: [PATCH 4/6] FindZLIB: Use pkg-config for finding dependencies
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ Modules/FindZLIB.cmake | 35 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 30 insertions(+), 5 deletions(-)
+
+diff --git a/Modules/FindZLIB.cmake b/Modules/FindZLIB.cmake
+index 5778b031b3..3a3ea6f262 100644
+--- a/Modules/FindZLIB.cmake
++++ b/Modules/FindZLIB.cmake
+@@ -55,6 +55,25 @@ A user may set ``ZLIB_ROOT`` to a zlib installation root to tell this
+ module where to look.
+ #]=======================================================================]
+ 
++function(_FIND_ZLIB_PKG_CONFIG)
++  find_package(PkgConfig)
++  if(NOT PKG_CONFIG_FOUND)
++      return()
++  endif()
++  pkg_check_modules(ZLIB QUIET zlib)
++  if(NOT ZLIB_FOUND)
++      return()
++  endif()
++  set(ZLIB_FOUND ${ZLIB_FOUND} PARENT_SCOPE)
++  set(ZLIB_INCLUDE_DIR ${ZLIB_INCLUDEDIR} PARENT_SCOPE)
++  set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} PARENT_SCOPE)
++  set(ZLIB_LIBRARIES ${ZLIB_LIBRARIES} PARENT_SCOPE)
++  list(GET ZLIB_LINK_LIBRARIES 0 ZLIB_LIBRARY)
++  set(ZLIB_LIBRARY ${ZLIB_LIBRARY} PARENT_SCOPE)
++endfunction()
++
++_FIND_ZLIB_PKG_CONFIG()
++
+ set(_ZLIB_SEARCHES)
+ 
+ # Search ZLIB_ROOT first if it is set.
+@@ -121,11 +140,10 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(ZLIB REQUIRED_VARS ZLIB_LIBRARY ZLIB_INCLUDE_D
+                                        VERSION_VAR ZLIB_VERSION_STRING)
+ 
+ if(ZLIB_FOUND)
+-    set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
+-
+-    if(NOT ZLIB_LIBRARIES)
+-      set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+-    endif()
++    list(APPEND ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
++    list(REMOVE_DUPLICATES ZLIB_INCLUDE_DIRS)
++    list(APPEND ZLIB_LIBRARIES ${ZLIB_LIBRARY})
++    list(REMOVE_DUPLICATES ZLIB_LIBRARIES)
+ 
+     if(NOT TARGET ZLIB::ZLIB)
+       add_library(ZLIB::ZLIB UNKNOWN IMPORTED)
+@@ -150,5 +168,12 @@ if(ZLIB_FOUND)
+         set_property(TARGET ZLIB::ZLIB APPEND PROPERTY
+           IMPORTED_LOCATION "${ZLIB_LIBRARY}")
+       endif()
++      if(ZLIB_LDFLAGS)
++        target_link_options(ZLIB::ZLIB INTERFACE ${ZLIB_LDFLAGS})
++        target_link_libraries(ZLIB::ZLIB INTERFACE ${ZLIB_LDFLAGS})
++      endif()
++      if(ZLIB_CFLAGS)
++        target_compile_options(ZLIB::ZLIB INTERFACE ${ZLIB_CFLAGS})
++      endif()
+     endif()
+ endif()
+-- 
+2.31.1
+
