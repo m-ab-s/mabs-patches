@@ -1,0 +1,112 @@
+From 45624da724fa65f462441d1ca1b15922c82f9462 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 8 Jun 2021 22:56:50 -0500
+Subject: [PATCH 6/9] CMake: use target_include_directories instead of
+ include_directories
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+Change-Id: I0b42225da4fc4734aa73adec2128cd1ca9658261
+---
+ CMakeLists.txt | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1f02efda..e533d988 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -483,7 +483,6 @@ endif()
+ 
+ if(WEBP_BUILD_GIF2WEBP)
+   # gif2webp
+-  include_directories(${WEBP_DEP_GIF_INCLUDE_DIRS})
+   parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "GIF2WEBP_SRCS"
+                     "gif2webp")
+   add_executable(gif2webp ${GIF2WEBP_SRCS})
+@@ -493,13 +492,12 @@ if(WEBP_BUILD_GIF2WEBP)
+                         webp
+                         libwebpmux
+                         ${WEBP_DEP_GIF_LIBRARIES})
+-  target_include_directories(gif2webp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(gif2webp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src ${WEBP_DEP_GIF_INCLUDE_DIRS})
+   install(TARGETS gif2webp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+ if(WEBP_BUILD_IMG2WEBP)
+   # img2webp
+-  include_directories(${WEBP_DEP_IMG_INCLUDE_DIRS})
+   parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "IMG2WEBP_SRCS"
+                     "img2webp")
+   add_executable(img2webp ${IMG2WEBP_SRCS})
+@@ -509,7 +507,7 @@ if(WEBP_BUILD_IMG2WEBP)
+                         imageioutil
+                         webp
+                         libwebpmux)
+-  target_include_directories(img2webp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(img2webp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src ${WEBP_DEP_IMG_INCLUDE_DIRS})
+   install(TARGETS img2webp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+@@ -517,7 +515,6 @@ if(WEBP_BUILD_VWEBP)
+   # vwebp
+   find_package(GLUT)
+   if(GLUT_FOUND)
+-    include_directories(${WEBP_DEP_IMG_INCLUDE_DIRS})
+     parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "VWEBP_SRCS" "vwebp")
+     add_executable(vwebp ${VWEBP_SRCS})
+     target_link_libraries(vwebp
+@@ -530,7 +527,8 @@ if(WEBP_BUILD_VWEBP)
+     target_include_directories(vwebp
+                                PRIVATE ${GLUT_INCLUDE_DIR}
+                                        ${CMAKE_CURRENT_BINARY_DIR}/src
+-                                       ${OPENGL_INCLUDE_DIR})
++                                       ${OPENGL_INCLUDE_DIR}
++                                       ${WEBP_DEP_IMG_INCLUDE_DIRS})
+     install(TARGETS vwebp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+       check_c_compiler_flag("-Wno-deprecated-declarations" HAS_NO_DEPRECATED)
+@@ -543,12 +541,11 @@ endif()
+ 
+ if(WEBP_BUILD_WEBPINFO)
+   # webpinfo
+-  include_directories(${WEBP_DEP_IMG_INCLUDE_DIRS})
+   parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "WEBPINFO_SRCS"
+                     "webpinfo")
+   add_executable(webpinfo ${WEBPINFO_SRCS})
+   target_link_libraries(webpinfo exampleutil imageioutil)
+-  target_include_directories(webpinfo PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(webpinfo PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src ${WEBP_DEP_IMG_INCLUDE_DIRS})
+   install(TARGETS webpinfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+@@ -633,7 +630,6 @@ endif()
+ 
+ if(WEBP_BUILD_ANIM_UTILS)
+   # anim_diff
+-  include_directories(${WEBP_DEP_IMG_INCLUDE_DIRS} ${WEBP_DEP_GIF_INCLUDE_DIRS})
+   parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "ANIM_DIFF_SRCS"
+                     "anim_diff")
+   add_executable(anim_diff ${ANIM_DIFF_SRCS})
+@@ -646,10 +642,9 @@ if(WEBP_BUILD_ANIM_UTILS)
+                         libwebpmux
+                         webpdemux
+                         ${WEBP_DEP_GIF_LIBRARIES})
+-  target_include_directories(anim_diff PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(anim_diff PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src ${WEBP_DEP_IMG_INCLUDE_DIRS} ${WEBP_DEP_GIF_INCLUDE_DIRS})
+ 
+   # anim_dump
+-  include_directories(${WEBP_DEP_IMG_INCLUDE_DIRS} ${WEBP_DEP_GIF_INCLUDE_DIRS})
+   parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "ANIM_DUMP_SRCS"
+                     "anim_dump")
+   add_executable(anim_dump ${ANIM_DUMP_SRCS})
+@@ -662,7 +657,7 @@ if(WEBP_BUILD_ANIM_UTILS)
+                         libwebpmux
+                         webpdemux
+                         ${WEBP_DEP_GIF_LIBRARIES})
+-  target_include_directories(anim_dump PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
++  target_include_directories(anim_dump PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src ${WEBP_DEP_IMG_INCLUDE_DIRS} ${WEBP_DEP_GIF_INCLUDE_DIRS})
+ endif()
+ 
+ # Install the different headers and libraries.
+-- 
+2.31.1
+
