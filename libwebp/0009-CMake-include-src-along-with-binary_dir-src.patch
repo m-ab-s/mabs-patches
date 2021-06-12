@@ -1,7 +1,7 @@
 From 127b86f1d969b6bf1cee3e4497d7d8b1aa603fd4 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 11:00:02 -0500
-Subject: [PATCH 9/9] CMake: include src along with binary_dir/src
+Subject: [PATCH 09/10] CMake: include src along with binary_dir/src
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 Change-Id: I74a15debe67935337ff0a51fa14f8f8b728cb9df
