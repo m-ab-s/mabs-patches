@@ -1,7 +1,7 @@
-From 5a6da0e82e46cf7de4c27073a7fb03021f3a3a55 Mon Sep 17 00:00:00 2001
+From ae526c647fe8ef5f969c4c6fa44f3ae5f61c9121 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 22:53:07 -0500
-Subject: [PATCH 05/10] CMake: build libwebpmux for 2 additional flags
+Subject: [PATCH 05/11] CMake: build libwebpmux for 2 additional flags
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 Change-Id: I6b2dbd8657788f51c9894c054e0408dde8e32ccc

@@ -1,7 +1,7 @@
-From 828a5f7238295c4072f98e81b471b724198a6e09 Mon Sep 17 00:00:00 2001
+From d1eeb4ae86c7ecdd0ca76de3409c4f3c74426786 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 9 Jun 2021 11:16:46 -0500
-Subject: [PATCH 08/10] CMake: use import library for SDL if available
+Subject: [PATCH 08/11] CMake: use import library for SDL if available
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 Change-Id: I5d606716a7fbce88efc04af2be8279144aadef85

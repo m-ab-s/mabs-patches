@@ -1,7 +1,7 @@
-From f5bf8b0329b0c0643b7cc68db826e34c1356785d Mon Sep 17 00:00:00 2001
+From 54dafb26d58f0509b0fb044f0f56c1851aa59396 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 23:06:28 -0500
-Subject: [PATCH 07/10] CMake: use import libraries if possible for vwebp
+Subject: [PATCH 07/11] CMake: use import libraries if possible for vwebp
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 Change-Id: Ic946630111144844a96bdbf762cc511bdf89391e

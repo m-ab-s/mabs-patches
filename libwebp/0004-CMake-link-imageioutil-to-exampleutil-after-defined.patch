@@ -1,7 +1,7 @@
-From 84d36be1f2255eb662479cb58be4480cfc848d1d Mon Sep 17 00:00:00 2001
+From 5b6b2e9b03d6d3b954c96cb9bdf127655ad8ba52 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 22:47:47 -0500
-Subject: [PATCH 04/10] CMake: link imageioutil to exampleutil after defined
+Subject: [PATCH 04/11] CMake: link imageioutil to exampleutil after defined
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 Change-Id: I6bd4b25d31a85839aadef57437faa04966085f52

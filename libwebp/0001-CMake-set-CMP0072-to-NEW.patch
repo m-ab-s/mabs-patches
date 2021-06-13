@@ -1,7 +1,7 @@
-From eb058684146472da1bb8801fd011c7d3025d2b1a Mon Sep 17 00:00:00 2001
+From c88a85ae8b29468f73ed7d9b738b13b253b49b51 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 21:58:57 -0500
-Subject: [PATCH 01/10] CMake: set CMP0072 to NEW
+Subject: [PATCH 01/11] CMake: set CMP0072 to NEW
 
 Silences CMake's warning and uses GLVND, which still works for linux
 

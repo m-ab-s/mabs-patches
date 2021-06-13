@@ -1,7 +1,7 @@
-From f036285d7385084a555f1c7ab96b5c308533953d Mon Sep 17 00:00:00 2001
+From e9ba9075a1d17cf76a9a79d6c2c903b647c57eaf Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 22:23:28 -0500
-Subject: [PATCH 03/10] deps.cmake: unroll img loop and use import libraries if
+Subject: [PATCH 03/11] deps.cmake: unroll img loop and use import libraries if
  available
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>

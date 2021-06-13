@@ -1,26 +1,26 @@
-From b2a67d1b0dab8f15335e4fe9f6c2357119e9db6a Mon Sep 17 00:00:00 2001
+From 2e054c2a5363306f3f6940750e753474d7042db6 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
-Date: Sat, 12 Jun 2021 01:20:04 -0500
-Subject: [PATCH 10/11] CMake: add WEBP_BUILD_WEBPMUX to list of checks for
+Date: Sun, 13 Jun 2021 13:40:55 -0500
+Subject: [PATCH 11/11] CMake: add WEBP_BUILD_WEBPINFO to list of checks for
  exampleutil
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
-Change-Id: I1bd6163966d8cec9fc240fa46d41605f11d0c1ac
+Change-Id: I530268809468107fe29e0f04278791fe7c583208
 ---
  CMakeLists.txt | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fe06cd6e..ce0c1c36 100644
+index ce0c1c36..23c40559 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -402,7 +402,8 @@ if(WEBP_BUILD_ANIM_UTILS
-    OR WEBP_BUILD_DWEBP
+@@ -403,7 +403,8 @@ if(WEBP_BUILD_ANIM_UTILS
     OR WEBP_BUILD_GIF2WEBP
     OR WEBP_BUILD_IMG2WEBP
--   OR WEBP_BUILD_VWEBP)
-+   OR WEBP_BUILD_VWEBP
-+   OR WEBP_BUILD_WEBPMUX)
+    OR WEBP_BUILD_VWEBP
+-   OR WEBP_BUILD_WEBPMUX)
++   OR WEBP_BUILD_WEBPMUX
++   OR WEBP_BUILD_WEBPINFO)
    # Example utility library.
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "EXAMPLEUTIL_SRCS"
                      "example_util_[^ ]*")
