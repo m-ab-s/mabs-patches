@@ -1,7 +1,7 @@
-From c954f893494352ac96d2b6360273517061be3f71 Mon Sep 17 00:00:00 2001
+From 7787ab0aea48114ddf9106afff74c218c296eb5a Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 22:13:48 -0500
-Subject: [PATCH 02/11] WEBP_DEP_LIBRARIES: use Threads::Threads
+Subject: [PATCH 03/11] WEBP_DEP_LIBRARIES: use Threads::Threads
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 Change-Id: Icfec8fba117cbf5668c6f4c7d46d05cbb17e3dea

@@ -1,4 +1,4 @@
-From b2a67d1b0dab8f15335e4fe9f6c2357119e9db6a Mon Sep 17 00:00:00 2001
+From d769f3a8c014fee06c7dd0879c4a58d7cccb4d1c Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 12 Jun 2021 01:20:04 -0500
 Subject: [PATCH 10/11] CMake: add WEBP_BUILD_WEBPMUX to list of checks for
@@ -11,10 +11,10 @@ Change-Id: I1bd6163966d8cec9fc240fa46d41605f11d0c1ac
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fe06cd6e..ce0c1c36 100644
+index ef0a083d..aaa2b3aa 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -402,7 +402,8 @@ if(WEBP_BUILD_ANIM_UTILS
+@@ -409,7 +409,8 @@ if(WEBP_BUILD_ANIM_UTILS
     OR WEBP_BUILD_DWEBP
     OR WEBP_BUILD_GIF2WEBP
     OR WEBP_BUILD_IMG2WEBP

@@ -1,4 +1,4 @@
-From 54dafb26d58f0509b0fb044f0f56c1851aa59396 Mon Sep 17 00:00:00 2001
+From e1b7510f228260b7cf6a24ed3fd27bea9645a0bf Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 23:06:28 -0500
 Subject: [PATCH 07/11] CMake: use import libraries if possible for vwebp
@@ -10,10 +10,10 @@ Change-Id: Ic946630111144844a96bdbf762cc511bdf89391e
  1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index e533d988..88e7d4a5 100644
+index 6fd63cb4..32f24085 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -517,16 +517,21 @@ if(WEBP_BUILD_VWEBP)
+@@ -521,16 +521,21 @@ if(WEBP_BUILD_VWEBP)
    if(GLUT_FOUND)
      parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "VWEBP_SRCS" "vwebp")
      add_executable(vwebp ${VWEBP_SRCS})

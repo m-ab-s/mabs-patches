@@ -1,4 +1,4 @@
-From e63549251f5fa7686d99c6c789e18c78d6c4e45f Mon Sep 17 00:00:00 2001
+From 195da79045c535f2f8036329e4185dc85ffc4380 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 11:00:02 -0500
 Subject: [PATCH 09/11] CMake: include src along with binary_dir/src
@@ -10,10 +10,10 @@ Change-Id: I74a15debe67935337ff0a51fa14f8f8b728cb9df
  1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index faa6fc75..fe06cd6e 100644
+index bad5aff8..ef0a083d 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -447,7 +447,7 @@ if(WEBP_BUILD_DWEBP)
+@@ -454,7 +454,7 @@ if(WEBP_BUILD_DWEBP)
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "DWEBP_SRCS" "dwebp")
    add_executable(dwebp ${DWEBP_SRCS})
    target_link_libraries(dwebp exampleutil imagedec imageenc)
@@ -22,7 +22,7 @@ index faa6fc75..fe06cd6e 100644
    install(TARGETS dwebp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
  endif()
  
-@@ -456,7 +456,7 @@ if(WEBP_BUILD_CWEBP)
+@@ -463,7 +463,7 @@ if(WEBP_BUILD_CWEBP)
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "CWEBP_SRCS" "cwebp")
    add_executable(cwebp ${CWEBP_SRCS})
    target_link_libraries(cwebp exampleutil imagedec webp)
@@ -31,7 +31,7 @@ index faa6fc75..fe06cd6e 100644
    install(TARGETS cwebp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
  endif()
  
-@@ -492,7 +492,7 @@ if(WEBP_BUILD_GIF2WEBP)
+@@ -496,7 +496,7 @@ if(WEBP_BUILD_GIF2WEBP)
                          webp
                          libwebpmux
                          ${WEBP_DEP_GIF_LIBRARIES})
@@ -40,7 +40,7 @@ index faa6fc75..fe06cd6e 100644
    install(TARGETS gif2webp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
  endif()
  
-@@ -507,7 +507,7 @@ if(WEBP_BUILD_IMG2WEBP)
+@@ -511,7 +511,7 @@ if(WEBP_BUILD_IMG2WEBP)
                          imageioutil
                          webp
                          libwebpmux)
@@ -49,7 +49,7 @@ index faa6fc75..fe06cd6e 100644
    install(TARGETS img2webp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
  endif()
  
-@@ -550,7 +550,7 @@ if(WEBP_BUILD_WEBPINFO)
+@@ -554,7 +554,7 @@ if(WEBP_BUILD_WEBPINFO)
                      "webpinfo")
    add_executable(webpinfo ${WEBPINFO_SRCS})
    target_link_libraries(webpinfo exampleutil imageioutil)
@@ -58,7 +58,7 @@ index faa6fc75..fe06cd6e 100644
    install(TARGETS webpinfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
  endif()
  
-@@ -560,7 +560,7 @@ if(WEBP_BUILD_WEBPMUX)
+@@ -564,7 +564,7 @@ if(WEBP_BUILD_WEBPMUX)
                      "webpmux")
    add_executable(webpmux ${WEBPMUX_SRCS})
    target_link_libraries(webpmux exampleutil imageioutil libwebpmux webp)
@@ -67,7 +67,7 @@ index faa6fc75..fe06cd6e 100644
    install(TARGETS webpmux RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
  endif()
  
-@@ -653,7 +653,7 @@ if(WEBP_BUILD_ANIM_UTILS)
+@@ -657,7 +657,7 @@ if(WEBP_BUILD_ANIM_UTILS)
                          libwebpmux
                          webpdemux
                          ${WEBP_DEP_GIF_LIBRARIES})
@@ -76,7 +76,7 @@ index faa6fc75..fe06cd6e 100644
  
    # anim_dump
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "ANIM_DUMP_SRCS"
-@@ -668,7 +668,7 @@ if(WEBP_BUILD_ANIM_UTILS)
+@@ -672,7 +672,7 @@ if(WEBP_BUILD_ANIM_UTILS)
                          libwebpmux
                          webpdemux
                          ${WEBP_DEP_GIF_LIBRARIES})

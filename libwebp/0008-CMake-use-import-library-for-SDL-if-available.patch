@@ -1,4 +1,4 @@
-From d1eeb4ae86c7ecdd0ca76de3409c4f3c74426786 Mon Sep 17 00:00:00 2001
+From d7514d72097660f465af12b8a32dde127db92290 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 9 Jun 2021 11:16:46 -0500
 Subject: [PATCH 08/11] CMake: use import library for SDL if available
@@ -10,10 +10,10 @@ Change-Id: I5d606716a7fbce88efc04af2be8279144aadef85
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 88e7d4a5..faa6fc75 100644
+index 32f24085..bad5aff8 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -590,7 +590,13 @@ if(WEBP_BUILD_EXTRAS)
+@@ -594,7 +594,13 @@ if(WEBP_BUILD_EXTRAS)
    find_package(SDL)
    if(SDL_FOUND)
      add_executable(vwebp_sdl ${VWEBP_SDL_SRCS})

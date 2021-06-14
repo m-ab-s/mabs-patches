@@ -1,7 +1,7 @@
 From 352116eb65193a349d216e6dafdb5820596607ac Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 14 Jun 2021 01:13:47 -0500
-Subject: [PATCH] CMake: add WEBP_BUILD_LIBWEBPMUX
+Subject: [PATCH 01/11] CMake: add WEBP_BUILD_LIBWEBPMUX
 
 Adds an additional option similar to configure's --enable-libwebpmux
 to toggle building libwebpmux separate from the binaries
