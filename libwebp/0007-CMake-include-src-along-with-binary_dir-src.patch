@@ -1,7 +1,7 @@
-From 195da79045c535f2f8036329e4185dc85ffc4380 Mon Sep 17 00:00:00 2001
+From 5531246fb7a205a9ca3c9e6231eac74affd88414 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 11:00:02 -0500
-Subject: [PATCH 09/11] CMake: include src along with binary_dir/src
+Subject: [PATCH 07/10] CMake: include src along with binary_dir/src
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 Change-Id: I74a15debe67935337ff0a51fa14f8f8b728cb9df
@@ -10,7 +10,7 @@ Change-Id: I74a15debe67935337ff0a51fa14f8f8b728cb9df
  1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index bad5aff8..ef0a083d 100644
+index a0a87523..f49972b1 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -454,7 +454,7 @@ if(WEBP_BUILD_DWEBP)
@@ -67,8 +67,8 @@ index bad5aff8..ef0a083d 100644
    install(TARGETS webpmux RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
  endif()
  
-@@ -657,7 +657,7 @@ if(WEBP_BUILD_ANIM_UTILS)
-                         libwebpmux
+@@ -656,7 +656,7 @@ if(WEBP_BUILD_ANIM_UTILS)
+                         webp
                          webpdemux
                          ${WEBP_DEP_GIF_LIBRARIES})
 -  target_include_directories(anim_diff PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src ${WEBP_DEP_IMG_INCLUDE_DIRS} ${WEBP_DEP_GIF_INCLUDE_DIRS})
@@ -76,8 +76,8 @@ index bad5aff8..ef0a083d 100644
  
    # anim_dump
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "ANIM_DUMP_SRCS"
-@@ -672,7 +672,7 @@ if(WEBP_BUILD_ANIM_UTILS)
-                         libwebpmux
+@@ -670,7 +670,7 @@ if(WEBP_BUILD_ANIM_UTILS)
+                         webp
                          webpdemux
                          ${WEBP_DEP_GIF_LIBRARIES})
 -  target_include_directories(anim_dump PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src ${WEBP_DEP_IMG_INCLUDE_DIRS} ${WEBP_DEP_GIF_INCLUDE_DIRS})
@@ -86,5 +86,5 @@ index bad5aff8..ef0a083d 100644
  
  # Install the different headers and libraries.
 -- 
-2.31.1
+2.32.0
 

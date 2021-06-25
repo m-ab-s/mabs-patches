@@ -1,7 +1,7 @@
-From d446bb1dfd3ac309ecb8cf36fd3ff7921b578978 Mon Sep 17 00:00:00 2001
+From c0c8ead1cce57272a1d88d75991af6b8e52ec5de Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 22:47:47 -0500
-Subject: [PATCH 05/11] CMake: link imageioutil to exampleutil after defined
+Subject: [PATCH 03/10] CMake: link imageioutil to exampleutil after defined
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 Change-Id: I6bd4b25d31a85839aadef57437faa04966085f52
@@ -10,7 +10,7 @@ Change-Id: I6bd4b25d31a85839aadef57437faa04966085f52
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index bd96f596..eb91020e 100644
+index d64f676b..f0fa9ebb 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -415,7 +415,6 @@ if(WEBP_BUILD_ANIM_UTILS
@@ -30,5 +30,5 @@ index bd96f596..eb91020e 100644
    # Image-decoding utility library.
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/imageio "IMAGEDEC_SRCS"
 -- 
-2.31.1
+2.32.0
 

@@ -1,0 +1,56 @@
+From 597015d1349a8fce7fabfb8d2950c919442b3fc0 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Wed, 23 Jun 2021 21:50:28 -0500
+Subject: [PATCH 10/10] deps: use pkg-config instead of find_package
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+Change-Id: I1e415a04064c451a988e1544485569d6c9483a85
+---
+ cmake/deps.cmake | 30 ++++++++----------------------
+ 1 file changed, 8 insertions(+), 22 deletions(-)
+
+diff --git a/cmake/deps.cmake b/cmake/deps.cmake
+index 6df2db68..9269a6fe 100644
+--- a/cmake/deps.cmake
++++ b/cmake/deps.cmake
+@@ -71,29 +71,15 @@ if(NOT HAVE_MATH_LIBRARY)
+ endif()
+ 
+ # Find the standard image libraries.
+-set(WEBP_DEP_IMG_LIBRARIES)
+-set(WEBP_DEP_IMG_INCLUDE_DIRS)
+-find_package(PNG)
+-set(WEBP_HAVE_PNG ${PNG_FOUND})
+-if(PNG_FOUND)
+-  list(APPEND WEBP_DEP_IMG_LIBRARIES PNG::PNG)
+-endif()
+-find_package(JPEG)
+-set(WEBP_HAVE_JPEG ${JPEG_FOUND})
+-if(JPEG_FOUND)
+-  if(TARGET JPEG::JPEG)
+-    list(APPEND WEBP_DEP_IMG_LIBRARIES JPEG::JPEG)
+-  else()
+-    list(APPEND WEBP_DEP_IMG_LIBRARIES ${JPEG_LIBRARIES})
+-    list(APPEND WEBP_DEP_IMG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR}
+-                ${JPEG_INCLUDE_DIRS})
+-  endif()
+-endif()
+-find_package(TIFF)
++find_package(PkgConfig)
++pkg_check_modules(WEBP_DEP_IMG libtiff-4 libjpeg libpng)
++pkg_check_modules(TIFF libtiff-4)
+ set(WEBP_HAVE_TIFF ${TIFF_FOUND})
+-if(TIFF_FOUND)
+-  list(APPEND WEBP_DEP_IMG_LIBRARIES TIFF::TIFF)
+-endif()
++pkg_check_modules(JPEG libjpeg)
++set(WEBP_HAVE_JPEG ${JPEG_FOUND})
++pkg_check_modules(PNG libpng)
++set(WEBP_HAVE_PNG ${PNG_FOUND})
++
+ if(WEBP_DEP_IMG_INCLUDE_DIRS)
+   list(REMOVE_DUPLICATES WEBP_DEP_IMG_INCLUDE_DIRS)
+ endif()
+-- 
+2.32.0
+
