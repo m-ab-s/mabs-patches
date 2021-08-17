@@ -1,7 +1,11 @@
-From eb665b2c40860337c1fda5a66537a29a1f95dba6 Mon Sep 17 00:00:00 2001
+From 25e6a8b64ff4e8f00df2a6ee2e212a39bdd111dd Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 21 Sep 2020 15:16:32 +0000
 Subject: [PATCH] get_cabac_inline_x86: Don't inline if 32-bit clang on windows
+
+Fixes https://trac.ffmpeg.org/ticket/8903
+
+relevant https://github.com/msys2/MINGW-packages/discussions/9258
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -9,10 +13,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/libavcodec/x86/cabac.h b/libavcodec/x86/cabac.h
-index cfd3b759c9..db27b1e720 100644
+index 53d74c541e..b046a56a6b 100644
 --- a/libavcodec/x86/cabac.h
 +++ b/libavcodec/x86/cabac.h
-@@ -175,8 +175,13 @@
+@@ -177,8 +177,13 @@
  
  #if HAVE_7REGS && !BROKEN_COMPILER
  #define get_cabac_inline get_cabac_inline_x86
@@ -29,5 +33,5 @@ index cfd3b759c9..db27b1e720 100644
      int bit, tmp;
  #ifdef BROKEN_RELOCATIONS
 -- 
-2.25.1
+2.32.0
 

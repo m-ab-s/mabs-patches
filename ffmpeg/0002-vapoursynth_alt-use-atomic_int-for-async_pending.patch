@@ -1,4 +1,4 @@
-From 1786c703e9bd9c82c3a2655e7ec8bdcd26f55abb Mon Sep 17 00:00:00 2001
+From 143baf51455fb387130f8927eb50110bba7c1221 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 26 Jan 2021 20:42:57 +0000
 Subject: [PATCH 2/2] vapoursynth_alt: use atomic_int for async_pending
@@ -30,5 +30,5 @@ index f7e3dd8879..ec08f0c2c6 100644
      int ncpu;
  } VSContext;
 -- 
-2.31.1
+2.32.0
 
