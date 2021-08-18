@@ -1,7 +1,7 @@
-From 87a588d96ae53b46631536831be90bf0095189d6 Mon Sep 17 00:00:00 2001
+From eda99e245ad4a55d15ae95aa1cb8844cb388f8e1 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
-Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
+Subject: [PATCH 1/3] loader: cross-compile & static linking hacks
 
 ---
  loader/CMakeLists.txt       | 24 ++++++++++++++----------
@@ -94,7 +94,7 @@ index 4f54c3298..a32f1202a 100644
  include(FindPkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
 diff --git a/loader/loader.c b/loader/loader.c
-index e93bb51cb..60aa635e1 100644
+index 6db4e9245..5a099ef5c 100644
 --- a/loader/loader.c
 +++ b/loader/loader.c
 @@ -697,6 +697,10 @@ out:
@@ -108,7 +108,7 @@ index e93bb51cb..60aa635e1 100644
  VkResult loaderGetDeviceRegistryFiles(const struct loader_instance *inst, char **reg_data, PDWORD reg_data_size,
                                        LPCSTR value_name) {
      static const wchar_t *softwareComponentGUID = L"{5c4c3332-344d-483c-8739-259e934c9cc8}";
-@@ -7872,7 +7876,7 @@ out:
+@@ -7876,7 +7880,7 @@ out:
      return result;
  }
  

@@ -1,0 +1,26 @@
+From e278a10032505832b9936e80dff3c9f20e0b95a7 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Wed, 18 Aug 2021 11:02:41 -0500
+Subject: [PATCH 3/3] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ loader/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
+index a32f1202a..712171810 100644
+--- a/loader/CMakeLists.txt
++++ b/loader/CMakeLists.txt
+@@ -338,7 +338,7 @@ endif()
+ include(FindPkgConfig QUIET)
+ if(PKG_CONFIG_FOUND)
+     set(VK_API_VERSION "${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}")
+-    foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES} ${PLATFORM_LIBS})
++    foreach(LIB ${PLATFORM_LIBS})
+         set(PRIVATE_LIBS "${PRIVATE_LIBS} -l${LIB}")
+     endforeach()
+     if(WIN32)
+-- 
+2.32.0
+
