@@ -1,0 +1,344 @@
+From 62865c79e8bdc54071e49229c416a23751e86a81 Mon Sep 17 00:00:00 2001
+From: Gijs Peskens <gijs@peskens.net>
+Date: Fri, 25 Jun 2021 12:46:36 +0200
+Subject: [PATCH] Workaround/fixes for cJSON symbol collision
+
+Provide 2 new confiration options "disable_json" and "external_cjson"
+external_cjson is intended ONLY for static libraries that get linked
+to an application that already has cjson compiled in, so that it may
+use that. The version of cJSON MUST match the version used in libRIST
+or at least be ABI compatible.
+---
+ meson.build          | 67 ++++++++++++++++++++++++++++++++++++--------
+ meson_options.txt    |  2 ++
+ src/rist.c           |  3 ++
+ src/stats.c          | 33 ++++++++++++++++------
+ tools/rist2rist.c    |  3 ++
+ tools/ristreceiver.c |  5 +++-
+ tools/ristsender.c   |  4 ++-
+ 7 files changed, 94 insertions(+), 23 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 8e4f6d7..11d3cc4 100755
+--- a/meson.build
++++ b/meson.build
+@@ -42,9 +42,12 @@ inc = []
+ inc += include_directories('.', 'src', 'include/librist', 'include', 'contrib')
+ 
+ #builtin_lz4 = get_option('builtin_lz4')
++disable_json = get_option('disable_json')
+ builtin_cjson = get_option('builtin_cjson')
++external_cjson = get_option('external_cjson')
+ builtin_mbedtls = get_option('builtin_mbedtls')
+ use_mbedtls = get_option('use_mbedtls')
++build_tools = get_option('built_tools')
+ cdata.set10('ALLOW_INSECURE_IV_FALLBACK', get_option('allow_insecure_iv_fallback'))
+ 
+ required_library = false
+@@ -57,6 +60,18 @@ if meson.is_subproject()
+ 	should_install = false
+ endif
+ 
++if builtin_cjson and external_cjson
++	error('builtin_cjson and external_cjson cannot both be true')
++endif
++
++if get_option('default_library') != 'static' and external_cjson
++	error('external_cjson can only be used with static library output')
++endif
++
++if external_cjson and build_tools
++	error('external cJSON is incompatible with building tools')
++endif
++
+ threads = []
+ test_args = []
+ if host_machine.system() == 'windows'
+@@ -148,22 +163,49 @@ if not cc.check_header('stdatomic.h')
+     endif
+ endif
+ 
+-#On ubuntu cjson does not come with pkgconfig files, hence the extended checking.
+-if not builtin_cjson
+-	cjson_lib = dependency('cJSON', required: false)
+-	if not cjson_lib.found()
+-		cjson_lib = cc.find_library('cjson', required: required_library, has_headers: ['cjson/cJSON.h'])
++
++if not disable_json
++	cdata.set10('HAVE_CJSON', 1)
++	#On ubuntu cjson does not come with pkgconfig files, hence the extended checking.
++	if not builtin_cjson
++		cjson_lib = dependency('cJSON', required: false)
+ 		if not cjson_lib.found()
+-			builtin_cjson = true
++			cjson_lib = cc.find_library('cjson', required: required_library, has_headers: ['cjson/cJSON.h'])
++			if not cjson_lib.found()
++				builtin_cjson = true
++			endif
++		else
++			deps += cjson_lib
+ 		endif
+ 	endif
++	if builtin_cjson
++		message('Using builtin cJSON library')
++		cjson_lib = declare_dependency( compile_args : '-DCJSON_HIDE_SYMBOLS',
++										sources: 'contrib/contrib_cJSON/cjson/cJSON.c',
++										include_directories : include_directories('contrib/contrib_cJSON'))
++		deps += cjson_lib
++	elif external_cjson
++		inc += include_directories('contrib/contrib_cJSON')
++	endif
++else
++	cdata.set10('HAVE_CJSON', 0)
+ endif
+-if builtin_cjson
+-	message('Using builtin cJSON library')
+-	cjson_lib = declare_dependency( compile_args : '-DCJSON_HIDE_SYMBOLS',
+-									sources: 'contrib/contrib_cJSON/cjson/cJSON.c',
+-									include_directories : include_directories('contrib/contrib_cJSON'))
+-endif
++
++#if not builtin_lz4
++#	lz4_lib = dependency('liblz4', required: required_library)
++#	if not lz4_lib.found()
++#		builtin_lz4 = true
++#	endif
++#endif
++#if builtin_lz4
++#	message('Using builtin lz4 library')
++#	lz4_lib = declare_dependency( compile_args : [ '-DLZ4LIB_VISIBILITY=',  '-DLZ4FLIB_API='],
++#								  sources: ['contrib/lz4/lz4.c',
++#											'contrib/lz4/lz4frame.c',
++#											'contrib/lz4/lz4hc.c',
++#											'contrib/lz4/xxhash.c',],
++#								  include_directories: include_directories('contrib/lz4'))
++#endif
+ 
+ if use_mbedtls
+ 	message('Building mbedtls')
+@@ -210,6 +252,7 @@ librist = library('librist',
+ 		deps,
+ 		stdatomic_dependency,
+ 		cjson_lib,
++#		lz4_lib
+ 	],
+ 	name_prefix : '',
+ 	version: librist_version,
+diff --git a/meson_options.txt b/meson_options.txt
+index 7ca2934..1394d15 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -1,7 +1,9 @@
+ option('static_analyze', type : 'boolean', value : false)
+ option('test', type : 'boolean', value : true)
+ #option('builtin_lz4', type: 'boolean', value: false)
++option('disable_json', type: 'boolean', value: false)
+ option('builtin_cjson', type: 'boolean', value: false)
++option('external_cjson', type: 'boolean', value: false)
+ option('builtin_mbedtls', type: 'boolean', value: false)
+ option('built_tools', type: 'boolean', value: true)
+ option('fallback_builtin', type: 'boolean', value: true)
+diff --git a/src/rist.c b/src/rist.c
+index 0009415..076029b 100644
+--- a/src/rist.c
++++ b/src/rist.c
+@@ -7,6 +7,7 @@
+  * SPDX-License-Identifier: BSD-2-Clause
+  */
+ 
++#include "config.h"
+ #include "rist-private.h"
+ #include "log-private.h"
+ #include "udp-private.h"
+@@ -628,8 +629,10 @@ int rist_stats_free(const struct rist_stats *stats_container)
+ {
+ 	if (!stats_container)
+ 		return -1;
++#if HAVE_CJSON
+ 	if (stats_container->stats_json)
+ 		free(stats_container->stats_json);
++#endif
+ 	free((void *)stats_container);
+ 	return 0;
+ }
+diff --git a/src/stats.c b/src/stats.c
+index e2e92c9..0ea1510 100644
+--- a/src/stats.c
++++ b/src/stats.c
+@@ -6,13 +6,14 @@
+  *
+  * SPDX-License-Identifier: BSD-2-Clause
+  */
+-
++#include "config.h"
+ #include "rist-private.h"
+ #include "log-private.h"
+ #include "udp-private.h"
+ #include <string.h>
++#if HAVE_CJSON
+ #include "cjson/cJSON.h"
+-
++#endif
+ static double round_two_digits(double number)
+ {
+ 	long new_number = (long)(number * 100);
+@@ -60,7 +61,8 @@ void rist_sender_peer_statistics(struct rist_peer *peer)
+ 	uint32_t avg_rtt = (peer->eight_times_rtt / 8);
+ 
+ 	struct rist_common_ctx *cctx = get_cctx(peer);
+-
++	char *stats_string = NULL;
++#if HAVE_CJSON
+ 	cJSON *stats = cJSON_CreateObject();
+ 	cJSON *rist_sender_stats = cJSON_AddObjectToObject(stats, "sender-stats");
+ 	cJSON *peer_obj = cJSON_AddObjectToObject(rist_sender_stats, "peer");
+@@ -82,9 +84,13 @@ void rist_sender_peer_statistics(struct rist_peer *peer)
+ 	cJSON_AddNumberToObject(json_stats, "avg_rtt", (double)avg_rtt);
+ 	cJSON_AddNumberToObject(json_stats, "retry_buffer_size", (double)retry_buf_size);
+ 	cJSON_AddNumberToObject(json_stats, "cooldown_time", (double)time_left);
+-	char *stats_string = cJSON_PrintUnformatted(stats);
++	stats_string = cJSON_PrintUnformatted(stats);
+ 	cJSON_Delete(stats);
+-
++#else
++	char json[1];
++	json[0] = '\0';
++	stats_string = json;
++#endif
+ 	stats_container->stats_json = stats_string;
+ 	stats_container->json_size = (uint32_t)strlen(stats_string);
+ 	stats_container->stats.sender_peer.cname[0] = '\0';
+@@ -129,6 +135,7 @@ void rist_receiver_flow_statistics(struct rist_receiver *ctx, struct rist_flow *
+ 		flow->stats_instant.cur_ips = (flow->stats_instant.total_ips / flow->stats_instant.avg_count);
+ 	}
+ 
++#if HAVE_CJSON
+ 	cJSON *stats = cJSON_CreateObject();
+ 	cJSON *stats_obj = cJSON_AddObjectToObject(stats, "receiver-stats");
+ 	cJSON *flow_obj = cJSON_AddObjectToObject(stats_obj, "flowinstant");
+@@ -136,6 +143,7 @@ void rist_receiver_flow_statistics(struct rist_receiver *ctx, struct rist_flow *
+ 	cJSON_AddNumberToObject(flow_obj, "dead",  flow->dead);
+ 	cJSON *json_stats = cJSON_AddObjectToObject(flow_obj, "stats");
+ 	cJSON *peers = cJSON_AddArrayToObject(flow_obj, "peers");
++#endif
+ 	uint32_t flow_rtt = 0;
+ 	uint32_t flow_sent_instant = 0;
+ 	for (size_t i = 0; i < flow->peer_lst_len; i++)
+@@ -149,7 +157,7 @@ void rist_receiver_flow_statistics(struct rist_receiver *ctx, struct rist_flow *
+ 		size_t avg_bitrate = peer->bw.eight_times_bitrate / 8;
+ 		flow_sent_instant += peer->stats_receiver_instant.sent_rtcp;
+ 		flow_rtt =+ peer->eight_times_rtt / 8;
+-
++#if HAVE_CJSON
+ 		cJSON *peer_obj = cJSON_CreateObject();
+ 		cJSON_AddNumberToObject(peer_obj, "id", peer->adv_peer_id);
+ 		cJSON_AddNumberToObject(peer_obj, "dead", peer->dead);
+@@ -162,6 +170,7 @@ void rist_receiver_flow_statistics(struct rist_receiver *ctx, struct rist_flow *
+ 		cJSON_AddNumberToObject(peer_stats, "bitrate", (double)bitrate);
+ 		cJSON_AddNumberToObject(peer_stats, "avg_bitrate", (double)avg_bitrate);
+ 		cJSON_AddItemToArray(peers, peer_obj);
++#endif
+ 		// Clear peer instant stats
+ 		memset(&peer->stats_receiver_instant, 0, sizeof(peer->stats_receiver_instant));
+ 	}
+@@ -217,6 +226,8 @@ void rist_receiver_flow_statistics(struct rist_receiver *ctx, struct rist_flow *
+ 		avg_buffer_duration /= flow->stats_instant.buffer_duration_count;
+ 		flow->stats_instant.buffer_duration_count = 0;
+ 	}
++	char *stats_string = NULL;
++#if HAVE_CJSON
+ 	cJSON_AddNumberToObject(json_stats, "quality", Q);
+ 	cJSON_AddNumberToObject(json_stats, "received", (double)flow->stats_instant.received);
+ 	cJSON_AddNumberToObject(json_stats, "dropped_late", (double)flow->stats_instant.dropped_late);
+@@ -240,10 +251,14 @@ void rist_receiver_flow_statistics(struct rist_receiver *ctx, struct rist_flow *
+ 	cJSON_AddNumberToObject(json_stats, "max_inter_packet_spacing", (double)flow->stats_instant.max_ips);
+ 	cJSON_AddNumberToObject(json_stats, "bitrate", (double)flow->bw.bitrate);
+ 
+-	char *stats_string = cJSON_PrintUnformatted(stats);
++	stats_string = cJSON_PrintUnformatted(stats);
+ 	cJSON_Delete(stats);
+-
+-	stats_container->stats_json = stats_string;
++#else
++	char json[1];
++	json[0] = '\0';
++    stats_string = json;
++#endif
++        stats_container->stats_json = stats_string;
+ 	stats_container->json_size = (uint32_t)strlen(stats_string);
+ 
+ 	stats_container->stats.receiver_flow.peer_count = (uint32_t)flow->peer_lst_len;
+diff --git a/tools/rist2rist.c b/tools/rist2rist.c
+index 0c8a4b4..4070415 100644
+--- a/tools/rist2rist.c
++++ b/tools/rist2rist.c
+@@ -7,6 +7,7 @@
+ 
+ /* rist2rist receive simple profile rist and expose it as main profile */
+ 
++#include "config.h"
+ #include <librist/librist.h>
+ #include "librist/version.h"
+ #include "risturlhelp.h"
+@@ -132,7 +133,9 @@ static int cb_recv_oob(void *arg, const struct rist_oob_block *oob_block)
+ 
+ static int cb_stats(void *arg, const struct rist_stats *stats_container) {
+ 	(void)arg;
++#if HAVE_CJSON
+ 	rist_log(&logging_settings, RIST_LOG_INFO, "%s\n\n", stats_container->stats_json);
++#endif
+ 	rist_stats_free(stats_container);
+ 	return 0;
+ }
+diff --git a/tools/ristreceiver.c b/tools/ristreceiver.c
+index 2d69ee5..3730fde 100644
+--- a/tools/ristreceiver.c
++++ b/tools/ristreceiver.c
+@@ -4,9 +4,10 @@
+  * SPDX-License-Identifier: BSD-2-Clause
+  */
+ 
++#include "config.h"
++#include "librist/version.h"
+ #include <librist/librist.h>
+ #include <librist/udpsocket.h>
+-#include "librist/version.h"
+ #ifdef USE_MBEDTLS
+ #include "librist/librist_srp.h"
+ #include "srp_shared.h"
+@@ -243,7 +244,9 @@ struct ristreceiver_flow_cumulative_stats *stats_list;
+ 
+ static int cb_stats(void *arg, const struct rist_stats *stats_container) {
+ 	(void)arg;
++#if HAVE_CJSON
+ 	rist_log(&logging_settings, RIST_LOG_INFO, "%s\n",  stats_container->stats_json);
++#endif
+ 	if (stats_container->stats_type == RIST_STATS_RECEIVER_FLOW)
+ 	{
+ 		struct ristreceiver_flow_cumulative_stats *stats = stats_list;
+diff --git a/tools/ristsender.c b/tools/ristsender.c
+index 1ae8387..0516cf5 100644
+--- a/tools/ristsender.c
++++ b/tools/ristsender.c
+@@ -3,7 +3,7 @@
+  *
+  * SPDX-License-Identifier: BSD-2-Clause
+  */
+-
++#include "config.h"
+ #include <librist/librist.h>
+ #include <librist/udpsocket.h>
+ #include "librist/version.h"
+@@ -264,7 +264,9 @@ static int cb_recv_oob(void *arg, const struct rist_oob_block *oob_block)
+ static int cb_stats(void *arg, const struct rist_stats *stats_container)
+ {
+ 	(void)arg;
++#if HAVE_CJSON
+ 	rist_log(&logging_settings, RIST_LOG_INFO, "%s\n\n", stats_container->stats_json);
++#endif
+ 	rist_stats_free(stats_container);
+ 	return 0;
+ }
+-- 
+2.32.0
+
