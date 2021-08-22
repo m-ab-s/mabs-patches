@@ -1,4 +1,4 @@
-From 62865c79e8bdc54071e49229c416a23751e86a81 Mon Sep 17 00:00:00 2001
+From 2fa5f99456be5abb0bf3f41f60e7d544a67e4d4c Mon Sep 17 00:00:00 2001
 From: Gijs Peskens <gijs@peskens.net>
 Date: Fri, 25 Jun 2021 12:46:36 +0200
 Subject: [PATCH] Workaround/fixes for cJSON symbol collision
@@ -19,7 +19,7 @@ or at least be ABI compatible.
  7 files changed, 94 insertions(+), 23 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index 8e4f6d7..11d3cc4 100755
+index 8e4f6d7..4d208f4 100755
 --- a/meson.build
 +++ b/meson.build
 @@ -42,9 +42,12 @@ inc = []
@@ -63,7 +63,7 @@ index 8e4f6d7..11d3cc4 100755
 -	cjson_lib = dependency('cJSON', required: false)
 -	if not cjson_lib.found()
 -		cjson_lib = cc.find_library('cjson', required: required_library, has_headers: ['cjson/cJSON.h'])
-+
++cjson_lib = []
 +if not disable_json
 +	cdata.set10('HAVE_CJSON', 1)
 +	#On ubuntu cjson does not come with pkgconfig files, hence the extended checking.
