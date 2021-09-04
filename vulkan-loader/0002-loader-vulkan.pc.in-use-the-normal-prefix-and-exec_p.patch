@@ -1,4 +1,4 @@
-From 00869ba2ba845400ea9a775dcfd4acb8ccd9ccb5 Mon Sep 17 00:00:00 2001
+From b9ea03b4ffd389b926edf3f93a74bcfedbfb6717 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 21 Oct 2020 01:00:50 +0000
 Subject: [PATCH 2/3] loader/vulkan.pc.in: use the normal prefix and
@@ -30,5 +30,5 @@ index 44049ee34..c03f59414 100644
  Cflags: -I${includedir}
 -
 -- 
-2.32.0
+2.33.0
 
