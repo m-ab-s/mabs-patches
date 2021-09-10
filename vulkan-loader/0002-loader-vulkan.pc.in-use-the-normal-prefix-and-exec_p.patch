@@ -1,4 +1,4 @@
-From b9ea03b4ffd389b926edf3f93a74bcfedbfb6717 Mon Sep 17 00:00:00 2001
+From c0fe5ae02f7aa00ee1b073191669a80b7dccb17b Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 21 Oct 2020 01:00:50 +0000
 Subject: [PATCH 2/3] loader/vulkan.pc.in: use the normal prefix and
