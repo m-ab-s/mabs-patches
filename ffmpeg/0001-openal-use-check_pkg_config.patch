@@ -1,4 +1,4 @@
-From 6981723008c46e5f26bd201d2db90b65006fd132 Mon Sep 17 00:00:00 2001
+From 88ed80e3c4e45fa1b75c455e8d4aa1a8a3d5a332 Mon Sep 17 00:00:00 2001
 From: Helenerineium <photosynthesis2728@gmail.com>
 Date: Mon, 14 Oct 2019 22:07:16 +0800
 Subject: [PATCH] openal: use check_pkg_config
@@ -8,7 +8,7 @@ Subject: [PATCH] openal: use check_pkg_config
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index 9249254b70..47ae0622fa 100755
+index 98987ed186..99d6ff276e 100755
 --- a/configure
 +++ b/configure
 @@ -6548,8 +6548,7 @@ enabled mmal              && { check_lib mmal interface/mmal/mmal.h mmal_port_co
@@ -22,5 +22,5 @@ index 9249254b70..47ae0622fa 100755
                               { test_cpp_condition "AL/al.h" "defined(AL_VERSION_1_1)" ||
                                 die "ERROR: openal must be installed and version must be 1.1 or compatible"; }
 -- 
-2.32.0
+2.33.0
 

@@ -1,4 +1,4 @@
-From a67dc8837feed903e62584f8cd8f2ffdbb0174ff Mon Sep 17 00:00:00 2001
+From a024101b5006d4cad8665c1a2d19d7181335ed64 Mon Sep 17 00:00:00 2001
 From: Helenerineium <photosynthesis2728@gmail.com>
 Date: Sun, 30 Jun 2019 20:13:49 +0800
 Subject: [PATCH 1/2] Add Alternative VapourSynth demuxer
@@ -13,7 +13,7 @@ Usage: ffmpeg -f vapoursynth_alt
  create mode 100644 libavformat/vapoursynth_alt.c
 
 diff --git a/configure b/configure
-index 9249254b70..768597401c 100755
+index 98987ed186..88efb3c9c0 100755
 --- a/configure
 +++ b/configure
 @@ -3327,6 +3327,7 @@ libxavs2_encoder_deps="libxavs2"
@@ -25,10 +25,10 @@ index 9249254b70..768597401c 100755
  videotoolbox_deps="corefoundation coremedia corevideo"
  videotoolbox_encoder_deps="videotoolbox VTCompressionSessionPrepareToEncodeFrames"
 diff --git a/libavformat/Makefile b/libavformat/Makefile
-index 813ddd3c20..9e2544182c 100644
+index f7e47563da..ffd03ff310 100644
 --- a/libavformat/Makefile
 +++ b/libavformat/Makefile
-@@ -609,6 +609,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
+@@ -610,6 +610,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
  OBJS-$(CONFIG_LIBMODPLUG_DEMUXER)        += libmodplug.o
  OBJS-$(CONFIG_LIBOPENMPT_DEMUXER)        += libopenmpt.o
  OBJS-$(CONFIG_VAPOURSYNTH_DEMUXER)       += vapoursynth.o
@@ -37,10 +37,10 @@ index 813ddd3c20..9e2544182c 100644
  # protocols I/O
  OBJS-$(CONFIG_ASYNC_PROTOCOL)            += async.o
 diff --git a/libavformat/allformats.c b/libavformat/allformats.c
-index 111ca3cbf0..60e8a7b94f 100644
+index 5471f7c16f..8beaf2f1fd 100644
 --- a/libavformat/allformats.c
 +++ b/libavformat/allformats.c
-@@ -529,6 +529,7 @@ extern const AVInputFormat  ff_libgme_demuxer;
+@@ -530,6 +530,7 @@ extern const AVInputFormat  ff_libgme_demuxer;
  extern const AVInputFormat  ff_libmodplug_demuxer;
  extern const AVInputFormat  ff_libopenmpt_demuxer;
  extern const AVInputFormat  ff_vapoursynth_demuxer;
@@ -417,5 +417,5 @@ index 0000000000..f7e3dd8879
 +    .read_seek      = read_seek,
 +};
 -- 
-2.32.0
+2.33.0
 
