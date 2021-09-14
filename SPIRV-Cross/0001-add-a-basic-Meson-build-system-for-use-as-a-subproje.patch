@@ -1,0 +1,124 @@
+From 27ebd9a28e27b9d6c4cebebb480114c4169c4a55 Mon Sep 17 00:00:00 2001
+From: Andrei Alexeyev <0x416b617269@gmail.com>
+Date: Sun, 7 Apr 2019 04:09:54 +0300
+Subject: [PATCH] add a basic Meson build system for use as a subproject
+
+---
+ get_version.py | 12 +++++++
+ meson.build    | 85 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 97 insertions(+)
+ create mode 100755 get_version.py
+ create mode 100644 meson.build
+
+diff --git a/get_version.py b/get_version.py
+new file mode 100755
+index 00000000..0ef89c6b
+--- /dev/null
++++ b/get_version.py
+@@ -0,0 +1,12 @@
++#!/usr/bin/env python
++
++from __future__ import print_function
++
++import subprocess
++
++try:
++    v = subprocess.check_output(['git', 'describe', '--tags'], universal_newlines=True)
++except Exception:
++    print('unknown')
++else:
++    print(v.strip().replace('-', '.'))
+diff --git a/meson.build b/meson.build
+new file mode 100644
+index 00000000..b16b3f93
+--- /dev/null
++++ b/meson.build
+@@ -0,0 +1,85 @@
++project('SPIRV-Cross', 'cpp',
++    license : 'Apache-2.0',
++    version : run_command(files('get_version.py')).stdout().strip(),
++    meson_version : '>=0.48.0',
++    default_options : [
++        'cpp_std=c++11',
++    ]
++)
++
++add_project_arguments(
++    meson.get_compiler('cpp').get_supported_arguments(
++        '-fno-exceptions',
++        '-fno-rtti',
++    ),
++    language : 'cpp',
++)
++
++spvc_install = not meson.is_subproject()
++
++spvc_defs = [
++    '-DSPIRV_CROSS_C_API_CPP=1',
++    '-DSPIRV_CROSS_C_API_GLSL=1',
++    '-DSPIRV_CROSS_C_API_HLSL=1',
++    '-DSPIRV_CROSS_C_API_MSL=1',
++    '-DSPIRV_CROSS_C_API_REFLECT=1',
++    '-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS',
++]
++
++spvc_src = files(
++    'spirv_cfg.cpp',
++    'spirv_cpp.cpp',
++    'spirv_cross.cpp',
++    'spirv_cross_c.cpp',
++    'spirv_cross_parsed_ir.cpp',
++    'spirv_cross_util.cpp',
++    'spirv_glsl.cpp',
++    'spirv_hlsl.cpp',
++    'spirv_msl.cpp',
++    'spirv_parser.cpp',
++    'spirv_reflect.cpp',
++)
++
++spvc_hdr = files(
++    'GLSL.std.450.h',
++    'spirv_cfg.hpp',
++    'spirv_common.hpp',
++    'spirv_cpp.hpp',
++    'spirv_cross_c.h',
++    'spirv_cross.hpp',
++    'spirv_cross_parsed_ir.hpp',
++    'spirv_cross_util.hpp',
++    'spirv_glsl.hpp',
++    'spirv.h',
++    'spirv_hlsl.hpp',
++    'spirv.hpp',
++    'spirv_msl.hpp',
++    'spirv_parser.hpp',
++    'spirv_reflect.hpp',
++)
++
++spvc_incdirs = include_directories('.', 'include')
++
++libspirv_cross = library('spirv-cross',
++    spvc_src,
++    cpp_args : spvc_defs,
++    build_by_default : not meson.is_subproject(),
++    include_directories : spvc_incdirs,
++    gnu_symbol_visibility : 'hidden',
++    install : spvc_install,
++)
++
++spirv_cross_dep = declare_dependency(
++    link_with : libspirv_cross,
++    include_directories : spvc_incdirs,
++)
++
++if spvc_install
++    install_headers(spvc_hdr, subdir : 'spirv_cross')
++
++    pkg = import('pkgconfig')
++    pkg.generate(libspirv_cross,
++        subdirs : 'spirv_cross',
++        version : '0.13.0'
++    )
++endif
+-- 
+2.33.0
+
