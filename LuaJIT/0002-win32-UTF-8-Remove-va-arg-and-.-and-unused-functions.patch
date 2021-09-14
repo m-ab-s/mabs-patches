@@ -1,4 +1,4 @@
-From a570f5010c340afba7b83ec50f76abc51d3039e6 Mon Sep 17 00:00:00 2001
+From 591aa0106ef06606772ec1a3d6a19ac06faa8626 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 28 May 2020 15:25:41 +0000
 Subject: [PATCH 2/2] win32 UTF-8: Remove va arg and ... and unused functions
@@ -119,5 +119,5 @@ index 604e279f..fac7691a 100644
  
  #ifndef O_BINARY
 -- 
-2.31.1
+2.33.0
 
