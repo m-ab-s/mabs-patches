@@ -1,0 +1,36 @@
+From 1c1b7969e66f390bfff57349ec7f83e513e8ec39 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sun, 24 Oct 2021 17:44:46 -0500
+Subject: [PATCH] cmake: split absolute library paths to L and l
+
+Fixes an issue where on Windows, libstdc++.a is put as a fullpath leading
+to
+
+Libs: -L${libdir} -lx265
+Libs.private: D:/mabs/msys64/mingw32/lib/gcc/i686-w64-mingw32/10.3.0/libstdc++.a -lgcc -lgcc
+
+to be present in the pkg-config file, thus breaking on version changes of gcc
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ source/CMakeLists.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/source/CMakeLists.txt b/source/CMakeLists.txt
+index ad46614d2..6d1d084a3 100755
+--- a/source/CMakeLists.txt
++++ b/source/CMakeLists.txt
+@@ -711,7 +711,9 @@ if(X265_LATEST_TAG)
+     # convert lists of link libraries into -lstdc++ -lm etc..
+     foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES} ${PLATFORM_LIBS})
+         if(IS_ABSOLUTE ${LIB} AND EXISTS ${LIB})
+-            list(APPEND PLIBLIST "${LIB}")
++            get_filename_component(LIB_NAME ${LIB} NAME_WE)
++            get_filename_component(LIB_PATH ${LIB} DIRECTORY)
++            list(APPEND PLIBLIST "-L${LIB_PATH} -l${LIB_NAME}")
+         else()
+             list(APPEND PLIBLIST "-l${LIB}")
+         endif()
+-- 
+2.33.0
+
