@@ -1,4 +1,4 @@
-From 1c1b7969e66f390bfff57349ec7f83e513e8ec39 Mon Sep 17 00:00:00 2001
+From 1c1f7ea8fbe328e558d46aa8b04b1fd2f491b493 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 24 Oct 2021 17:44:46 -0500
 Subject: [PATCH] cmake: split absolute library paths to L and l
@@ -13,20 +13,21 @@ to be present in the pkg-config file, thus breaking on version changes of gcc
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- source/CMakeLists.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ source/CMakeLists.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/source/CMakeLists.txt b/source/CMakeLists.txt
-index ad46614d2..6d1d084a3 100755
+index ad46614d2..02997534d 100755
 --- a/source/CMakeLists.txt
 +++ b/source/CMakeLists.txt
-@@ -711,7 +711,9 @@ if(X265_LATEST_TAG)
+@@ -711,7 +711,10 @@ if(X265_LATEST_TAG)
      # convert lists of link libraries into -lstdc++ -lm etc..
      foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES} ${PLATFORM_LIBS})
          if(IS_ABSOLUTE ${LIB} AND EXISTS ${LIB})
 -            list(APPEND PLIBLIST "${LIB}")
 +            get_filename_component(LIB_NAME ${LIB} NAME_WE)
 +            get_filename_component(LIB_PATH ${LIB} DIRECTORY)
++            string(REGEX REPLACE "^lib" "" LIB_NAME "${LIB_NAME}")
 +            list(APPEND PLIBLIST "-L${LIB_PATH} -l${LIB_NAME}")
          else()
              list(APPEND PLIBLIST "-l${LIB}")
