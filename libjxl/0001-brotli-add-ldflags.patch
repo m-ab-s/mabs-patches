@@ -1,0 +1,34 @@
+From 60a776c0231d45b62d87bae94d5288e7b6166c39 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 14 Dec 2021 01:44:09 -0600
+Subject: [PATCH] brotli: add ldflags
+
+fixes static linking
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ cmake/FindBrotli.cmake | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/cmake/FindBrotli.cmake b/cmake/FindBrotli.cmake
+index 568356f..157c871 100644
+--- a/cmake/FindBrotli.cmake
++++ b/cmake/FindBrotli.cmake
+@@ -39,11 +39,11 @@ foreach(brlib IN ITEMS ${brlibs})
+     else()
+     add_library(${brlib} INTERFACE IMPORTED GLOBAL)
+       target_include_directories(${brlib}
+-        INTERFACE ${BROTLI_INCLUDE_DIR})
++        INTERFACE ${BROTLI_INCLUDE_DIR} ${PC_${BRPREFIX}_CFLAGS})
+       target_link_libraries(${brlib}
+-        INTERFACE ${${BRPREFIX}_LIBRARY})
++        INTERFACE ${${BRPREFIX}_LIBRARY} ${PC_${BRPREFIX}_LDFLAGS})
+       target_link_options(${brlib}
+-        INTERFACE ${PC_${BRPREFIX}_LDFLAGS_OTHER})
++        INTERFACE ${PC_${BRPREFIX}_LDFLAGS_OTHER} ${PC_${BRPREFIX}_LDFLAGS})
+       target_compile_options(${brlib}
+         INTERFACE ${PC_${BRPREFIX}_CFLAGS_OTHER})
+ 
+-- 
+2.34.0
+
