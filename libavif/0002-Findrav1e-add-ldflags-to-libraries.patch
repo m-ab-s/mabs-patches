@@ -1,0 +1,41 @@
+From eef2d46b332da099974f9879ddf6964ef8958211 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 9 Dec 2021 21:47:18 -0600
+Subject: [PATCH 2/2] Findrav1e: add ldflags to libraries
+
+fixes static linking of librav1e.a on windows since it requires bcrypt
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt                | 2 +-
+ cmake/Modules/Findrav1e.cmake | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 533eafd..9e75b44 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -328,7 +328,7 @@ if(AVIF_CODEC_RAV1E)
+             find_package(rav1e REQUIRED)
+             set(AVIF_CODEC_INCLUDES ${AVIF_CODEC_INCLUDES} ${RAV1E_INCLUDE_DIR})
+         endif()
+-        set(AVIF_CODEC_LIBRARIES ${AVIF_CODEC_LIBRARIES} ${RAV1E_LIBRARY})
++        set(AVIF_CODEC_LIBRARIES ${AVIF_CODEC_LIBRARIES} ${RAV1E_LIBRARIES})
+     endif()
+ 
+     # Unfortunately, rav1e requires a few more libraries
+diff --git a/cmake/Modules/Findrav1e.cmake b/cmake/Modules/Findrav1e.cmake
+index c86e044..71929c8 100644
+--- a/cmake/Modules/Findrav1e.cmake
++++ b/cmake/Modules/Findrav1e.cmake
+@@ -38,6 +38,7 @@ endif()
+ 
+ if (RAV1E_LIBRARY)
+     set(RAV1E_LIBRARIES
++        ${_RAV1E_LDFLAGS}
+         ${RAV1E_LIBRARIES}
+         ${RAV1E_LIBRARY})
+ endif (RAV1E_LIBRARY)
+-- 
+2.34.0
+
