@@ -1,0 +1,33 @@
+From 968413df1fa8e534d6c10c0ce56724c7f72c549c Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 20 Dec 2021 12:31:13 -0600
+Subject: [PATCH] third_party: set INSTALL variables as cache
+
+this would give the option to install only shaderc if they already have
+the third party repos in their system
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ third_party/CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/third_party/CMakeLists.txt b/third_party/CMakeLists.txt
+index 7bd9617..b317c83 100644
+--- a/third_party/CMakeLists.txt
++++ b/third_party/CMakeLists.txt
+@@ -18,9 +18,9 @@ set(SHADERC_RE2_DIR "${SHADERC_THIRD_PARTY_ROOT_DIR}/re2" CACHE STRING
+ set(SHADERC_TINT_DIR "${SHADERC_THIRD_PARTY_ROOT_DIR}/tint" CACHE STRING
+   "Location of tint source")
+ 
+-set( SKIP_GLSLANG_INSTALL ${SHADERC_SKIP_INSTALL} )
+-set( SKIP_SPIRV_TOOLS_INSTALL ${SHADERC_SKIP_INSTALL} )
+-set( SKIP_GOOGLETEST_INSTALL ${SHADERC_SKIP_INSTALL} )
++set( SKIP_GLSLANG_INSTALL ${SHADERC_SKIP_INSTALL} CACHE BOOL "Skip glslang installation" )
++set( SKIP_SPIRV_TOOLS_INSTALL ${SHADERC_SKIP_INSTALL} CACHE BOOL "Skip spirv-tools installation" )
++set( SKIP_GOOGLETEST_INSTALL ${SHADERC_SKIP_INSTALL} CACHE BOOL "Skip googletest installation" )
+ 
+ # Configure third party projects.
+ if(${SHADERC_ENABLE_TESTS})
+-- 
+2.34.1
+
