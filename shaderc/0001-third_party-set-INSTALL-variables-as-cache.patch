@@ -1,7 +1,7 @@
 From 968413df1fa8e534d6c10c0ce56724c7f72c549c Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 20 Dec 2021 12:31:13 -0600
-Subject: [PATCH] third_party: set INSTALL variables as cache
+Subject: [PATCH 1/2] third_party: set INSTALL variables as cache
 
 this would give the option to install only shaderc if they already have
 the third party repos in their system

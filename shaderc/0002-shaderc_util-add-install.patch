@@ -1,0 +1,30 @@
+From 79e9669c84c889843721e568bd64cb3bd23a2ef7 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 24 Dec 2021 11:26:32 -0600
+Subject: [PATCH 2/2] shaderc_util: add install()
+
+needed for static linking
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ libshaderc_util/CMakeLists.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/libshaderc_util/CMakeLists.txt b/libshaderc_util/CMakeLists.txt
+index 99ce3c4..344b2f7 100644
+--- a/libshaderc_util/CMakeLists.txt
++++ b/libshaderc_util/CMakeLists.txt
+@@ -87,3 +87,10 @@ if(${SHADERC_ENABLE_TESTS})
+   add_dependencies(shaderc_util_file_finder_test testdata)
+   add_dependencies(shaderc_util_io_shaderc_test testdata)
+ endif()
++
++if(SHADERC_ENABLE_INSTALL)
++  install(TARGETS shaderc_util
++    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
++endif(SHADERC_ENABLE_INSTALL)
+-- 
+2.34.1
+
