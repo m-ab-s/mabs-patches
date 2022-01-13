@@ -1,0 +1,45 @@
+From 7c1cf936586282551f8c2fd2d6d930f51ad68c12 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 13 Jan 2022 14:59:33 -0600
+Subject: [PATCH 2/2] gflags: use the example way to link gflags
+
+from https://github.com/gflags/example/blob/master/foo/CMakeLists.txt
+
+kept on failing regardless of if only static was installed due to
+shlwapi not being set as a link target for some reason, can't figure out
+why because I can't put more effort into this
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ tools/CMakeLists.txt | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
+index a312e4e..6c6a14e 100644
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -145,8 +145,20 @@ if(JPEGXL_ENABLE_TOOLS)
+   )
+   target_link_libraries(cjxl_ng
+     jxl
+-    gflags
+   )
++  if(GFLAGS_USE_TARGET_NAMESPACE)
++    if(TARGET gflags::gflags)
++      target_link_libraries(cjxl_ng gflags::gflags)
++    else()
++      message(FATAL_ERROR "gflags::gflags target not defined")
++    endif()
++  else()
++    if(TARGET gflags)
++      target_link_libraries(cjxl_ng gflags)
++    else()
++      message(FATAL_ERROR "gflags target not defined")
++    endif()
++  endif()
+ 
+ add_executable(cjpeg_hdr
+   cjpeg_hdr.cc
+-- 
+2.34.1
+
