@@ -1,22 +1,27 @@
-From a5a5c1b14b8425862f6bb289c2ae79aac424cf5a Mon Sep 17 00:00:00 2001
+From b79957ebedf0a584d7174a54efb5943c9ff95934 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 7 Sep 2020 22:44:17 +0000
 Subject: [PATCH] Mingw-w64: Re-enable avx2
 
--fno-asynchronous-unwind-tables is necessary for mingw-w64 gcc for avx2
-functions when 256-bit vectors are passed around non-inlined.
+recent patches in mingw-w64 and gcc fixes using avx2 with pass-by-value
+arguments, https://github.com/msys2/MINGW-packages/pull/10314
 
-Afaik, this mainly affects ease of debugging, but's not clear to me if
-it completly blocks debugging in general
+Confirmed by compiling with gcc.exe "(Rev6, Built by MSYS2 project) 11.2.0"
+with `CFLAGS=-mavx2 ./configure`
+and encoding a video
+
+Compiled: INTEL, flags: MMX SSE SSE2 SSE3 SSSE3 SSE41 SSE42 AVX AVX2
+Detected: INTEL, flags: MMX SSE SSE2 SSE3 SSSE3 SSE41 SSE42 AVX AVX2
+Available: avx2(54) sse2(2) sse41(4)
+In use: avx2(54) sse2(1)
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- configure.ac    | 4 ++--
- src/Makefile.am | 7 +++----
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 13b00e8e..87bb9768 100644
+index 832b584d..0706e50a 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -68,8 +68,8 @@ AX_CHECK_COMPILE_FLAG([-mbmi2],   [flag_bmi2="true"])
@@ -30,37 +35,6 @@ index 13b00e8e..87bb9768 100644
  AM_CONDITIONAL([HAVE_SSE4_1], [test x"$flag_sse4_1" = x"true"])
  AM_CONDITIONAL([HAVE_SSE2], [test x"$flag_sse2" = x"true"])
  
-diff --git a/src/Makefile.am b/src/Makefile.am
-index 26372337..575db709 100644
---- a/src/Makefile.am
-+++ b/src/Makefile.am
-@@ -54,7 +54,7 @@ libkvazaar_la_SOURCES = \
- 	cfg.c \
- 	cfg.h \
- 	constraint.c \
--	constraint.h \ 
-+	constraint.h \
- 	context.c \
- 	context.h \
- 	cu.c \
-@@ -224,10 +224,10 @@ endif #HAVE_PPC
- if HAVE_X86
- 
- if HAVE_AVX2_GCC
--libavx2_la_CFLAGS = -mavx2 -mbmi -mabm -mbmi2
-+libavx2_la_CFLAGS = -mavx2 -mbmi -mabm -mbmi2 -fno-asynchronous-unwind-tables
- endif
- if HAVE_AVX2_CLANG
--libavx2_la_CFLAGS = -mavx2 -mbmi -mpopcnt -mlzcnt -mbmi2
-+libavx2_la_CFLAGS = -mavx2 -mbmi -mpopcnt -mlzcnt -mbmi2 -fno-asynchronous-unwind-tables
- endif
- if HAVE_SSE4_1
- libsse41_la_CFLAGS = -msse4.1
-@@ -258,4 +258,3 @@ yasm_verbose_0 = @echo "  YASM    " $@;
- 
- .asm.lo:
- 	$(yasm_verbose)$(LIBTOOL) --mode=compile --tag=CC $(YASM) -I$(srcdir)/extras $(ASFLAGS) $< -o $@ -prefer-non-pic 1>/dev/null
--
 -- 
-2.25.1
+2.34.1
 
