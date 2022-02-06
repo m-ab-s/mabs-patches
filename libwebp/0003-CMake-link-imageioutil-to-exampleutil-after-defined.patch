@@ -1,4 +1,4 @@
-From c0c8ead1cce57272a1d88d75991af6b8e52ec5de Mon Sep 17 00:00:00 2001
+From 44a11a8c34b1d7860aa1a3de2f1dd17a378f84a5 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 22:47:47 -0500
 Subject: [PATCH 03/10] CMake: link imageioutil to exampleutil after defined
@@ -10,10 +10,10 @@ Change-Id: I6bd4b25d31a85839aadef57437faa04966085f52
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index d64f676b..f0fa9ebb 100644
+index 37619652..f57fa2ea 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -415,7 +415,6 @@ if(WEBP_BUILD_ANIM_UTILS
+@@ -417,7 +417,6 @@ if(WEBP_BUILD_ANIM_UTILS
                      "example_util_[^ ]*")
    list(APPEND EXAMPLEUTIL_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/examples/stopwatch.h)
    add_library(exampleutil STATIC ${EXAMPLEUTIL_SRCS})
@@ -21,7 +21,7 @@ index d64f676b..f0fa9ebb 100644
    target_include_directories(
      exampleutil
      PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
-@@ -424,6 +423,7 @@ if(WEBP_BUILD_ANIM_UTILS
+@@ -426,6 +425,7 @@ if(WEBP_BUILD_ANIM_UTILS
                      "imageio_util_[^ ]*")
    add_library(imageioutil STATIC ${IMAGEIOUTILS_SRCS})
    target_link_libraries(imageioutil webp)
@@ -30,5 +30,5 @@ index d64f676b..f0fa9ebb 100644
    # Image-decoding utility library.
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/imageio "IMAGEDEC_SRCS"
 -- 
-2.32.0
+2.34.1
 

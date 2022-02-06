@@ -1,4 +1,4 @@
-From ffe3ece1edc4a847ad504ff4410dac4a81743e07 Mon Sep 17 00:00:00 2001
+From 76805be4620640af58d1522c34c477c8b1b68d2e Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 22:56:50 -0500
 Subject: [PATCH 04/10] CMake: use target_include_directories instead of
@@ -11,10 +11,10 @@ Change-Id: I0b42225da4fc4734aa73adec2128cd1ca9658261
  1 file changed, 7 insertions(+), 12 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f0fa9ebb..b3ebc34a 100644
+index f57fa2ea..fb0089f6 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -487,7 +487,6 @@ endif()
+@@ -489,7 +489,6 @@ endif()
  
  if(WEBP_BUILD_GIF2WEBP)
    # gif2webp
@@ -22,7 +22,7 @@ index f0fa9ebb..b3ebc34a 100644
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "GIF2WEBP_SRCS"
                      "gif2webp")
    add_executable(gif2webp ${GIF2WEBP_SRCS})
-@@ -497,13 +496,12 @@ if(WEBP_BUILD_GIF2WEBP)
+@@ -499,13 +498,12 @@ if(WEBP_BUILD_GIF2WEBP)
                          webp
                          libwebpmux
                          ${WEBP_DEP_GIF_LIBRARIES})
@@ -37,7 +37,7 @@ index f0fa9ebb..b3ebc34a 100644
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "IMG2WEBP_SRCS"
                      "img2webp")
    add_executable(img2webp ${IMG2WEBP_SRCS})
-@@ -513,7 +511,7 @@ if(WEBP_BUILD_IMG2WEBP)
+@@ -515,7 +513,7 @@ if(WEBP_BUILD_IMG2WEBP)
                          imageioutil
                          webp
                          libwebpmux)
@@ -46,7 +46,7 @@ index f0fa9ebb..b3ebc34a 100644
    install(TARGETS img2webp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
  endif()
  
-@@ -521,7 +519,6 @@ if(WEBP_BUILD_VWEBP)
+@@ -523,7 +521,6 @@ if(WEBP_BUILD_VWEBP)
    # vwebp
    find_package(GLUT)
    if(GLUT_FOUND)
@@ -54,7 +54,7 @@ index f0fa9ebb..b3ebc34a 100644
      parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "VWEBP_SRCS" "vwebp")
      add_executable(vwebp ${VWEBP_SRCS})
      target_link_libraries(vwebp
-@@ -534,7 +531,8 @@ if(WEBP_BUILD_VWEBP)
+@@ -536,7 +533,8 @@ if(WEBP_BUILD_VWEBP)
      target_include_directories(vwebp
                                 PRIVATE ${GLUT_INCLUDE_DIR}
                                         ${CMAKE_CURRENT_BINARY_DIR}/src
@@ -64,7 +64,7 @@ index f0fa9ebb..b3ebc34a 100644
      install(TARGETS vwebp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
      if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
        check_c_compiler_flag("-Wno-deprecated-declarations" HAS_NO_DEPRECATED)
-@@ -547,12 +545,11 @@ endif()
+@@ -549,12 +547,11 @@ endif()
  
  if(WEBP_BUILD_WEBPINFO)
    # webpinfo
@@ -108,5 +108,5 @@ index f0fa9ebb..b3ebc34a 100644
  
  # Install the different headers and libraries.
 -- 
-2.32.0
+2.34.1
 

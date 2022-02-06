@@ -1,4 +1,4 @@
-From b19896903ae788596a108c264712b1a42cf38cd5 Mon Sep 17 00:00:00 2001
+From 0ce0cd67ff80c1f5387ede0f4b99f4ade28e5e31 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 23 Jun 2021 21:50:28 -0500
 Subject: [PATCH 10/10] deps: use pkg-config instead of find_package
@@ -11,10 +11,10 @@ Change-Id: I1e415a04064c451a988e1544485569d6c9483a85
  2 files changed, 9 insertions(+), 23 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 6c8a82c3..e935bb2e 100644
+index b46a40e2..86641c47 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -435,7 +435,7 @@ if(WEBP_BUILD_ANIM_UTILS
+@@ -437,7 +437,7 @@ if(WEBP_BUILD_ANIM_UTILS
                          imageioutil
                          webpdemux
                          webp
@@ -66,5 +66,5 @@ index 6df2db68..9269a6fe 100644
    list(REMOVE_DUPLICATES WEBP_DEP_IMG_INCLUDE_DIRS)
  endif()
 -- 
-2.32.0
+2.34.1
 

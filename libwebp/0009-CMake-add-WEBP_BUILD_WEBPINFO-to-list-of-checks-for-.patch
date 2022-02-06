@@ -1,4 +1,4 @@
-From a79604a3c6a0c5bd1053f4c78d8a72cfc7ed4063 Mon Sep 17 00:00:00 2001
+From a255937d4840f658faf8aea6f31355044b20035b Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 13 Jun 2021 13:40:55 -0500
 Subject: [PATCH 09/10] CMake: add WEBP_BUILD_WEBPINFO to list of checks for
@@ -11,10 +11,10 @@ Change-Id: I530268809468107fe29e0f04278791fe7c583208
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 53aee5d6..6c8a82c3 100644
+index e3268e36..b46a40e2 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -410,7 +410,8 @@ if(WEBP_BUILD_ANIM_UTILS
+@@ -412,7 +412,8 @@ if(WEBP_BUILD_ANIM_UTILS
     OR WEBP_BUILD_GIF2WEBP
     OR WEBP_BUILD_IMG2WEBP
     OR WEBP_BUILD_VWEBP
@@ -25,5 +25,5 @@ index 53aee5d6..6c8a82c3 100644
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "EXAMPLEUTIL_SRCS"
                      "example_util_[^ ]*")
 -- 
-2.32.0
+2.34.1
 

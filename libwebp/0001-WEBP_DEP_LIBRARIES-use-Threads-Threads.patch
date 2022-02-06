@@ -1,4 +1,4 @@
-From b097cf6f95d0fb1784490fe90e7c3395b60a646b Mon Sep 17 00:00:00 2001
+From a9bc1eee560c055eee54bfb84bc9a21488676f74 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 8 Jun 2021 22:13:48 -0500
 Subject: [PATCH 01/10] WEBP_DEP_LIBRARIES: use Threads::Threads
@@ -23,5 +23,5 @@ index e00611f6..c4b62116 100644
    set(WEBP_USE_THREAD ${Threads_FOUND})
  endif()
 -- 
-2.32.0
+2.34.1
 
