@@ -1,22 +1,22 @@
-From a024101b5006d4cad8665c1a2d19d7181335ed64 Mon Sep 17 00:00:00 2001
+From cdb9de5f3ac5470341e8e04978e7790d17be1622 Mon Sep 17 00:00:00 2001
 From: Helenerineium <photosynthesis2728@gmail.com>
 Date: Sun, 30 Jun 2019 20:13:49 +0800
-Subject: [PATCH 1/2] Add Alternative VapourSynth demuxer
+Subject: [PATCH] Add Alternative VapourSynth demuxer
 
 Usage: ffmpeg -f vapoursynth_alt
 ---
  configure                     |   1 +
  libavformat/Makefile          |   1 +
  libavformat/allformats.c      |   1 +
- libavformat/vapoursynth_alt.c | 362 ++++++++++++++++++++++++++++++++++
- 4 files changed, 365 insertions(+)
+ libavformat/vapoursynth_alt.c | 363 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 366 insertions(+)
  create mode 100644 libavformat/vapoursynth_alt.c
 
 diff --git a/configure b/configure
-index 98987ed186..88efb3c9c0 100755
+index 1535dc3c5b..c9cf045003 100755
 --- a/configure
 +++ b/configure
-@@ -3327,6 +3327,7 @@ libxavs2_encoder_deps="libxavs2"
+@@ -3376,6 +3376,7 @@ libxavs2_encoder_deps="libxavs2"
  libxvid_encoder_deps="libxvid"
  libzvbi_teletext_decoder_deps="libzvbi"
  vapoursynth_demuxer_deps="vapoursynth"
@@ -25,10 +25,10 @@ index 98987ed186..88efb3c9c0 100755
  videotoolbox_deps="corefoundation coremedia corevideo"
  videotoolbox_encoder_deps="videotoolbox VTCompressionSessionPrepareToEncodeFrames"
 diff --git a/libavformat/Makefile b/libavformat/Makefile
-index f7e47563da..ffd03ff310 100644
+index 6566e40cac..4e75a9384e 100644
 --- a/libavformat/Makefile
 +++ b/libavformat/Makefile
-@@ -610,6 +610,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
+@@ -618,6 +618,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
  OBJS-$(CONFIG_LIBMODPLUG_DEMUXER)        += libmodplug.o
  OBJS-$(CONFIG_LIBOPENMPT_DEMUXER)        += libopenmpt.o
  OBJS-$(CONFIG_VAPOURSYNTH_DEMUXER)       += vapoursynth.o
@@ -37,10 +37,10 @@ index f7e47563da..ffd03ff310 100644
  # protocols I/O
  OBJS-$(CONFIG_ASYNC_PROTOCOL)            += async.o
 diff --git a/libavformat/allformats.c b/libavformat/allformats.c
-index 5471f7c16f..8beaf2f1fd 100644
+index d066a7745b..490d16aaa5 100644
 --- a/libavformat/allformats.c
 +++ b/libavformat/allformats.c
-@@ -530,6 +530,7 @@ extern const AVInputFormat  ff_libgme_demuxer;
+@@ -535,6 +535,7 @@ extern const AVInputFormat  ff_libgme_demuxer;
  extern const AVInputFormat  ff_libmodplug_demuxer;
  extern const AVInputFormat  ff_libopenmpt_demuxer;
  extern const AVInputFormat  ff_vapoursynth_demuxer;
@@ -50,10 +50,10 @@ index 5471f7c16f..8beaf2f1fd 100644
  #include "libavformat/demuxer_list.c"
 diff --git a/libavformat/vapoursynth_alt.c b/libavformat/vapoursynth_alt.c
 new file mode 100644
-index 0000000000..f7e3dd8879
+index 0000000000..efbf90f588
 --- /dev/null
 +++ b/libavformat/vapoursynth_alt.c
-@@ -0,0 +1,362 @@
+@@ -0,0 +1,363 @@
 +/*
 + * This file is part of FFmpeg.
 + *
@@ -84,6 +84,7 @@ index 0000000000..f7e3dd8879
 +#include <vapoursynth/VSScript.h>
 +#include <vapoursynth/VSHelper.h>
 +
++#include "libavutil/cpu.h"
 +#include "libavutil/internal.h"
 +#include "libavutil/pixdesc.h"
 +#include "libavutil/time.h"
@@ -96,7 +97,7 @@ index 0000000000..f7e3dd8879
 +    const VSVideoInfo *vi;
 +    VSNodeRef *node;
 +    VSScript *script;
-+    int async_pending;
++    atomic_int async_pending;
 +    int current_frame;
 +    int ncpu;
 +} VSContext;
@@ -406,7 +407,7 @@ index 0000000000..f7e3dd8879
 +    return 0;
 +}
 +
-+AVInputFormat ff_vapoursynth_alt_demuxer = {
++const AVInputFormat ff_vapoursynth_alt_demuxer = {
 +    .name           = "vapoursynth_alt",
 +    .long_name      = NULL_IF_CONFIG_SMALL("Alternative VapourSynth demuxer"),
 +    .priv_data_size = sizeof(VSContext),
@@ -417,5 +418,5 @@ index 0000000000..f7e3dd8879
 +    .read_seek      = read_seek,
 +};
 -- 
-2.33.0
+2.35.1
 
