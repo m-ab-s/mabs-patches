@@ -1,4 +1,4 @@
-From 9fcfb89bb236efe3109daf0943e2df3e94a8bdcc Mon Sep 17 00:00:00 2001
+From ae60708ba56187eb7c17772f7e79fa7bc0dc692c Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 2/2] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
@@ -9,10 +9,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 7f7e0dd73..56ff134a9 100644
+index fd84c3cbd..79d398c73 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -391,7 +391,7 @@ endif()
+@@ -329,7 +329,7 @@ endif()
  include(FindPkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
      set(VK_API_VERSION "${LOADER_GENERATED_HEADER_VERSION}")
@@ -22,5 +22,5 @@ index 7f7e0dd73..56ff134a9 100644
      endforeach()
      if(WIN32)
 -- 
-2.33.0
+2.35.1
 
