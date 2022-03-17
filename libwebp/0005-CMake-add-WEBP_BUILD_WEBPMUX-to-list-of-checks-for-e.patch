@@ -1,7 +1,7 @@
-From d96e040abf127c5a0c53aa7200eab731146e9885 Mon Sep 17 00:00:00 2001
+From 318b30235b1201a69748c34efc6ea23103c60615 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 12 Jun 2021 01:20:04 -0500
-Subject: [PATCH 08/10] CMake: add WEBP_BUILD_WEBPMUX to list of checks for
+Subject: [PATCH 5/7] CMake: add WEBP_BUILD_WEBPMUX to list of checks for
  exampleutil
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
@@ -11,10 +11,10 @@ Change-Id: I1bd6163966d8cec9fc240fa46d41605f11d0c1ac
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1bce95fa..e3268e36 100644
+index 614aadbc..c043b91b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -411,7 +411,8 @@ if(WEBP_BUILD_ANIM_UTILS
+@@ -424,7 +424,8 @@ if(WEBP_BUILD_ANIM_UTILS
     OR WEBP_BUILD_DWEBP
     OR WEBP_BUILD_GIF2WEBP
     OR WEBP_BUILD_IMG2WEBP
@@ -25,5 +25,5 @@ index 1bce95fa..e3268e36 100644
    parse_makefile_am(${CMAKE_CURRENT_SOURCE_DIR}/examples "EXAMPLEUTIL_SRCS"
                      "example_util_[^ ]*")
 -- 
-2.34.1
+2.35.1
 
