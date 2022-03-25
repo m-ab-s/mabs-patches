@@ -1,7 +1,7 @@
-From 03e0289812400e9c1d66739e843560159c0c5e05 Mon Sep 17 00:00:00 2001
+From 1f6e6b0f0b7bd87ef36c70222082ea64054a18a9 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 2 May 2021 20:14:30 -0500
-Subject: [PATCH] CMake: exclude mingw-w64 from some msvc exclusive things
+Subject: [PATCH 1/2] CMake: exclude mingw-w64 from some msvc exclusive things
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -40,5 +40,5 @@ index 9bd474de..f338b5ab 100644
              NAMES glib-2.dll glib-2-vs9.dll
              PATHS "${GLIB2_BASE_DIR}/bin"
 -- 
-2.31.1
+2.35.1
 

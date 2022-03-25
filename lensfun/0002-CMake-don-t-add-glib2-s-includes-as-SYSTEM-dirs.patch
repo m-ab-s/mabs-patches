@@ -1,0 +1,28 @@
+From aceff0972f4241c79d1f961039a913fa01301ee2 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 25 Mar 2022 18:39:24 -0500
+Subject: [PATCH 2/2] CMake: don't add glib2's includes as SYSTEM dirs
+
+breaks gcc as it adds -isystem /mingw32/include
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f338b5ab..2ef7b9e5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -116,7 +116,7 @@ ELSE()
+   FIND_PACKAGE(GLIB2 REQUIRED)
+ ENDIF()
+ 
+-INCLUDE_DIRECTORIES(SYSTEM ${GLIB2_INCLUDE_DIRS})
++INCLUDE_DIRECTORIES(${GLIB2_INCLUDE_DIRS})
+ LINK_DIRECTORIES(${GLIB2_LIBRARY_DIRS})
+ 
+ 
+-- 
+2.35.1
+
