@@ -1,4 +1,4 @@
-From 66f922b05187cded56f40ed6de263c2275a19568 Mon Sep 17 00:00:00 2001
+From 67f2aaaf229572f809250f311363110450eb5ccf Mon Sep 17 00:00:00 2001
 From: Gijs Peskens <gijs@peskens.net>
 Date: Fri, 25 Jun 2021 12:46:36 +0200
 Subject: [PATCH] Workaround/fixes for cJSON symbol collision
@@ -19,7 +19,7 @@ or at least be ABI compatible.
  7 files changed, 92 insertions(+), 22 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index 8e906ac..36b4b91 100755
+index 0ed8201..365b7da 100755
 --- a/meson.build
 +++ b/meson.build
 @@ -42,9 +42,12 @@ inc = []
@@ -54,13 +54,13 @@ index 8e906ac..36b4b91 100755
  threads = []
  test_args = []
  if host_machine.system() == 'windows'
-@@ -152,22 +167,49 @@ if not cc.check_header('stdatomic.h')
+@@ -154,22 +169,49 @@ if not cc.check_header('stdatomic.h')
      endif
  endif
  
 -#On ubuntu cjson does not come with pkgconfig files, hence the extended checking.
 -if not builtin_cjson
--	cjson_lib = dependency('cJSON', required: false)
+-	cjson_lib = dependency('libcjson', required: false)
 -	if not cjson_lib.found()
 -		cjson_lib = cc.find_library('cjson', required: required_library, has_headers: ['cjson/cJSON.h'])
 +cjson_lib = []
@@ -68,7 +68,7 @@ index 8e906ac..36b4b91 100755
 +	cdata.set10('HAVE_CJSON', 1)
 +	#On ubuntu cjson does not come with pkgconfig files, hence the extended checking.
 +	if not builtin_cjson
-+		cjson_lib = dependency('cJSON', required: false)
++		cjson_lib = dependency('libcjson', required: false)
  		if not cjson_lib.found()
 -			builtin_cjson = true
 +			cjson_lib = cc.find_library('cjson', required: required_library, has_headers: ['cjson/cJSON.h'])
@@ -114,9 +114,9 @@ index 8e906ac..36b4b91 100755
 +#								  include_directories: include_directories('contrib/lz4'))
 +#endif
  
- mbedcrypto_lib_found = false
- if use_mbedtls
-@@ -220,6 +262,7 @@ librist = library('librist',
+ if get_option('use_tun')
+ 	if host_machine.system() == 'linux' and cc.check_header('linux/if_tun.h')
+@@ -230,6 +272,7 @@ librist = library('librist',
  		deps,
  		stdatomic_dependency,
  		cjson_lib,
@@ -125,7 +125,7 @@ index 8e906ac..36b4b91 100755
  	name_prefix : '',
  	version: librist_version,
 diff --git a/meson_options.txt b/meson_options.txt
-index 7ca2934..1394d15 100644
+index 5232dfa..feb12f6 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
 @@ -1,7 +1,9 @@
@@ -139,7 +139,7 @@ index 7ca2934..1394d15 100644
  option('built_tools', type: 'boolean', value: true)
  option('fallback_builtin', type: 'boolean', value: true)
 diff --git a/src/rist.c b/src/rist.c
-index 88d07f1..167ff97 100644
+index fff0ab5..4e41a70 100644
 --- a/src/rist.c
 +++ b/src/rist.c
 @@ -7,6 +7,7 @@
@@ -150,7 +150,7 @@ index 88d07f1..167ff97 100644
  #include "rist-private.h"
  #include "log-private.h"
  #include "udp-private.h"
-@@ -636,8 +637,10 @@ int rist_stats_free(const struct rist_stats *stats_container)
+@@ -646,8 +647,10 @@ int rist_stats_free(const struct rist_stats *stats_container)
  {
  	if (!stats_container)
  		return -1;
@@ -291,10 +291,10 @@ index 67d1bae..38d826b 100644
  	return 0;
  }
 diff --git a/tools/ristreceiver.c b/tools/ristreceiver.c
-index 7edc6ec..caccd47 100644
+index c9091fb..6a958ec 100644
 --- a/tools/ristreceiver.c
 +++ b/tools/ristreceiver.c
-@@ -244,7 +244,9 @@ struct ristreceiver_flow_cumulative_stats *stats_list;
+@@ -376,7 +376,9 @@ struct ristreceiver_flow_cumulative_stats *stats_list;
  
  static int cb_stats(void *arg, const struct rist_stats *stats_container) {
  	(void)arg;
@@ -305,7 +305,7 @@ index 7edc6ec..caccd47 100644
  	{
  		struct ristreceiver_flow_cumulative_stats *stats = stats_list;
 diff --git a/tools/ristsender.c b/tools/ristsender.c
-index 4d6d99a..8dc2051 100644
+index 8ff1d3d..f43073a 100644
 --- a/tools/ristsender.c
 +++ b/tools/ristsender.c
 @@ -3,7 +3,7 @@
@@ -316,8 +316,8 @@ index 4d6d99a..8dc2051 100644
 +#include "config.h"
  #include <librist/librist.h>
  #include <librist/udpsocket.h>
- #include "librist/version.h"
-@@ -265,7 +265,9 @@ static int cb_recv_oob(void *arg, const struct rist_oob_block *oob_block)
+ #include <stdint.h>
+@@ -364,7 +364,9 @@ static int cb_recv_oob(void *arg, const struct rist_oob_block *oob_block)
  static int cb_stats(void *arg, const struct rist_stats *stats_container)
  {
  	(void)arg;
@@ -328,5 +328,5 @@ index 4d6d99a..8dc2051 100644
  	return 0;
  }
 -- 
-2.33.0
+2.35.1
 
