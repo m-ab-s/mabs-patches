@@ -1,0 +1,78 @@
+From 13ea09e30acaf2f3a8446c14d6f7a7c76e764129 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 23 Apr 2022 13:59:00 -0500
+Subject: [PATCH] avformat/tls_mbedtls: update file for mbedtls 3
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ libavformat/tls_mbedtls.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/libavformat/tls_mbedtls.c b/libavformat/tls_mbedtls.c
+index 5754d0d018..eb76a83377 100644
+--- a/libavformat/tls_mbedtls.c
++++ b/libavformat/tls_mbedtls.c
+@@ -19,8 +19,11 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+  */
+ 
++#include <mbedtls/version.h>
++#if MBEDTLS_VERSION_MAJOR < 3
+ #include <mbedtls/certs.h>
+ #include <mbedtls/config.h>
++#endif
+ #include <mbedtls/ctr_drbg.h>
+ #include <mbedtls/entropy.h>
+ #include <mbedtls/net_sockets.h>
+@@ -130,7 +133,11 @@ static void handle_pk_parse_error(URLContext *h, int ret)
+ static void handle_handshake_error(URLContext *h, int ret)
+ {
+     switch (ret) {
++#if MBEDTLS_VERSION_MAJOR < 3
+     case MBEDTLS_ERR_SSL_NO_USABLE_CIPHERSUITE:
++#else
++    case MBEDTLS_ERR_SSL_HANDSHAKE_FAILURE:
++#endif
+         av_log(h, AV_LOG_ERROR, "None of the common ciphersuites is usable. Was the local certificate correctly set?\n");
+         break;
+     case MBEDTLS_ERR_SSL_FATAL_ALERT_MESSAGE:
+@@ -195,16 +202,6 @@ static int tls_open(URLContext *h, const char *uri, int flags, AVDictionary **op
+         }
+     }
+ 
+-    // load key file
+-    if (shr->key_file) {
+-        if ((ret = mbedtls_pk_parse_keyfile(&tls_ctx->priv_key,
+-                                            shr->key_file,
+-                                            tls_ctx->priv_key_pw)) != 0) {
+-            handle_pk_parse_error(h, ret);
+-            goto fail;
+-        }
+-    }
+-
+     // seed the random number generator
+     if ((ret = mbedtls_ctr_drbg_seed(&tls_ctx->ctr_drbg_context,
+                                      mbedtls_entropy_func,
+@@ -214,6 +211,19 @@ static int tls_open(URLContext *h, const char *uri, int flags, AVDictionary **op
+         goto fail;
+     }
+ 
++    // load key file
++    if (shr->key_file) {
++        if ((ret = mbedtls_pk_parse_keyfile(&tls_ctx->priv_key,
++                                            shr->key_file,
++                                            tls_ctx->priv_key_pw,
++                                            mbedtls_ctr_drbg_random,
++                                            &tls_ctx->ctr_drbg_context)) != 0)
++        {
++            handle_pk_parse_error(h, ret);
++            goto fail;
++        }
++    }
++
+     if ((ret = mbedtls_ssl_config_defaults(&tls_ctx->ssl_config,
+                                            shr->listen ? MBEDTLS_SSL_IS_SERVER : MBEDTLS_SSL_IS_CLIENT,
+                                            MBEDTLS_SSL_TRANSPORT_STREAM,
+-- 
+2.35.1
+
