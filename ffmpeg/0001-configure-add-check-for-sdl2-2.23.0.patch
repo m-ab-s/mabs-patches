@@ -1,0 +1,29 @@
+From 6997d56beeda154bc2943b8f5a6bd0045935dd9b Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 5 May 2022 22:42:11 -0500
+Subject: [PATCH] configure: add check for sdl2 >= 2.23.0
+
+sdl2 recently changed their versioning, moving the patch level to minor level
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ configure | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/configure b/configure
+index 196873c4aa..fb3818364e 100755
+--- a/configure
++++ b/configure
+@@ -6743,6 +6743,9 @@ fi
+ if enabled sdl2; then
+     SDL2_CONFIG="${cross_prefix}sdl2-config"
+     test_pkg_config sdl2 "sdl2 >= 2.0.1 sdl2 < 2.1.0" SDL_events.h SDL_PollEvent
++    if disabled sdl2; then
++        test_pkg_config sdl2 "sdl2 >= 2.23.0" SDL_events.h SDL_PollEvent
++    fi
+     if disabled sdl2 && "${SDL2_CONFIG}" --version > /dev/null 2>&1; then
+         sdl2_cflags=$("${SDL2_CONFIG}" --cflags)
+         sdl2_extralibs=$("${SDL2_CONFIG}" --libs)
+-- 
+2.35.1
+
