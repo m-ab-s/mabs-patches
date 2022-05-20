@@ -1,0 +1,28 @@
+From ce88437e8fd7049245a88ed2d75289a4f8d36269 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 20 May 2022 00:25:08 -0500
+Subject: [PATCH 2/2] cmake: limit type suffixing libraries to msvc only
+
+mingw-w64 is perfectly capable of generating static and shared libraries with import libs with the same name
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8a5a4c0..4e9e640 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -452,7 +452,7 @@ foreach (TYPE IN ITEMS STATIC SHARED)
+       set (GFLAGS_IS_A_DLL 0)
+     endif ()
+     # filename suffix for static libraries on Windows
+-    if (OS_WINDOWS AND "^${TYPE}$" STREQUAL "^STATIC$")
++    if (MSVC AND OS_WINDOWS AND "^${TYPE}$" STREQUAL "^STATIC$")
+       set (type_suffix "_${type}")
+     else ()
+       set (type_suffix "")
+-- 
+2.36.1
+
