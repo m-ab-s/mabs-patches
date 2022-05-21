@@ -1,0 +1,24 @@
+From aaf949f2b4047e6986f2d6e6347ec9197fa5e844 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 21 May 2022 14:34:18 -0500
+Subject: [PATCH 4/4] pkgconfig: fix pkg-config file for mingw64
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ etc/luajit.pc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/etc/luajit.pc b/etc/luajit.pc
+index 39e1e577..aa750d82 100644
+--- a/etc/luajit.pc
++++ b/etc/luajit.pc
+@@ -21,5 +21,5 @@ URL: https://luajit.org
+ Version: ${version}
+ Requires:
+ Libs: -L${libdir} -l${libname}
+-Libs.private: -Wl,-E -lm -ldl
++Libs.private: -lm -liconv
+ Cflags: -I${includedir}
+-- 
+2.36.1
+

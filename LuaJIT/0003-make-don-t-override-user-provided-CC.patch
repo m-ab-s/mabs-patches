@@ -1,7 +1,7 @@
 From ad63db023fe6939768cff7aba6fe818426e7a989 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 21 May 2022 14:30:37 -0500
-Subject: [PATCH 3/3] make: don't override user-provided CC
+Subject: [PATCH 3/4] make: don't override user-provided CC
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
