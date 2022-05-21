@@ -1,0 +1,26 @@
+From ad63db023fe6939768cff7aba6fe818426e7a989 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 21 May 2022 14:30:37 -0500
+Subject: [PATCH 3/3] make: don't override user-provided CC
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ src/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Makefile b/src/Makefile
+index b35fd272..9bc4d119 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -24,7 +24,7 @@ NODOTABIVER= 51
+ # removing the '#' in front of them. Make sure you force a full recompile
+ # with "make clean", followed by "make" if you change any options.
+ #
+-DEFAULT_CC = gcc
++DEFAULT_CC := $(or $(CC),gcc)
+ #
+ # LuaJIT builds as a native 32 or 64 bit binary by default.
+ CC= $(DEFAULT_CC)
+-- 
+2.36.1
+

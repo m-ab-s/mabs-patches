@@ -1,7 +1,7 @@
-From 8a0ae5ae44faeb45c6a3271d53badd13de062f24 Mon Sep 17 00:00:00 2001
+From ce677409616a990cc10fc626d605757ff0f16ca1 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Mon, 18 May 2020 16:10:58 +0800
-Subject: [PATCH 1/2] Add win32 UTF-8 filesystem functions
+Subject: [PATCH 1/3] Add win32 UTF-8 filesystem functions
 
 Taken from https://github.com/wm4/libinsanity
 ---
@@ -23,7 +23,7 @@ Taken from https://github.com/wm4/libinsanity
  create mode 100644 src/lj_fs_io_replace.h
 
 diff --git a/src/Makefile b/src/Makefile
-index 2538503f..b762bd93 100644
+index 30d64be2..b35fd272 100644
 --- a/src/Makefile
 +++ b/src/Makefile
 @@ -500,7 +500,7 @@ LJCORE_O= lj_assert.o lj_gc.o lj_err.o lj_char.o lj_bc.o lj_obj.o lj_buf.o \
@@ -57,7 +57,7 @@ index 1ad6701a..2c1f8863 100644
  host/buildvm.o: host/buildvm.c host/buildvm.h lj_def.h lua.h luaconf.h \
   lj_arch.h lj_obj.h lj_def.h lj_arch.h lj_gc.h lj_obj.h lj_bc.h lj_ir.h \
 diff --git a/src/lib_io.c b/src/lib_io.c
-index b9d8cc75..93ab31cf 100644
+index 7f218e49..4b542035 100644
 --- a/src/lib_io.c
 +++ b/src/lib_io.c
 @@ -25,6 +25,7 @@
@@ -69,7 +69,7 @@ index b9d8cc75..93ab31cf 100644
  /* Userdata payload for I/O file. */
  typedef struct IOFileUD {
 diff --git a/src/lib_os.c b/src/lib_os.c
-index f19b831c..584311f8 100644
+index eb8704cf..133bbcd7 100644
 --- a/src/lib_os.c
 +++ b/src/lib_os.c
 @@ -22,6 +22,7 @@
@@ -81,7 +81,7 @@ index f19b831c..584311f8 100644
  #if LJ_TARGET_POSIX
  #include <unistd.h>
 diff --git a/src/lib_package.c b/src/lib_package.c
-index 2068a098..0e607b06 100644
+index 1f8b0677..09db1233 100644
 --- a/src/lib_package.c
 +++ b/src/lib_package.c
 @@ -16,6 +16,7 @@
@@ -93,7 +93,7 @@ index 2068a098..0e607b06 100644
  /* ------------------------------------------------------------------------ */
  
 diff --git a/src/lj_clib.c b/src/lj_clib.c
-index d8636a48..8d6d9550 100644
+index 57669a14..c6cadca3 100644
 --- a/src/lj_clib.c
 +++ b/src/lj_clib.c
 @@ -17,6 +17,7 @@
@@ -814,7 +814,7 @@ index 00000000..604e279f
 +
 +#endif
 diff --git a/src/lj_load.c b/src/lj_load.c
-index af0c2b1f..bb66f402 100644
+index 0aab4884..150be4e9 100644
 --- a/src/lj_load.c
 +++ b/src/lj_load.c
 @@ -22,6 +22,7 @@
@@ -826,7 +826,7 @@ index af0c2b1f..bb66f402 100644
  /* -- Load Lua source code and bytecode ----------------------------------- */
  
 diff --git a/src/lj_trace.c b/src/lj_trace.c
-index a0ff8864..a11df123 100644
+index c2329394..ee5896e3 100644
 --- a/src/lj_trace.c
 +++ b/src/lj_trace.c
 @@ -31,6 +31,7 @@
@@ -838,7 +838,7 @@ index a0ff8864..a11df123 100644
  /* -- Error handling ------------------------------------------------------ */
  
 diff --git a/src/ljamalg.c b/src/ljamalg.c
-index 384b3cc1..9a917ed9 100644
+index cae8356c..94263155 100644
 --- a/src/ljamalg.c
 +++ b/src/ljamalg.c
 @@ -73,6 +73,7 @@
@@ -850,5 +850,5 @@ index 384b3cc1..9a917ed9 100644
  #include "lib_aux.c"
  #include "lib_base.c"
 -- 
-2.33.0
+2.36.1
 
