@@ -1,4 +1,4 @@
-From 95e15b9fd42442d718b37f3eeed05311f100f852 Mon Sep 17 00:00:00 2001
+From 3ff20fba2d7c4460180db222285eb4fc02cafd09 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
@@ -12,7 +12,7 @@ Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
  5 files changed, 42 insertions(+), 8 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index d1606f549..fd84c3cbd 100644
+index 24074973c..7451e3f81 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -24,7 +24,7 @@ add_library(loader_specific_options INTERFACE)
@@ -70,9 +70,9 @@ index d1606f549..fd84c3cbd 100644
                            PROPERTIES SOVERSION "1"
                            VERSION ${LOADER_GENERATED_HEADER_VERSION})
 +    endif()
-     target_link_libraries(vulkan ${CMAKE_DL_LIBS} m)
+     target_link_libraries(vulkan PRIVATE ${CMAKE_DL_LIBS} m)
      if (NOT ANDROID)
-         target_link_libraries(vulkan Threads::Threads)
+         target_link_libraries(vulkan PRIVATE Threads::Threads)
 @@ -319,6 +321,10 @@ if (TARGET asm_offset)
      set_target_properties(asm_offset ${LOADER_STANDARD_C_PROPERTIES})
  endif()
@@ -85,10 +85,10 @@ index d1606f549..fd84c3cbd 100644
  include(FindPkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
 diff --git a/loader/loader.h b/loader/loader.h
-index 23d6229dd..010cc60a0 100644
+index 10fa14acd..7ec1bd2fd 100644
 --- a/loader/loader.h
 +++ b/loader/loader.h
-@@ -73,6 +73,9 @@ static inline void loader_init_dispatch(void *obj, const void *data) {
+@@ -76,6 +76,9 @@ static inline void loader_init_dispatch(void *obj, const void *data) {
  
  // Global variables used across files
  extern struct loader_struct loader;
@@ -115,7 +115,7 @@ index 23010f53d..09b1446e3 100644
  // All set through CMake
  #define VER_FILE_VERSION ${LOADER_VER_FILE_VERSION}
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index 6c3cdfa4a..b478c01a8 100644
+index cc469a4e0..54d6abe4f 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -86,6 +86,7 @@ void windows_initialization(void) {
@@ -147,10 +147,10 @@ index 6c3cdfa4a..b478c01a8 100644
                                             PDWORD reg_data_size, LPCSTR value_name) {
      static const wchar_t *softwareComponentGUID = L"{5c4c3332-344d-483c-8739-259e934c9cc8}";
 diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index bda77eb29..7fe1a39f3 100644
+index 62f74312e..957c3e2c1 100644
 --- a/loader/vk_loader_platform.h
 +++ b/loader/vk_loader_platform.h
-@@ -452,9 +452,25 @@ typedef HANDLE loader_platform_thread;
+@@ -451,9 +451,25 @@ typedef HANDLE loader_platform_thread;
  // The once init functionality is not used when building a DLL on Windows. This is because there is no way to clean up the
  // resources allocated by anything allocated by once init. This isn't a problem for static libraries, but it is for dynamic
  // ones. When building a DLL, we use DllMain() instead to allow properly cleaning up resources.
@@ -177,5 +177,5 @@ index bda77eb29..7fe1a39f3 100644
  // Thread IDs:
  typedef DWORD loader_platform_thread_id;
 -- 
-2.35.1
+2.36.1
 
