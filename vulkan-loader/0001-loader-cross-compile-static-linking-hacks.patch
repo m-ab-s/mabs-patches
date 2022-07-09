@@ -1,18 +1,17 @@
-From 3ff20fba2d7c4460180db222285eb4fc02cafd09 Mon Sep 17 00:00:00 2001
+From e94a931b6076d3c8b95c0efd97ecdd81ef400eba Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
 
 ---
- loader/CMakeLists.txt       | 20 +++++++++++++-------
- loader/loader.h             |  3 +++
- loader/loader.rc.in         |  4 ++++
- loader/loader_windows.c     |  7 ++++++-
- loader/vk_loader_platform.h | 16 ++++++++++++++++
- 5 files changed, 42 insertions(+), 8 deletions(-)
+ loader/CMakeLists.txt   | 20 +++++++++++++-------
+ loader/loader.h         |  3 +++
+ loader/loader.rc.in     |  4 ++++
+ loader/loader_windows.c |  7 ++++++-
+ 4 files changed, 26 insertions(+), 8 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 24074973c..7451e3f81 100644
+index 3e99612bf..723cfa155 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -24,7 +24,7 @@ add_library(loader_specific_options INTERFACE)
@@ -51,13 +50,14 @@ index 24074973c..7451e3f81 100644
      add_library(loader-opt STATIC ${OPT_LOADER_SRCS})
      target_link_libraries(loader-opt PUBLIC loader_specific_options)
      add_dependencies(loader-opt loader_asm_gen_files)
-@@ -251,16 +251,18 @@ if(WIN32)
+@@ -251,17 +251,19 @@ if(WIN32)
      add_dependencies(vulkan loader_asm_gen_files)
  
  else()
 -    if(APPLE AND BUILD_STATIC_LOADER)
 +    if(BUILD_STATIC_LOADER)
          add_library(vulkan STATIC ${NORMAL_LOADER_SRCS} ${OPT_LOADER_SRCS})
+         target_compile_definitions(vulkan PRIVATE BUILD_STATIC_LOADER)
      else()
          add_library(vulkan SHARED ${NORMAL_LOADER_SRCS} ${OPT_LOADER_SRCS})
      endif()
@@ -73,7 +73,7 @@ index 24074973c..7451e3f81 100644
      target_link_libraries(vulkan PRIVATE ${CMAKE_DL_LIBS} m)
      if (NOT ANDROID)
          target_link_libraries(vulkan PRIVATE Threads::Threads)
-@@ -319,6 +321,10 @@ if (TARGET asm_offset)
+@@ -320,6 +322,10 @@ if (TARGET asm_offset)
      set_target_properties(asm_offset ${LOADER_STANDARD_C_PROPERTIES})
  endif()
  
@@ -85,10 +85,10 @@ index 24074973c..7451e3f81 100644
  include(FindPkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
 diff --git a/loader/loader.h b/loader/loader.h
-index 10fa14acd..7ec1bd2fd 100644
+index 3beb8b6cd..f51379ddd 100644
 --- a/loader/loader.h
 +++ b/loader/loader.h
-@@ -76,6 +76,9 @@ static inline void loader_init_dispatch(void *obj, const void *data) {
+@@ -79,6 +79,9 @@ static inline void loader_init_dispatch(void *obj, const void *data) {
  
  // Global variables used across files
  extern struct loader_struct loader;
@@ -115,10 +115,10 @@ index 23010f53d..09b1446e3 100644
  // All set through CMake
  #define VER_FILE_VERSION ${LOADER_VER_FILE_VERSION}
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index cc469a4e0..54d6abe4f 100644
+index f99d05df9..0cf8a74b1 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
-@@ -86,6 +86,7 @@ void windows_initialization(void) {
+@@ -90,6 +90,7 @@ void windows_initialization(void) {
  #endif
  }
  
@@ -126,7 +126,7 @@ index cc469a4e0..54d6abe4f 100644
  BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      switch (reason) {
          case DLL_PROCESS_ATTACH:
-@@ -102,6 +103,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+@@ -106,6 +107,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      }
      return TRUE;
  }
@@ -134,7 +134,7 @@ index cc469a4e0..54d6abe4f 100644
  
  bool windows_add_json_entry(const struct loader_instance *inst,
                              char **reg_data,    // list of JSON files
-@@ -221,7 +223,10 @@ out:
+@@ -225,7 +227,10 @@ out:
      RegCloseKey(hkrKey);
      return found;
  }
@@ -146,36 +146,6 @@ index cc469a4e0..54d6abe4f 100644
  VkResult windows_get_device_registry_files(const struct loader_instance *inst, uint32_t log_target_flag, char **reg_data,
                                             PDWORD reg_data_size, LPCSTR value_name) {
      static const wchar_t *softwareComponentGUID = L"{5c4c3332-344d-483c-8739-259e934c9cc8}";
-diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index 62f74312e..957c3e2c1 100644
---- a/loader/vk_loader_platform.h
-+++ b/loader/vk_loader_platform.h
-@@ -451,9 +451,25 @@ typedef HANDLE loader_platform_thread;
- // The once init functionality is not used when building a DLL on Windows. This is because there is no way to clean up the
- // resources allocated by anything allocated by once init. This isn't a problem for static libraries, but it is for dynamic
- // ones. When building a DLL, we use DllMain() instead to allow properly cleaning up resources.
-+#if defined(LOADER_DYNAMIC_LIB)
- #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var)
- #define LOADER_PLATFORM_THREAD_ONCE_DEFINITION(var)
- #define LOADER_PLATFORM_THREAD_ONCE(ctl, func)
-+#else
-+#define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var) INIT_ONCE var = INIT_ONCE_STATIC_INIT;
-+#define LOADER_PLATFORM_THREAD_ONCE_DEFINITION(var) INIT_ONCE var;
-+#define LOADER_PLATFORM_THREAD_ONCE(ctl, func) loader_platform_thread_once_fn(ctl, func)
-+static BOOL CALLBACK InitFuncWrapper(PINIT_ONCE InitOnce, PVOID Parameter, PVOID *Context) {
-+    void (*func)(void) = (void (*)(void))Parameter;
-+    func();
-+    return TRUE;
-+}
-+static void loader_platform_thread_once_fn(void *ctl, void (*func)(void)) {
-+    assert(func != NULL);
-+    assert(ctl != NULL);
-+    InitOnceExecuteOnce((PINIT_ONCE)ctl, InitFuncWrapper, (void *)func, NULL);
-+}
-+#endif
- 
- // Thread IDs:
- typedef DWORD loader_platform_thread_id;
 -- 
 2.36.1
 
