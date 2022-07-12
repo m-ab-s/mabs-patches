@@ -1,4 +1,4 @@
-From 26db845613670ea93de27bd9fdf938d6e0d9bc76 Mon Sep 17 00:00:00 2001
+From 2a216f32cfcbf76550e2ca0f06003c136dfe8439 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 2/2] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
@@ -9,7 +9,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 723cfa155..dbbb1090a 100644
+index 93c685555..af45c5405 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -330,7 +330,7 @@ endif()
@@ -22,5 +22,5 @@ index 723cfa155..dbbb1090a 100644
      endforeach()
      if(WIN32)
 -- 
-2.36.1
+2.37.0
 

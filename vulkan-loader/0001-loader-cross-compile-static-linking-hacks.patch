@@ -1,17 +1,17 @@
-From e94a931b6076d3c8b95c0efd97ecdd81ef400eba Mon Sep 17 00:00:00 2001
+From 75de702320cc6777419b3a77064ff92f5afa25a6 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
 
 ---
- loader/CMakeLists.txt   | 20 +++++++++++++-------
- loader/loader.h         |  3 +++
- loader/loader.rc.in     |  4 ++++
- loader/loader_windows.c |  7 ++++++-
- 4 files changed, 26 insertions(+), 8 deletions(-)
+ loader/CMakeLists.txt       | 22 ++++++++++++++--------
+ loader/loader.rc.in         |  4 ++++
+ loader/loader_windows.c     |  9 +++++++--
+ loader/vk_loader_platform.h | 14 ++++++++++++++
+ 4 files changed, 39 insertions(+), 10 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 3e99612bf..723cfa155 100644
+index 3e99612bf..93c685555 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -24,7 +24,7 @@ add_library(loader_specific_options INTERFACE)
@@ -32,6 +32,15 @@ index 3e99612bf..723cfa155 100644
      if(MINGW)
          find_program(JWASM_FOUND jwasm)
          if (JWASM_FOUND)
+@@ -145,7 +145,7 @@ if(WIN32)
+     if (USE_MASM)
+       enable_language(ASM_MASM)
+     endif ()
+-    if(CMAKE_ASM_MASM_COMPILER_WORKS OR JWASM_FOUND)
++    if(MSVC AND CMAKE_ASM_MASM_COMPILER_WORKS OR JWASM_FOUND)
+         if(MINGW)
+             set(CMAKE_ASM_MASM_FLAGS ${CMAKE_ASM_MASM_FLAGS} ${JWASM_FLAGS})
+         elseif(NOT CMAKE_CL_64 AND NOT JWASM_FOUND)
 @@ -168,7 +168,7 @@ if(WIN32)
          target_link_libraries(loader-unknown-chain loader_specific_options)
          set_target_properties(loader-unknown-chain PROPERTIES CMAKE_C_FLAGS_DEBUG "${MODIFIED_C_FLAGS_DEBUG}")
@@ -84,20 +93,6 @@ index 3e99612bf..723cfa155 100644
  # Generate pkg-config file.
  include(FindPkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
-diff --git a/loader/loader.h b/loader/loader.h
-index 3beb8b6cd..f51379ddd 100644
---- a/loader/loader.h
-+++ b/loader/loader.h
-@@ -79,6 +79,9 @@ static inline void loader_init_dispatch(void *obj, const void *data) {
- 
- // Global variables used across files
- extern struct loader_struct loader;
-+#if defined(_WIN32) && !defined(LOADER_DYNAMIC_LIB)
-+extern LOADER_PLATFORM_THREAD_ONCE_DEFINITION(once_init);
-+#endif
- extern loader_platform_thread_mutex loader_lock;
- extern loader_platform_thread_mutex loader_json_lock;
- extern loader_platform_thread_mutex loader_preload_icd_lock;
 diff --git a/loader/loader.rc.in b/loader/loader.rc.in
 index 23010f53d..09b1446e3 100644
 --- a/loader/loader.rc.in
@@ -115,18 +110,27 @@ index 23010f53d..09b1446e3 100644
  // All set through CMake
  #define VER_FILE_VERSION ${LOADER_VER_FILE_VERSION}
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index f99d05df9..0cf8a74b1 100644
+index 89408d2ed..4abec1b4b 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
-@@ -90,6 +90,7 @@ void windows_initialization(void) {
+@@ -32,7 +32,7 @@
+ // This needs to be defined first, or else we'll get redefinitions on NTSTATUS values
+ #define UMDF_USING_NTSTATUS
+ #include <ntstatus.h>
+-
++#include <winsock2.h>
+ #include "loader_windows.h"
+ 
+ #include "allocation.h"
+@@ -88,6 +88,7 @@ void windows_initialization(void) {
  #endif
  }
  
-+#if defined(LOADER_DYNAMIC_LIB)
++#if !defined(BUILD_STATIC_LOADER)
  BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      switch (reason) {
          case DLL_PROCESS_ATTACH:
-@@ -106,6 +107,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+@@ -104,6 +105,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      }
      return TRUE;
  }
@@ -134,7 +138,7 @@ index f99d05df9..0cf8a74b1 100644
  
  bool windows_add_json_entry(const struct loader_instance *inst,
                              char **reg_data,    // list of JSON files
-@@ -225,7 +227,10 @@ out:
+@@ -223,7 +225,10 @@ out:
      RegCloseKey(hkrKey);
      return found;
  }
@@ -146,6 +150,31 @@ index f99d05df9..0cf8a74b1 100644
  VkResult windows_get_device_registry_files(const struct loader_instance *inst, uint32_t log_target_flag, char **reg_data,
                                             PDWORD reg_data_size, LPCSTR value_name) {
      static const wchar_t *softwareComponentGUID = L"{5c4c3332-344d-483c-8739-259e934c9cc8}";
+diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
+index 864eaf4be..bdf58437a 100644
+--- a/loader/vk_loader_platform.h
++++ b/loader/vk_loader_platform.h
+@@ -212,6 +212,20 @@ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*fu
+ #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var) pthread_once_t var = PTHREAD_ONCE_INIT;
+ #define LOADER_PLATFORM_THREAD_ONCE_EXTERN_DEFINITION(var) extern pthread_once_t var;
+ #define LOADER_PLATFORM_THREAD_ONCE(ctl, func) loader_platform_thread_once_fn(ctl, func);
++#elif defined(_WIN32) && defined(BUILD_STATIC_LOADER)
++static BOOL CALLBACK InitFuncWrapper(PINIT_ONCE InitOnce, PVOID Parameter, PVOID *Context) {
++    void (*func)(void) = (void (*)(void))Parameter;
++    func();
++    return TRUE;
++}
++static void loader_platform_thread_once_fn(void *ctl, void (*func)(void)) {
++    assert(func != NULL);
++    assert(ctl != NULL);
++    InitOnceExecuteOnce((PINIT_ONCE)ctl, InitFuncWrapper, (void *)func, NULL);
++}
++#define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var) INIT_ONCE var = INIT_ONCE_STATIC_INIT;
++#define LOADER_PLATFORM_THREAD_ONCE_DEFINITION(var) INIT_ONCE var;
++#define LOADER_PLATFORM_THREAD_ONCE(ctl, func) loader_platform_thread_once_fn(ctl, func)
+ #else
+ #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var)
+ #define LOADER_PLATFORM_THREAD_ONCE_EXTERN_DEFINITION(var)
 -- 
-2.36.1
+2.37.0
 
