@@ -1,4 +1,4 @@
-From 2a216f32cfcbf76550e2ca0f06003c136dfe8439 Mon Sep 17 00:00:00 2001
+From 7d87599ce8697601317cc72e5184869cf3c9ba60 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 2/2] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
