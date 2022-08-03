@@ -1,0 +1,32 @@
+From 8c136ee767e192436cd1e1455263bf07c6c8f22c Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 22 May 2021 17:53:54 -0500
+Subject: [PATCH 2/3] vwebp: link winmm if windows
+
+static libglut.a requires winmm but cmake's FindGLUT.cmake doesn't
+recognize this.
+
+Similar issue to https://gitlab.com/libtiff/libtiff/-/merge_requests/233
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9ba66e1f..bcd7fd7d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -604,6 +604,9 @@ if(WEBP_BUILD_VWEBP)
+                           imageioutil
+                           webp
+                           webpdemux)
++    if(WIN32)
++      target_link_libraries(vwebp winmm)
++    endif()
+     target_include_directories(vwebp
+                                PRIVATE ${GLUT_INCLUDE_DIR}
+                                        ${CMAKE_CURRENT_BINARY_DIR}/src
+-- 
+2.37.1
+
