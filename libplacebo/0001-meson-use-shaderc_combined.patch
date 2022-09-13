@@ -1,4 +1,4 @@
-From 45b49266a9152e3c651bc025d444beb548fbad00 Mon Sep 17 00:00:00 2001
+From ba61dafe1c1e4237af3f9655a6ad03defd5b9dcc Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 24 Jan 2022 13:07:06 -0600
 Subject: [PATCH 1/2] meson: use shaderc_combined
@@ -9,7 +9,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/meson.build b/src/meson.build
-index 3a00090..57bbd57 100644
+index d3eaccf..5b7072b 100644
 --- a/src/meson.build
 +++ b/src/meson.build
 @@ -36,7 +36,7 @@ test_deps = []
@@ -22,5 +22,5 @@ index 3a00090..57bbd57 100644
  
  opengl = disabler()
 -- 
-2.37.1
+2.37.3
 

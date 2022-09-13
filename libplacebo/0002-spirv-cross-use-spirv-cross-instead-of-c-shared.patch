@@ -1,4 +1,4 @@
-From aca0fa69e0c8025d0e2741e95225b6fa2ac9f16f Mon Sep 17 00:00:00 2001
+From 989d8a3de811b12ce01e38df84bba0d414ba5611 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 7 Feb 2022 09:16:37 -0600
 Subject: [PATCH 2/2] spirv-cross: use spirv-cross instead of -c-shared
@@ -9,7 +9,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/meson.build b/src/meson.build
-index 57bbd57..c136d40 100644
+index 5b7072b..2beb5be 100644
 --- a/src/meson.build
 +++ b/src/meson.build
 @@ -37,7 +37,7 @@ test_deps = []
@@ -22,5 +22,5 @@ index 57bbd57..c136d40 100644
  opengl = disabler()
  if not get_option('opengl').disabled()
 -- 
-2.37.1
+2.37.3
 
