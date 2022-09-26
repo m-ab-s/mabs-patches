@@ -1,26 +1,24 @@
-From ba61dafe1c1e4237af3f9655a6ad03defd5b9dcc Mon Sep 17 00:00:00 2001
+From 51d1fc77a09efd8ad6851b96eb2d3c78830def28 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 24 Jan 2022 13:07:06 -0600
 Subject: [PATCH 1/2] meson: use shaderc_combined
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- src/meson.build | 2 +-
+ src/glsl/meson.build | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/src/meson.build b/src/meson.build
-index d3eaccf..5b7072b 100644
---- a/src/meson.build
-+++ b/src/meson.build
-@@ -36,7 +36,7 @@ test_deps = []
- 
- vulkan_opt = get_option('vulkan')
- vulkan = dependency('vulkan', version: '>=1.2.0', required: vulkan_opt)
+diff --git a/src/glsl/meson.build b/src/glsl/meson.build
+index 19b4bc6..a62a4ae 100644
+--- a/src/glsl/meson.build
++++ b/src/glsl/meson.build
+@@ -1,5 +1,5 @@
+ # shaderc
 -shaderc = dependency('shaderc', version: '>=2019.1', required: get_option('shaderc'))
 +shaderc = dependency('shaderc_combined', version: '>=2019.1', required: get_option('shaderc'))
- cross = dependency('spirv-cross-c-shared', version: '>=0.29.0', required: get_option('d3d11'))
- 
- opengl = disabler()
+ components.set('shaderc', shaderc.found())
+ if shaderc.found()
+   build_deps += shaderc
 -- 
 2.37.3
 
