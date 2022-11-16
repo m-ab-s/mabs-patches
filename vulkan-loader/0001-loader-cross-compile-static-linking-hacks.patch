@@ -1,4 +1,4 @@
-From 2aa2dce17baafc7a9cf01802a406551f7c81135c Mon Sep 17 00:00:00 2001
+From 1d8a89bf1ae035e2bc81e0c924df90fff355d583 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
@@ -10,7 +10,7 @@ Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
  3 files changed, 31 insertions(+), 9 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 3e99612bf..93c685555 100644
+index 2eb704fde..a4c605114 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -24,7 +24,7 @@ add_library(loader_specific_options INTERFACE)
@@ -22,7 +22,7 @@ index 3e99612bf..93c685555 100644
      if(MSVC)
          # Use static MSVCRT libraries
          foreach(configuration
-@@ -126,7 +126,7 @@ set(ASM_FAILURE_MSG "The build will fall back on building with C code\n")
+@@ -130,7 +130,7 @@ set(ASM_FAILURE_MSG "The build will fall back on building with C code\n")
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG}Note that this may be unsafe, as the C code requires tail-call optimizations to remove")
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} the stack frame for certain calls. If the compiler does not do this, then unknown device")
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} extensions will suffer from a corrupted stack.")
@@ -31,7 +31,7 @@ index 3e99612bf..93c685555 100644
      if(MINGW)
          find_program(JWASM_FOUND jwasm)
          if (JWASM_FOUND)
-@@ -145,7 +145,7 @@ if(WIN32)
+@@ -149,7 +149,7 @@ if(WIN32)
      if (USE_MASM)
        enable_language(ASM_MASM)
      endif ()
@@ -40,7 +40,7 @@ index 3e99612bf..93c685555 100644
          if(MINGW)
              set(CMAKE_ASM_MASM_FLAGS ${CMAKE_ASM_MASM_FLAGS} ${JWASM_FLAGS})
          elseif(NOT CMAKE_CL_64 AND NOT JWASM_FOUND)
-@@ -168,7 +168,7 @@ if(WIN32)
+@@ -191,7 +191,7 @@ if(WIN32)
          target_link_libraries(loader-unknown-chain loader_specific_options)
          set_target_properties(loader-unknown-chain PROPERTIES CMAKE_C_FLAGS_DEBUG "${MODIFIED_C_FLAGS_DEBUG}")
      endif()
@@ -49,7 +49,7 @@ index 3e99612bf..93c685555 100644
      # For MacOS, use the C code and force the compiler's tail-call optimization instead of using assembly code.
      set(OPT_LOADER_SRCS ${OPT_LOADER_SRCS} unknown_ext_chain.c)
      set_source_files_properties(${OPT_LOADER_SRCS} PROPERTIES COMPILE_FLAGS -O)
-@@ -215,7 +215,7 @@ else() # i.e.: Linux
+@@ -268,7 +268,7 @@ else() # i.e.: Linux
      endif()
  endif()
  
@@ -58,7 +58,7 @@ index 3e99612bf..93c685555 100644
      add_library(loader-opt STATIC ${OPT_LOADER_SRCS})
      target_link_libraries(loader-opt PUBLIC loader_specific_options)
      add_dependencies(loader-opt loader_asm_gen_files)
-@@ -251,17 +251,19 @@ if(WIN32)
+@@ -310,17 +310,19 @@ if(WIN32)
      add_dependencies(vulkan loader_asm_gen_files)
  
  else()
@@ -81,7 +81,7 @@ index 3e99612bf..93c685555 100644
      target_link_libraries(vulkan PRIVATE ${CMAKE_DL_LIBS} m)
      if (NOT ANDROID)
          target_link_libraries(vulkan PRIVATE Threads::Threads)
-@@ -320,6 +322,10 @@ if (TARGET asm_offset)
+@@ -380,6 +382,10 @@ if (TARGET asm_offset)
      set_target_properties(asm_offset ${LOADER_STANDARD_C_PROPERTIES})
  endif()
  
@@ -90,10 +90,10 @@ index 3e99612bf..93c685555 100644
 +endif()
 +
  # Generate pkg-config file.
- include(FindPkgConfig QUIET)
+ find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index 89408d2ed..b8019aca7 100644
+index db8b69104..b0fbf561f 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -32,7 +32,7 @@
@@ -105,7 +105,7 @@ index 89408d2ed..b8019aca7 100644
  #include "loader_windows.h"
  
  #include "allocation.h"
-@@ -88,6 +88,7 @@ void windows_initialization(void) {
+@@ -91,6 +91,7 @@ void windows_initialization(void) {
  #endif
  }
  
@@ -113,7 +113,7 @@ index 89408d2ed..b8019aca7 100644
  BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      switch (reason) {
          case DLL_PROCESS_ATTACH:
-@@ -104,6 +105,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+@@ -107,6 +108,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      }
      return TRUE;
  }
@@ -122,10 +122,10 @@ index 89408d2ed..b8019aca7 100644
  bool windows_add_json_entry(const struct loader_instance *inst,
                              char **reg_data,    // list of JSON files
 diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index 864eaf4be..c626c6bee 100644
+index 44120f2c2..914188e28 100644
 --- a/loader/vk_loader_platform.h
 +++ b/loader/vk_loader_platform.h
-@@ -212,6 +212,20 @@ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*fu
+@@ -225,6 +225,20 @@ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*fu
  #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var) pthread_once_t var = PTHREAD_ONCE_INIT;
  #define LOADER_PLATFORM_THREAD_ONCE_EXTERN_DEFINITION(var) extern pthread_once_t var;
  #define LOADER_PLATFORM_THREAD_ONCE(ctl, func) loader_platform_thread_once_fn(ctl, func);
@@ -147,5 +147,5 @@ index 864eaf4be..c626c6bee 100644
  #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var)
  #define LOADER_PLATFORM_THREAD_ONCE_EXTERN_DEFINITION(var)
 -- 
-2.37.0
+2.38.1
 

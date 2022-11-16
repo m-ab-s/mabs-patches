@@ -1,26 +1,37 @@
-From e1d86becef492d18d6101e533730fe2171866e71 Mon Sep 17 00:00:00 2001
+From 82c69a1f4418fbd30cb63960250c913ea639eaa5 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 2/2] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- loader/CMakeLists.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ loader/CMakeLists.txt | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 93c685555..af45c5405 100644
+index a4c605114..779cd4d95 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -330,7 +330,7 @@ endif()
- include(FindPkgConfig QUIET)
+@@ -391,14 +391,11 @@ find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
      set(VK_API_VERSION "${LOADER_GENERATED_HEADER_VERSION}")
--    foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES} ${PLATFORM_LIBS})
+     set(PRIVATE_LIBS "")
+-    if (APPLE AND BUILD_STATIC_LOADER)
+-        # Libs.private should only be present when building a static loader
+-        foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
+-            list(APPEND PRIVATE_LIBS "-l${LIB}")
+-        endforeach()
+-        list(REMOVE_DUPLICATES PRIVATE_LIBS)
+-        set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
+-    endif()
 +    foreach(LIB ${PLATFORM_LIBS})
-         set(PRIVATE_LIBS "${PRIVATE_LIBS} -l${LIB}")
-     endforeach()
++        list(APPEND PRIVATE_LIBS "-l${LIB}")
++    endforeach()
++    list(REMOVE_DUPLICATES PRIVATE_LIBS)
++    set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
      if(WIN32)
+         if(MINGW)
+             set(VULKAN_LIB_SUFFIX "-1.dll")
 -- 
-2.37.0
+2.38.1
 
