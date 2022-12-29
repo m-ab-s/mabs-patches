@@ -1,4 +1,4 @@
-From 82c69a1f4418fbd30cb63960250c913ea639eaa5 Mon Sep 17 00:00:00 2001
+From ae7ac077994b3e992047a96b379dada09b681b92 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 2/2] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
@@ -9,12 +9,12 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index a4c605114..779cd4d95 100644
+index edaea661a..14067886a 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -391,14 +391,11 @@ find_package(PkgConfig QUIET)
+@@ -383,14 +383,11 @@ find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
-     set(VK_API_VERSION "${LOADER_GENERATED_HEADER_VERSION}")
+     set(VK_API_VERSION "${VulkanHeaders_VERSION}")
      set(PRIVATE_LIBS "")
 -    if (APPLE AND BUILD_STATIC_LOADER)
 -        # Libs.private should only be present when building a static loader
@@ -33,5 +33,5 @@ index a4c605114..779cd4d95 100644
          if(MINGW)
              set(VULKAN_LIB_SUFFIX "-1.dll")
 -- 
-2.38.1
+2.39.0
 
