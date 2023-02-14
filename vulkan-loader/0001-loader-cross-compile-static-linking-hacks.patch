@@ -1,4 +1,4 @@
-From 64af993423149c23bf5239a8bbe82b55c243f36c Mon Sep 17 00:00:00 2001
+From b7402586fb78468670e167bbaa71d28b2e36f443 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
@@ -10,7 +10,7 @@ Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
  3 files changed, 29 insertions(+), 7 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index c48f097c3..e422604b9 100644
+index babe02138..713d05400 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -21,7 +21,7 @@ add_library(loader_specific_options INTERFACE)
@@ -22,7 +22,7 @@ index c48f097c3..e422604b9 100644
      if(MSVC)
          # Use static MSVCRT libraries
          foreach(configuration
-@@ -127,7 +127,7 @@ set(ASM_FAILURE_MSG "The build will fall back on building with C code\n")
+@@ -124,7 +124,7 @@ set(ASM_FAILURE_MSG "The build will fall back on building with C code\n")
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG}Note that this may be unsafe, as the C code requires tail-call optimizations to remove")
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} the stack frame for certain calls. If the compiler does not do this, then unknown device")
  set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} extensions will suffer from a corrupted stack.")
@@ -31,7 +31,7 @@ index c48f097c3..e422604b9 100644
      if(MINGW)
          find_program(JWASM_FOUND jwasm)
          if (JWASM_FOUND)
-@@ -146,7 +146,7 @@ if(WIN32)
+@@ -143,7 +143,7 @@ if(WIN32)
      if (USE_MASM)
        enable_language(ASM_MASM)
      endif ()
@@ -40,7 +40,7 @@ index c48f097c3..e422604b9 100644
          if(MINGW)
              set(CMAKE_ASM_MASM_FLAGS ${CMAKE_ASM_MASM_FLAGS} ${JWASM_FLAGS})
          elseif(NOT CMAKE_CL_64 AND NOT JWASM_FOUND)
-@@ -186,7 +186,7 @@ if(WIN32)
+@@ -183,7 +183,7 @@ if(WIN32)
          target_link_libraries(loader-unknown-chain loader_specific_options)
          set_target_properties(loader-unknown-chain PROPERTIES CMAKE_C_FLAGS_DEBUG "${MODIFIED_C_FLAGS_DEBUG}")
      endif()
@@ -49,7 +49,7 @@ index c48f097c3..e422604b9 100644
      # For MacOS, use the C code and force the compiler's tail-call optimization instead of using assembly code.
      set(OPT_LOADER_SRCS ${OPT_LOADER_SRCS} unknown_ext_chain.c)
      set_source_files_properties(${OPT_LOADER_SRCS} PROPERTIES COMPILE_FLAGS -O)
-@@ -261,7 +261,7 @@ else() # i.e.: Linux
+@@ -258,7 +258,7 @@ else() # i.e.: Linux
      endif()
  endif()
  
@@ -58,7 +58,7 @@ index c48f097c3..e422604b9 100644
      add_library(loader-opt STATIC ${OPT_LOADER_SRCS})
      target_link_libraries(loader-opt PUBLIC loader_specific_options)
      add_dependencies(loader-opt loader_asm_gen_files)
-@@ -303,16 +303,18 @@ if(WIN32)
+@@ -306,16 +306,18 @@ if(WIN32)
      add_dependencies(vulkan loader_asm_gen_files)
  
  else()
@@ -73,12 +73,12 @@ index c48f097c3..e422604b9 100644
 +    if (NOT BUILD_STATIC_LOADER)
      set_target_properties(vulkan
                            PROPERTIES SOVERSION "1"
-                           VERSION ${LOADER_GENERATED_HEADER_VERSION})
+                           VERSION ${VULKAN_LOADER_VERSION})
 +    endif()
      target_link_libraries(vulkan PRIVATE ${CMAKE_DL_LIBS} m)
      if (NOT ANDROID)
          target_link_libraries(vulkan PRIVATE Threads::Threads)
-@@ -372,6 +374,10 @@ if (TARGET asm_offset)
+@@ -370,6 +372,10 @@ if (TARGET asm_offset)
      set_target_properties(asm_offset ${LOADER_STANDARD_C_PROPERTIES})
  endif()
  
@@ -90,7 +90,7 @@ index c48f097c3..e422604b9 100644
  find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index db8b69104..b0fbf561f 100644
+index 5b0e9dc6e..86994f9f0 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -32,7 +32,7 @@
@@ -144,5 +144,5 @@ index 44120f2c2..914188e28 100644
  #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var)
  #define LOADER_PLATFORM_THREAD_ONCE_EXTERN_DEFINITION(var)
 -- 
-2.39.0
+2.39.1
 
