@@ -1,4 +1,4 @@
-From 67f2aaaf229572f809250f311363110450eb5ccf Mon Sep 17 00:00:00 2001
+From 6e6494dc06b5ee4d859a49b952fd03c8d3274f55 Mon Sep 17 00:00:00 2001
 From: Gijs Peskens <gijs@peskens.net>
 Date: Fri, 25 Jun 2021 12:46:36 +0200
 Subject: [PATCH] Workaround/fixes for cJSON symbol collision
@@ -15,11 +15,11 @@ or at least be ABI compatible.
  src/stats.c          | 33 ++++++++++++++++------
  tools/rist2rist.c    |  3 ++
  tools/ristreceiver.c |  2 ++
- tools/ristsender.c   |  4 ++-
- 7 files changed, 92 insertions(+), 22 deletions(-)
+ tools/ristsender.c   |  6 ++--
+ 7 files changed, 93 insertions(+), 23 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index 0ed8201..365b7da 100755
+index f8ec49b..5e63b08 100755
 --- a/meson.build
 +++ b/meson.build
 @@ -42,9 +42,12 @@ inc = []
@@ -54,7 +54,7 @@ index 0ed8201..365b7da 100755
  threads = []
  test_args = []
  if host_machine.system() == 'windows'
-@@ -154,22 +169,49 @@ if not cc.check_header('stdatomic.h')
+@@ -164,22 +179,49 @@ if not cc.check_header('stdatomic.h')
      endif
  endif
  
@@ -116,7 +116,7 @@ index 0ed8201..365b7da 100755
  
  if get_option('use_tun')
  	if host_machine.system() == 'linux' and cc.check_header('linux/if_tun.h')
-@@ -230,6 +272,7 @@ librist = library('librist',
+@@ -240,6 +282,7 @@ librist = library('librist',
  		deps,
  		stdatomic_dependency,
  		cjson_lib,
@@ -139,7 +139,7 @@ index 5232dfa..feb12f6 100644
  option('built_tools', type: 'boolean', value: true)
  option('fallback_builtin', type: 'boolean', value: true)
 diff --git a/src/rist.c b/src/rist.c
-index fff0ab5..4e41a70 100644
+index 3f9a8cb..37f858a 100644
 --- a/src/rist.c
 +++ b/src/rist.c
 @@ -7,6 +7,7 @@
@@ -291,13 +291,13 @@ index 67d1bae..38d826b 100644
  	return 0;
  }
 diff --git a/tools/ristreceiver.c b/tools/ristreceiver.c
-index c9091fb..6a958ec 100644
+index 651fb02..668f217 100644
 --- a/tools/ristreceiver.c
 +++ b/tools/ristreceiver.c
-@@ -376,7 +376,9 @@ struct ristreceiver_flow_cumulative_stats *stats_list;
+@@ -419,7 +419,9 @@ struct ristreceiver_flow_cumulative_stats {
+ struct ristreceiver_flow_cumulative_stats *stats_list;
  
  static int cb_stats(void *arg, const struct rist_stats *stats_container) {
- 	(void)arg;
 +#if HAVE_CJSON
  	rist_log(&logging_settings, RIST_LOG_INFO, "%s\n",  stats_container->stats_json);
 +#endif
@@ -305,7 +305,7 @@ index c9091fb..6a958ec 100644
  	{
  		struct ristreceiver_flow_cumulative_stats *stats = stats_list;
 diff --git a/tools/ristsender.c b/tools/ristsender.c
-index 8ff1d3d..f43073a 100644
+index afc0c1a..e2c1bb9 100644
 --- a/tools/ristsender.c
 +++ b/tools/ristsender.c
 @@ -3,7 +3,7 @@
@@ -317,16 +317,17 @@ index 8ff1d3d..f43073a 100644
  #include <librist/librist.h>
  #include <librist/udpsocket.h>
  #include <stdint.h>
-@@ -364,7 +364,9 @@ static int cb_recv_oob(void *arg, const struct rist_oob_block *oob_block)
+@@ -424,7 +424,9 @@ static int cb_recv_oob(void *arg, const struct rist_oob_block *oob_block)
+ 
  static int cb_stats(void *arg, const struct rist_stats *stats_container)
  {
- 	(void)arg;
+-	rist_log(&logging_settings, RIST_LOG_INFO, "%s\n\n", stats_container->stats_json);
 +#if HAVE_CJSON
- 	rist_log(&logging_settings, RIST_LOG_INFO, "%s\n\n", stats_container->stats_json);
++    rist_log(&logging_settings, RIST_LOG_INFO, "%s\n\n", stats_container->stats_json);
 +#endif
- 	rist_stats_free(stats_container);
- 	return 0;
- }
+ #if HAVE_PROMETHEUS_SUPPORT
+ 	if (prom_stats_ctx != NULL)
+ 		rist_prometheus_parse_stats(prom_stats_ctx, stats_container, (uint64_t)arg);
 -- 
-2.35.1
+2.40.0
 
