@@ -1,0 +1,25 @@
+From 367a069644a1958c170468b116620ac9894ad32f Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 28 Mar 2023 16:17:44 -0500
+Subject: [PATCH 2/2] djxl_main: add cmath for std::log10
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ tools/djxl_main.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/djxl_main.cc b/tools/djxl_main.cc
+index 6781881b..e64e6fc8 100644
+--- a/tools/djxl_main.cc
++++ b/tools/djxl_main.cc
+@@ -14,6 +14,7 @@
+ #include <cstdio>
+ #include <cstdlib>
+ #include <cstring>
++#include <cmath>
+ #include <iostream>
+ #include <sstream>
+ #include <string>
+-- 
+2.40.0
+
