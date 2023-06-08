@@ -1,4 +1,4 @@
-From ca3bacacf866383b10785a7eba036d5dbfe80760 Mon Sep 17 00:00:00 2001
+From e588f26fcc9efe23a89c34c908955c0f80a498ae Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 2/2] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
@@ -9,10 +9,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 713d05400..2e1a2c06d 100644
+index b1c92741c..658e6fc83 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -380,14 +380,11 @@ endif()
+@@ -407,14 +407,11 @@ endif()
  find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
      set(PRIVATE_LIBS "")
@@ -33,5 +33,5 @@ index 713d05400..2e1a2c06d 100644
          if(MINGW)
              set(VULKAN_LIB_SUFFIX "-1.dll")
 -- 
-2.39.1
+2.41.0
 
