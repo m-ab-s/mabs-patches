@@ -1,16 +1,16 @@
-From 9fff3ceab74e568aa86e5be69cf6671d5ebb404d Mon Sep 17 00:00:00 2001
+From 71d0dc69ce6aa06d0e2985faac32769069536381 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
 
 ---
- loader/CMakeLists.txt       | 16 +++++++++++-----
+ loader/CMakeLists.txt       | 12 +++++++++---
  loader/loader_windows.c     |  4 +++-
  loader/vk_loader_platform.h | 14 ++++++++++++++
- 3 files changed, 28 insertions(+), 6 deletions(-)
+ 3 files changed, 26 insertions(+), 4 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index ad2aecb8b..b1c92741c 100644
+index 33cd8cbf5..7dcb1fa3d 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -21,7 +21,7 @@ add_library(loader_specific_options INTERFACE)
@@ -22,26 +22,8 @@ index ad2aecb8b..b1c92741c 100644
      if(MSVC)
          # Use static MSVCRT libraries
          foreach(configuration
-@@ -136,7 +136,7 @@ set(ASM_FAILURE_MSG "The build will fall back on building with C code\n")
- set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG}Note that this may be unsafe, as the C code requires tail-call optimizations to remove")
- set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} the stack frame for certain calls. If the compiler does not do this, then unknown device")
- set(ASM_FAILURE_MSG "${ASM_FAILURE_MSG} extensions will suffer from a corrupted stack.")
--if(WIN32)
-+if(WIN32 AND NOT USE_UNSAFE_C_GEN)
-     if(MINGW)
-         find_program(JWASM_FOUND jwasm)
-         if (JWASM_FOUND)
-@@ -155,7 +155,7 @@ if(WIN32)
-     if (USE_MASM)
-       enable_language(ASM_MASM)
-     endif ()
--    if(CMAKE_ASM_MASM_COMPILER_WORKS OR JWASM_FOUND)
-+    if(MSVC AND CMAKE_ASM_MASM_COMPILER_WORKS OR JWASM_FOUND)
-         if(MINGW)
-             set(CMAKE_ASM_MASM_FLAGS ${CMAKE_ASM_MASM_FLAGS} ${JWASM_FLAGS})
-         elseif(NOT CMAKE_CL_64 AND NOT JWASM_FOUND)
-@@ -270,7 +270,7 @@ else()
-     add_custom_target(loader_asm_gen_files) # This causes no assembly files to be generated.
+@@ -277,7 +277,7 @@ if(USE_ASSEMBLY_FALLBACK)
+     endif()
  endif()
  
 -if(WIN32)
@@ -49,7 +31,7 @@ index ad2aecb8b..b1c92741c 100644
      add_library(loader-opt STATIC ${OPT_LOADER_SRCS})
      target_link_libraries(loader-opt PUBLIC loader_specific_options)
      add_dependencies(loader-opt loader_asm_gen_files)
-@@ -314,16 +314,18 @@ if(WIN32)
+@@ -327,16 +327,18 @@ if(WIN32)
      add_dependencies(vulkan loader_asm_gen_files)
  
  else()
@@ -69,7 +51,7 @@ index ad2aecb8b..b1c92741c 100644
      target_link_libraries(vulkan PRIVATE ${CMAKE_DL_LIBS} m)
      if (NOT ANDROID)
          target_link_libraries(vulkan PRIVATE Threads::Threads)
-@@ -397,6 +399,10 @@ if (TARGET asm_offset)
+@@ -417,6 +419,10 @@ if (TARGET asm_offset)
      set_target_properties(asm_offset ${LOADER_STANDARD_C_PROPERTIES})
  endif()
  
@@ -81,7 +63,7 @@ index ad2aecb8b..b1c92741c 100644
  find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index 0f9861d80..97adcf34e 100644
+index 8c1d67fa4..4329efdce 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -32,7 +32,7 @@
@@ -93,7 +75,7 @@ index 0f9861d80..97adcf34e 100644
  #include "loader_windows.h"
  
  #include "allocation.h"
-@@ -94,6 +94,7 @@ void windows_initialization(void) {
+@@ -95,6 +95,7 @@ void windows_initialization(void) {
  #endif
  }
  
@@ -101,7 +83,7 @@ index 0f9861d80..97adcf34e 100644
  BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      switch (reason) {
          case DLL_PROCESS_ATTACH:
-@@ -110,6 +111,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+@@ -111,6 +112,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      }
      return TRUE;
  }
@@ -110,7 +92,7 @@ index 0f9861d80..97adcf34e 100644
  bool windows_add_json_entry(const struct loader_instance *inst,
                              char **reg_data,    // list of JSON files
 diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index 05d1a91d8..e389f7225 100644
+index 82a2533eb..48609a8a9 100644
 --- a/loader/vk_loader_platform.h
 +++ b/loader/vk_loader_platform.h
 @@ -230,6 +230,20 @@ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*fu
