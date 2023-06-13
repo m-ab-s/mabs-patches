@@ -1,0 +1,34 @@
+From 6078de2e9c88c98f46a42bd77373ec17c004d7e8 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 13 Jun 2023 07:57:19 -0500
+Subject: [PATCH 3/3] loader: fix 32-bit jwasm compilation
+
+jwasm, and by extension uasm, requires setting a cpu model to at least
+386 in order to set the model to flat.
+
+References:
+https://github.com/JWasm/JWasm/blob/7218960b65d69216693a655d928eb4c2fb6b505c/cpumodel.c#L330-L332
+https://github.com/Terraspace/UASM/blob/bffb18461dd541479064990c3b2750ab50ae23e2/cpumodel.c#L326-L328
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ loader/CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
+index c785d7b02..e9d24333f 100644
+--- a/loader/CMakeLists.txt
++++ b/loader/CMakeLists.txt
+@@ -146,7 +146,8 @@ if(WIN32)
+                 if (COMPILER_VERSION_OUTPUT MATCHES "x86_64")
+                     set(JWASM_FLAGS -win64)
+                 else()
+-                    set(JWASM_FLAGS -coff)
++                    # jwasm requires setting the cpu to at least 386 for setting a flat model
++                    set(JWASM_FLAGS -3 -coff)
+                 endif()
+             endif()
+         endif()
+-- 
+2.41.0
+
