@@ -1,19 +1,19 @@
-From 8ab8d26343bad338f4d0f58aed7ebdd2e2bf7ba5 Mon Sep 17 00:00:00 2001
+From cfef971758d8a945f733afc17d180bc071d17141 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
-Subject: [PATCH 1/3] loader: cross-compile & static linking hacks
+Subject: [PATCH 1/2] loader: cross-compile & static linking hacks
 
 ---
- loader/CMakeLists.txt       | 10 ++++++++--
+ loader/CMakeLists.txt       | 13 +++++++++++--
  loader/loader_windows.c     |  4 +++-
  loader/vk_loader_platform.h | 14 ++++++++++++++
- 3 files changed, 25 insertions(+), 3 deletions(-)
+ 3 files changed, 28 insertions(+), 3 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 33cd8cbf5..d4d15f741 100644
+index 3b7cdda1d..6bc4fcd53 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -277,7 +277,7 @@ if(USE_ASSEMBLY_FALLBACK)
+@@ -257,7 +257,7 @@ if(USE_ASSEMBLY_FALLBACK)
      endif()
  endif()
  
@@ -22,7 +22,7 @@ index 33cd8cbf5..d4d15f741 100644
      add_library(loader-opt STATIC ${OPT_LOADER_SRCS})
      target_link_libraries(loader-opt PUBLIC loader_specific_options)
      add_dependencies(loader-opt loader_asm_gen_files)
-@@ -327,16 +327,18 @@ if(WIN32)
+@@ -307,16 +307,18 @@ if(WIN32)
      add_dependencies(vulkan loader_asm_gen_files)
  
  else()
@@ -42,8 +42,18 @@ index 33cd8cbf5..d4d15f741 100644
      target_link_libraries(vulkan PRIVATE ${CMAKE_DL_LIBS} m)
      if (NOT ANDROID)
          target_link_libraries(vulkan PRIVATE Threads::Threads)
-@@ -417,6 +419,10 @@ if (TARGET asm_offset)
-     set_target_properties(asm_offset ${LOADER_STANDARD_C_PROPERTIES})
+@@ -377,6 +379,9 @@ else()
+         )
+ # cmake-format: on
+     endif()
++    if(WIN32)
++        target_link_libraries(vulkan PRIVATE loader-unknown-chain)
++    endif()
+ endif()
+ 
+ option(LOADER_USE_UNSAFE_FILE_SEARCH "Allows the loader to search in unsafe locations")
+@@ -397,6 +402,10 @@ if (TARGET asm_offset)
+     set_target_properties(asm_offset PROPERTIES ${LOADER_STANDARD_C_PROPERTIES})
  endif()
  
 +if(WIN32)
@@ -54,7 +64,7 @@ index 33cd8cbf5..d4d15f741 100644
  find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index 21494a0d3..9be068f95 100644
+index f9f2ddae8..d5bf050c7 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -32,7 +32,7 @@
@@ -72,9 +82,9 @@ index 21494a0d3..9be068f95 100644
  
 +#if !defined(BUILD_STATIC_LOADER)
  BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+     (void)hinst;
      switch (reason) {
-         case DLL_PROCESS_ATTACH:
-@@ -111,6 +112,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+@@ -112,6 +113,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      }
      return TRUE;
  }
@@ -83,7 +93,7 @@ index 21494a0d3..9be068f95 100644
  bool windows_add_json_entry(const struct loader_instance *inst,
                              char **reg_data,    // list of JSON files
 diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index ca1568817..75a22a711 100644
+index e7a1ad9b3..72cbcce09 100644
 --- a/loader/vk_loader_platform.h
 +++ b/loader/vk_loader_platform.h
 @@ -230,6 +230,20 @@ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*fu
