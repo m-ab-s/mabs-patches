@@ -1,4 +1,4 @@
-From e913e8f25fe6f08a662d9ed8080021199fb55eef Mon Sep 17 00:00:00 2001
+From bc92757a078a8ef4c00b9189964a62c616f6d53f Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 4 Sep 2021 00:18:00 -0500
 Subject: [PATCH] jv_thread: try using HAVE_PTHREAD_KEY_CREATE instead
@@ -10,13 +10,13 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/jv.c b/src/jv.c
-index 10eff41..0813d11 100644
+index 6de4150..268d5ac 100644
 --- a/src/jv.c
 +++ b/src/jv.c
-@@ -226,7 +226,7 @@ enum {
+@@ -221,7 +221,7 @@ enum {
  #define DEC_NUMBER_STRING_GUARD (14)
  
- #include <jv_thread.h>
+ #include "jv_thread.h"
 -#ifdef WIN32
 +#if !defined(HAVE_PTHREAD_KEY_CREATE)
  /* Copied from Heimdal: thread-specific keys; see lib/base/dll.c in Heimdal */
@@ -36,5 +36,5 @@ index a34cd08..d22434b 100644
  #include <winnt.h>
  #include <errno.h>
 -- 
-2.33.0
+2.41.0
 
