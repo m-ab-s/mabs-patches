@@ -1,0 +1,1149 @@
+From 3943a4f20037bc0f86d964e13c87e8653467ec9e Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 6 Jul 2023 13:57:56 -0500
+Subject: [PATCH 3/3] loader: prefix cjson symbols and mark most as static
+
+prevents conflicts with other libraries that might also use cjson
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ loader/cJSON.c    | 391 ++++++----------------------------------------
+ loader/cJSON.h    |  81 +---------
+ loader/loader.c   |  66 ++++----
+ loader/settings.c |  38 ++---
+ 4 files changed, 106 insertions(+), 470 deletions(-)
+
+diff --git a/loader/cJSON.c b/loader/cJSON.c
+index 9e0fa1036..d5a5c36d5 100644
+--- a/loader/cJSON.c
++++ b/loader/cJSON.c
+@@ -40,15 +40,15 @@
+ #include "loader.h"
+ #include "log.h"
+ 
+-void *cJSON_malloc(const VkAllocationCallbacks *pAllocator, size_t size) {
++static void *cJSON_malloc(const VkAllocationCallbacks *pAllocator, size_t size) {
+     return loader_alloc(pAllocator, size, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+ }
+ 
+-void *cJSON_malloc_instance_scope(const VkAllocationCallbacks *pAllocator, size_t size) {
++static void *cJSON_malloc_instance_scope(const VkAllocationCallbacks *pAllocator, size_t size) {
+     return loader_alloc(pAllocator, size, VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE);
+ }
+ 
+-void cJSON_Free(const VkAllocationCallbacks *pAllocator, void *pMemory) { loader_free(pAllocator, pMemory); }
++static void cJSON_Free(const VkAllocationCallbacks *pAllocator, void *pMemory) { loader_free(pAllocator, pMemory); }
+ 
+ /*
+ // commented out as it is unused - static error code channel requires external locks to be used.
+@@ -57,7 +57,7 @@ static const char *ep;
+ const char *cJSON_GetErrorPtr(void) { return ep; }
+ */
+ 
+-char *cJSON_strdup(const VkAllocationCallbacks *pAllocator, const char *str) {
++static char *cJSON_strdup(const VkAllocationCallbacks *pAllocator, const char *str) {
+     size_t len;
+     char *copy;
+ 
+@@ -69,7 +69,7 @@ char *cJSON_strdup(const VkAllocationCallbacks *pAllocator, const char *str) {
+ }
+ 
+ /* Internal constructor. */
+-cJSON *cJSON_New_Item(const VkAllocationCallbacks *pAllocator) {
++static cJSON *cJSON_New_Item(const VkAllocationCallbacks *pAllocator) {
+     cJSON *node = (cJSON *)cJSON_malloc(pAllocator, sizeof(cJSON));
+     if (node) {
+         memset(node, 0, sizeof(cJSON));
+@@ -79,11 +79,11 @@ cJSON *cJSON_New_Item(const VkAllocationCallbacks *pAllocator) {
+ }
+ 
+ /* Delete a cJSON structure. */
+-void cJSON_Delete(cJSON *c) {
++void loader_cJSON_Delete(cJSON *c) {
+     cJSON *next;
+     while (c) {
+         next = c->next;
+-        if (!(c->type & cJSON_IsReference) && c->child) cJSON_Delete(c->child);
++        if (!(c->type & cJSON_IsReference) && c->child) loader_cJSON_Delete(c->child);
+         if (!(c->type & cJSON_IsReference) && c->valuestring) cJSON_Free(c->pAllocator, c->valuestring);
+         if (!(c->type & cJSON_StringIsConst) && c->string) cJSON_Free(c->pAllocator, c->string);
+         cJSON_Free(c->pAllocator, c);
+@@ -93,7 +93,7 @@ void cJSON_Delete(cJSON *c) {
+ 
+ /* Parse the input text to generate a number, and populate the result into item.
+  */
+-const char *parse_number(cJSON *item, const char *num) {
++static const char *parse_number(cJSON *item, const char *num) {
+     double n = 0, sign = 1, scale = 0;
+     int subscale = 0, signsubscale = 1;
+ 
+@@ -127,7 +127,7 @@ const char *parse_number(cJSON *item, const char *num) {
+     return num;
+ }
+ 
+-size_t pow2gt(size_t x) {
++static size_t pow2gt(size_t x) {
+     --x;
+     x |= x >> 1;
+     x |= x >> 2;
+@@ -143,7 +143,7 @@ typedef struct {
+     size_t offset;
+ } printbuffer;
+ 
+-char *ensure(const VkAllocationCallbacks *pAllocator, printbuffer *p, size_t needed) {
++static char *ensure(const VkAllocationCallbacks *pAllocator, printbuffer *p, size_t needed) {
+     char *newbuffer;
+     size_t newsize;
+     if (!p || !p->buffer) return 0;
+@@ -164,7 +164,7 @@ char *ensure(const VkAllocationCallbacks *pAllocator, printbuffer *p, size_t nee
+     return newbuffer + p->offset;
+ }
+ 
+-size_t cJSON_update(printbuffer *p) {
++static size_t cJSON_update(printbuffer *p) {
+     char *str;
+     if (!p || !p->buffer) return 0;
+     str = p->buffer + p->offset;
+@@ -172,7 +172,7 @@ size_t cJSON_update(printbuffer *p) {
+ }
+ 
+ /* Render the number nicely from the given item into a string. */
+-char *print_number(cJSON *item, printbuffer *p) {
++static char *print_number(cJSON *item, printbuffer *p) {
+     char *str = 0;
+     size_t str_buf_size;
+     double d = item->valuedouble;
+@@ -208,7 +208,7 @@ char *print_number(cJSON *item, printbuffer *p) {
+     return str;
+ }
+ 
+-unsigned parse_hex4(const char *str) {
++static unsigned parse_hex4(const char *str) {
+     unsigned h = 0;
+     if (*str >= '0' && *str <= '9')
+         h += (*str) - '0';
+@@ -253,7 +253,7 @@ unsigned parse_hex4(const char *str) {
+ 
+ /* Parse the input text into an unescaped cstring, and populate item. */
+ static const unsigned char firstByteMark[7] = {0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC};
+-const char *parse_string(cJSON *item, const char *str) {
++static const char *parse_string(cJSON *item, const char *str) {
+     const char *ptr = str + 1;
+     char *ptr2;
+     char *out;
+@@ -342,7 +342,7 @@ const char *parse_string(cJSON *item, const char *str) {
+ }
+ 
+ /* Render the cstring provided to an escaped version that can be printed. */
+-char *print_string_ptr(const VkAllocationCallbacks *pAllocator, const char *str, printbuffer *p) {
++static char *print_string_ptr(const VkAllocationCallbacks *pAllocator, const char *str, printbuffer *p) {
+     const char *ptr;
+     char *ptr2;
+     char *out;
+@@ -437,25 +437,25 @@ char *print_string_ptr(const VkAllocationCallbacks *pAllocator, const char *str,
+     return out;
+ }
+ /* Invoke print_string_ptr (which is useful) on an item. */
+-char *print_string(cJSON *item, printbuffer *p) { return print_string_ptr(item->pAllocator, item->valuestring, p); }
++static char *print_string(cJSON *item, printbuffer *p) { return print_string_ptr(item->pAllocator, item->valuestring, p); }
+ 
+ /* Predeclare these prototypes. */
+-const char *parse_value(cJSON *item, const char *value);
+-char *print_value(cJSON *item, int depth, int fmt, printbuffer *p);
+-const char *parse_array(cJSON *item, const char *value);
+-char *print_array(cJSON *item, int depth, int fmt, printbuffer *p);
+-const char *parse_object(cJSON *item, const char *value);
+-char *print_object(cJSON *item, int depth, int fmt, printbuffer *p);
++static const char *parse_value(cJSON *item, const char *value);
++static char *print_value(cJSON *item, int depth, int fmt, printbuffer *p);
++static const char *parse_array(cJSON *item, const char *value);
++static char *print_array(cJSON *item, int depth, int fmt, printbuffer *p);
++static const char *parse_object(cJSON *item, const char *value);
++static char *print_object(cJSON *item, int depth, int fmt, printbuffer *p);
+ 
+ /* Utility to jump whitespace and cr/lf */
+-const char *skip(const char *in) {
++static const char *skip(const char *in) {
+     while (in && *in && (unsigned char)*in <= 32) in++;
+     return in;
+ }
+ 
+ /* Parse an object - create a new root, and populate. */
+-cJSON *cJSON_ParseWithOpts(const VkAllocationCallbacks *pAllocator, const char *value, const char **return_parse_end,
+-                           int require_null_terminated) {
++static cJSON *cJSON_ParseWithOpts(const VkAllocationCallbacks *pAllocator, const char *value, const char **return_parse_end,
++                                  int require_null_terminated) {
+     const char *end = 0;
+     cJSON *c = cJSON_New_Item(pAllocator);
+     // ep = 0; // commented out as it is unused
+@@ -463,7 +463,7 @@ cJSON *cJSON_ParseWithOpts(const VkAllocationCallbacks *pAllocator, const char *
+ 
+     end = parse_value(c, skip(value));
+     if (!end) {
+-        cJSON_Delete(c);
++        loader_cJSON_Delete(c);
+         return 0;
+     } /* parse failure. ep is set. */
+ 
+@@ -472,7 +472,7 @@ cJSON *cJSON_ParseWithOpts(const VkAllocationCallbacks *pAllocator, const char *
+     if (require_null_terminated) {
+         end = skip(end);
+         if (*end) {
+-            cJSON_Delete(c);
++            loader_cJSON_Delete(c);
+             // ep = end; // commented out as it is unused
+             return 0;
+         }
+@@ -481,24 +481,16 @@ cJSON *cJSON_ParseWithOpts(const VkAllocationCallbacks *pAllocator, const char *
+     return c;
+ }
+ /* Default options for cJSON_Parse */
+-cJSON *cJSON_Parse(const VkAllocationCallbacks *pAllocator, const char *value) {
++static cJSON *cJSON_Parse(const VkAllocationCallbacks *pAllocator, const char *value) {
+     return cJSON_ParseWithOpts(pAllocator, value, 0, 0);
+ }
+ 
+ /* Render a cJSON item/entity/structure to text. */
+-char *cJSON_Print(cJSON *item) { return print_value(item, 0, 1, 0); }
+-char *cJSON_PrintUnformatted(cJSON *item) { return print_value(item, 0, 0, 0); }
+-
+-char *cJSON_PrintBuffered(cJSON *item, int prebuffer, int fmt) {
+-    printbuffer p;
+-    p.buffer = (char *)cJSON_malloc(item->pAllocator, prebuffer);
+-    p.length = prebuffer;
+-    p.offset = 0;
+-    return print_value(item, 0, fmt, &p);
+-}
++char *loader_cJSON_Print(cJSON *item) { return print_value(item, 0, 1, 0); }
++char *loader_cJSON_PrintUnformatted(cJSON *item) { return print_value(item, 0, 0, 0); }
+ 
+ /* Parser core - when encountering text, process appropriately. */
+-const char *parse_value(cJSON *item, const char *value) {
++static const char *parse_value(cJSON *item, const char *value) {
+     if (!value) return 0; /* Fail on null. */
+     if (!strncmp(value, "null", 4)) {
+         item->type = cJSON_NULL;
+@@ -531,7 +523,7 @@ const char *parse_value(cJSON *item, const char *value) {
+ }
+ 
+ /* Render a value to text. */
+-char *print_value(cJSON *item, int depth, int fmt, printbuffer *p) {
++static char *print_value(cJSON *item, int depth, int fmt, printbuffer *p) {
+     char *out = 0;
+     if (!item) return 0;
+     if (p) {
+@@ -593,7 +585,7 @@ char *print_value(cJSON *item, int depth, int fmt, printbuffer *p) {
+ }
+ 
+ /* Build an array from input text. */
+-const char *parse_array(cJSON *item, const char *value) {
++static const char *parse_array(cJSON *item, const char *value) {
+     cJSON *child;
+     if (*value != '[') {
+         // ep = value; // commented out as it is unused
+@@ -626,7 +618,7 @@ const char *parse_array(cJSON *item, const char *value) {
+ }
+ 
+ /* Render an array to text */
+-char *print_array(cJSON *item, int depth, int fmt, printbuffer *p) {
++static char *print_array(cJSON *item, int depth, int fmt, printbuffer *p) {
+     char **entries;
+     char *out = 0, *ptr, *ret;
+     size_t len = 5;
+@@ -726,7 +718,7 @@ char *print_array(cJSON *item, int depth, int fmt, printbuffer *p) {
+ }
+ 
+ /* Build an object from the text. */
+-const char *parse_object(cJSON *item, const char *value) {
++static const char *parse_object(cJSON *item, const char *value) {
+     cJSON *child;
+     if (*value != '{') {
+         // ep = value; // commented out as it is unused
+@@ -775,7 +767,7 @@ const char *parse_object(cJSON *item, const char *value) {
+ }
+ 
+ /* Render an object to text. */
+-char *print_object(cJSON *item, int depth, int fmt, printbuffer *p) {
++static char *print_object(cJSON *item, int depth, int fmt, printbuffer *p) {
+     char **entries = 0, **names = 0;
+     char *out = 0, *ptr, *ret, *str;
+     int j;
+@@ -923,310 +915,23 @@ char *print_object(cJSON *item, int depth, int fmt, printbuffer *p) {
+ }
+ 
+ /* Get Array size/item / object item. */
+-int cJSON_GetArraySize(cJSON *array) {
++int loader_cJSON_GetArraySize(cJSON *array) {
+     cJSON *c = array->child;
+     int i = 0;
+     while (c) i++, c = c->next;
+     return i;
+ }
+-cJSON *cJSON_GetArrayItem(cJSON *array, int item) {
++cJSON *loader_cJSON_GetArrayItem(cJSON *array, int item) {
+     cJSON *c = array->child;
+     while (c && item > 0) item--, c = c->next;
+     return c;
+ }
+-cJSON *cJSON_GetObjectItem(cJSON *object, const char *string) {
++cJSON *loader_cJSON_GetObjectItem(cJSON *object, const char *string) {
+     cJSON *c = object->child;
+     while (c && strcmp(c->string, string)) c = c->next;
+     return c;
+ }
+ 
+-/* Utility for array list handling. */
+-void suffix_object(cJSON *prev, cJSON *item) {
+-    prev->next = item;
+-    item->prev = prev;
+-}
+-/* Utility for handling references. */
+-cJSON *create_reference(cJSON *item) {
+-    cJSON *ref = cJSON_New_Item(item->pAllocator);
+-    if (!ref) return 0;
+-    memcpy(ref, item, sizeof(cJSON));
+-    ref->string = 0;
+-    ref->type |= cJSON_IsReference;
+-    ref->next = ref->prev = 0;
+-    return ref;
+-}
+-
+-/* Add item to array/object. */
+-void cJSON_AddItemToArray(cJSON *array, cJSON *item) {
+-    cJSON *c = array->child;
+-    if (!item) return;
+-    if (!c) {
+-        array->child = item;
+-    } else {
+-        while (c && c->next) c = c->next;
+-        suffix_object(c, item);
+-    }
+-}
+-void cJSON_AddItemToObject(cJSON *object, const char *string, cJSON *item) {
+-    if (!item) return;
+-    if (item->string) cJSON_Free(object->pAllocator, item->string);
+-    item->string = cJSON_strdup(object->pAllocator, string);
+-    cJSON_AddItemToArray(object, item);
+-}
+-void cJSON_AddItemToObjectCS(cJSON *object, const char *string, cJSON *item) {
+-    if (!item) return;
+-    if (!(item->type & cJSON_StringIsConst) && item->string) cJSON_Free(object->pAllocator, item->string);
+-    item->string = (char *)string;
+-    item->type |= cJSON_StringIsConst;
+-    cJSON_AddItemToArray(object, item);
+-}
+-void cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item) { cJSON_AddItemToArray(array, create_reference(item)); }
+-void cJSON_AddItemReferenceToObject(cJSON *object, const char *string, cJSON *item) {
+-    cJSON_AddItemToObject(object, string, create_reference(item));
+-}
+-
+-cJSON *cJSON_DetachItemFromArray(cJSON *array, int which) {
+-    cJSON *c = array->child;
+-    while (c && which > 0) c = c->next, which--;
+-    if (!c) return 0;
+-    if (c->prev) c->prev->next = c->next;
+-    if (c->next) c->next->prev = c->prev;
+-    if (c == array->child) array->child = c->next;
+-    c->prev = c->next = 0;
+-    return c;
+-}
+-void cJSON_DeleteItemFromArray(cJSON *array, int which) { cJSON_Delete(cJSON_DetachItemFromArray(array, which)); }
+-cJSON *cJSON_DetachItemFromObject(cJSON *object, const char *string) {
+-    int i = 0;
+-    cJSON *c = object->child;
+-    while (c && strcmp(c->string, string)) i++, c = c->next;
+-    if (c) return cJSON_DetachItemFromArray(object, i);
+-    return 0;
+-}
+-void cJSON_DeleteItemFromObject(cJSON *object, const char *string) { cJSON_Delete(cJSON_DetachItemFromObject(object, string)); }
+-
+-/* Replace array/object items with new ones. */
+-void cJSON_InsertItemInArray(cJSON *array, int which, cJSON *newitem) {
+-    cJSON *c = array->child;
+-    while (c && which > 0) c = c->next, which--;
+-    if (!c) {
+-        cJSON_AddItemToArray(array, newitem);
+-        return;
+-    }
+-    newitem->next = c;
+-    newitem->prev = c->prev;
+-    c->prev = newitem;
+-    if (c == array->child)
+-        array->child = newitem;
+-    else
+-        newitem->prev->next = newitem;
+-}
+-void cJSON_ReplaceItemInArray(cJSON *array, int which, cJSON *newitem) {
+-    cJSON *c = array->child;
+-    while (c && which > 0) c = c->next, which--;
+-    if (!c) return;
+-    newitem->next = c->next;
+-    newitem->prev = c->prev;
+-    if (newitem->next) newitem->next->prev = newitem;
+-    if (c == array->child)
+-        array->child = newitem;
+-    else
+-        newitem->prev->next = newitem;
+-    c->next = c->prev = 0;
+-    cJSON_Delete(c);
+-}
+-void cJSON_ReplaceItemInObject(cJSON *object, const char *string, cJSON *newitem) {
+-    int i = 0;
+-    cJSON *c = object->child;
+-    while (c && strcmp(c->string, string)) i++, c = c->next;
+-    if (c) {
+-        newitem->string = cJSON_strdup(object->pAllocator, string);
+-        cJSON_ReplaceItemInArray(object, i, newitem);
+-    }
+-}
+-
+-/* Create basic types: */
+-cJSON *cJSON_CreateNull(const VkAllocationCallbacks *pAllocator) {
+-    cJSON *item = cJSON_New_Item(pAllocator);
+-    if (item) item->type = cJSON_NULL;
+-    return item;
+-}
+-cJSON *cJSON_CreateTrue(const VkAllocationCallbacks *pAllocator) {
+-    cJSON *item = cJSON_New_Item(pAllocator);
+-    if (item) item->type = cJSON_True;
+-    return item;
+-}
+-cJSON *cJSON_CreateFalse(const VkAllocationCallbacks *pAllocator) {
+-    cJSON *item = cJSON_New_Item(pAllocator);
+-    if (item) item->type = cJSON_False;
+-    return item;
+-}
+-cJSON *cJSON_CreateBool(const VkAllocationCallbacks *pAllocator, int b) {
+-    cJSON *item = cJSON_New_Item(pAllocator);
+-    if (item) item->type = b ? cJSON_True : cJSON_False;
+-    return item;
+-}
+-cJSON *cJSON_CreateNumber(const VkAllocationCallbacks *pAllocator, double num) {
+-    cJSON *item = cJSON_New_Item(pAllocator);
+-    if (item) {
+-        item->type = cJSON_Number;
+-        item->valuedouble = num;
+-        item->valueint = (int)num;
+-    }
+-    return item;
+-}
+-cJSON *cJSON_CreateString(const VkAllocationCallbacks *pAllocator, const char *string) {
+-    cJSON *item = cJSON_New_Item(pAllocator);
+-    if (item) {
+-        item->type = cJSON_String;
+-        item->valuestring = cJSON_strdup(pAllocator, string);
+-    }
+-    return item;
+-}
+-cJSON *cJSON_CreateArray(const VkAllocationCallbacks *pAllocator) {
+-    cJSON *item = cJSON_New_Item(pAllocator);
+-    if (item) item->type = cJSON_Array;
+-    return item;
+-}
+-cJSON *cJSON_CreateObject(const VkAllocationCallbacks *pAllocator) {
+-    cJSON *item = cJSON_New_Item(pAllocator);
+-    if (item) item->type = cJSON_Object;
+-    return item;
+-}
+-
+-/* Create Arrays: */
+-cJSON *cJSON_CreateIntArray(const VkAllocationCallbacks *pAllocator, const int *numbers, int count) {
+-    int i;
+-    cJSON *n = 0, *p = 0, *a = cJSON_CreateArray(pAllocator);
+-    for (i = 0; a && i < count; i++) {
+-        n = cJSON_CreateNumber(pAllocator, numbers[i]);
+-        if (!i)
+-            a->child = n;
+-        else
+-            suffix_object(p, n);
+-        p = n;
+-    }
+-    return a;
+-}
+-cJSON *cJSON_CreateFloatArray(const VkAllocationCallbacks *pAllocator, const float *numbers, int count) {
+-    int i;
+-    cJSON *n = 0, *p = 0, *a = cJSON_CreateArray(pAllocator);
+-    for (i = 0; a && i < count; i++) {
+-        n = cJSON_CreateNumber(pAllocator, numbers[i]);
+-        if (!i)
+-            a->child = n;
+-        else
+-            suffix_object(p, n);
+-        p = n;
+-    }
+-    return a;
+-}
+-cJSON *cJSON_CreateDoubleArray(const VkAllocationCallbacks *pAllocator, const double *numbers, int count) {
+-    int i;
+-    cJSON *n = 0, *p = 0, *a = cJSON_CreateArray(pAllocator);
+-    for (i = 0; a && i < count; i++) {
+-        n = cJSON_CreateNumber(pAllocator, numbers[i]);
+-        if (!i)
+-            a->child = n;
+-        else
+-            suffix_object(p, n);
+-        p = n;
+-    }
+-    return a;
+-}
+-cJSON *cJSON_CreateStringArray(const VkAllocationCallbacks *pAllocator, const char **strings, int count) {
+-    int i;
+-    cJSON *n = 0, *p = 0, *a = cJSON_CreateArray(pAllocator);
+-    for (i = 0; a && i < count; i++) {
+-        n = cJSON_CreateString(pAllocator, strings[i]);
+-        if (!i)
+-            a->child = n;
+-        else
+-            suffix_object(p, n);
+-        p = n;
+-    }
+-    return a;
+-}
+-
+-/* Duplication */
+-cJSON *cJSON_Duplicate(cJSON *item, int recurse) {
+-    cJSON *newitem, *cptr, *nptr = 0, *newchild;
+-    /* Bail on bad ptr */
+-    if (!item) return 0;
+-    /* Create new item */
+-    newitem = cJSON_New_Item(item->pAllocator);
+-    if (!newitem) return 0;
+-    /* Copy over all vars */
+-    newitem->type = item->type & (~cJSON_IsReference), newitem->valueint = item->valueint, newitem->valuedouble = item->valuedouble;
+-    if (item->valuestring) {
+-        newitem->valuestring = cJSON_strdup(item->pAllocator, item->valuestring);
+-        if (!newitem->valuestring) {
+-            cJSON_Delete(newitem);
+-            return 0;
+-        }
+-    }
+-    if (item->string) {
+-        newitem->string = cJSON_strdup(item->pAllocator, item->string);
+-        if (!newitem->string) {
+-            cJSON_Delete(newitem);
+-            return 0;
+-        }
+-    }
+-    /* If non-recursive, then we're done! */
+-    if (!recurse) return newitem;
+-    /* Walk the ->next chain for the child. */
+-    cptr = item->child;
+-    while (cptr) {
+-        newchild = cJSON_Duplicate(cptr, 1); /* Duplicate (with recurse) each item in the ->next chain */
+-        if (!newchild) {
+-            cJSON_Delete(newitem);
+-            return 0;
+-        }
+-        if (nptr) {
+-            nptr->next = newchild, newchild->prev = nptr;
+-            nptr = newchild;
+-        } /* If newitem->child already set, then crosswire ->prev and ->next and
+-             move on */
+-        else {
+-            newitem->child = newchild;
+-            nptr = newchild;
+-        } /* Set newitem->child and move to it */
+-        cptr = cptr->next;
+-    }
+-    return newitem;
+-}
+-
+-void cJSON_Minify(char *json) {
+-    char *into = json;
+-    while (*json) {
+-        if (*json == ' ')
+-            json++;
+-        else if (*json == '\t')
+-            json++; /* Whitespace characters. */
+-        else if (*json == '\r')
+-            json++;
+-        else if (*json == '\n')
+-            json++;
+-        else if (*json == '/' && json[1] == '/')
+-            while (*json && *json != '\n') json++; /* double-slash comments, to end of line. */
+-        else if (*json == '/' && json[1] == '*') {
+-            while (*json && !(*json == '*' && json[1] == '/')) json++;
+-            json += 2;
+-        } /* multiline comments. */
+-        else if (*json == '\"') {
+-            *into++ = *json++;
+-            while (*json && *json != '\"') {
+-                if (*json == '\\') *into++ = *json++;
+-                *into++ = *json++;
+-            }
+-            *into++ = *json++;
+-        } /* string literals, which are \" sensitive. */
+-        else
+-            *into++ = *json++; /* All other characters. */
+-    }
+-    *into = 0; /* and null-terminate. */
+-}
+-
+ VkResult loader_get_json(const struct loader_instance *inst, const char *filename, cJSON **json) {
+     FILE *file = NULL;
+     char *json_buf = NULL;
+@@ -1298,7 +1003,7 @@ out:
+         fclose(file);
+     }
+     if (res != VK_SUCCESS && *json != NULL) {
+-        cJSON_Delete(*json);
++        loader_cJSON_Delete(*json);
+         *json = NULL;
+     }
+ 
+@@ -1307,12 +1012,12 @@ out:
+ 
+ VkResult loader_parse_json_string_to_existing_str(const struct loader_instance *inst, cJSON *object, const char *key,
+                                                   size_t out_str_len, char *out_string) {
+-    cJSON *item = cJSON_GetObjectItem(object, key);
++    cJSON *item = loader_cJSON_GetObjectItem(object, key);
+     if (NULL == item) {
+         return VK_ERROR_INITIALIZATION_FAILED;
+     }
+ 
+-    char *str = cJSON_Print(item);
++    char *str = loader_cJSON_Print(item);
+     if (str == NULL) {
+         return VK_ERROR_OUT_OF_HOST_MEMORY;
+     }
+@@ -1327,12 +1032,12 @@ VkResult loader_parse_json_string_to_existing_str(const struct loader_instance *
+ }
+ 
+ VkResult loader_parse_json_string(cJSON *object, const char *key, char **out_string) {
+-    cJSON *item = cJSON_GetObjectItem(object, key);
++    cJSON *item = loader_cJSON_GetObjectItem(object, key);
+     if (NULL == item) {
+         return VK_ERROR_INITIALIZATION_FAILED;
+     }
+ 
+-    char *str = cJSON_Print(item);
++    char *str = loader_cJSON_Print(item);
+     if (str == NULL) {
+         return VK_ERROR_OUT_OF_HOST_MEMORY;
+     }
+@@ -1344,12 +1049,12 @@ VkResult loader_parse_json_string(cJSON *object, const char *key, char **out_str
+ VkResult loader_parse_json_array_of_strings(const struct loader_instance *inst, cJSON *object, const char *key,
+                                             struct loader_string_list *string_list) {
+     VkResult res = VK_SUCCESS;
+-    cJSON *item = cJSON_GetObjectItem(object, key);
++    cJSON *item = loader_cJSON_GetObjectItem(object, key);
+     if (NULL == item) {
+         return VK_ERROR_INITIALIZATION_FAILED;
+     }
+ 
+-    uint32_t count = cJSON_GetArraySize(item);
++    uint32_t count = loader_cJSON_GetArraySize(item);
+     if (count == 0) {
+         return VK_SUCCESS;
+     }
+@@ -1359,11 +1064,11 @@ VkResult loader_parse_json_array_of_strings(const struct loader_instance *inst,
+         goto out;
+     }
+     for (uint32_t i = 0; i < count; i++) {
+-        cJSON *element = cJSON_GetArrayItem(item, i);
++        cJSON *element = loader_cJSON_GetArrayItem(item, i);
+         if (element == NULL) {
+             return VK_ERROR_INITIALIZATION_FAILED;
+         }
+-        char *out_data = cJSON_Print(element);
++        char *out_data = loader_cJSON_Print(element);
+         if (out_data == NULL) {
+             res = VK_ERROR_OUT_OF_HOST_MEMORY;
+             goto out;
+diff --git a/loader/cJSON.h b/loader/cJSON.h
+index 9331ae855..4878288f5 100644
+--- a/loader/cJSON.h
++++ b/loader/cJSON.h
+@@ -62,91 +62,22 @@ typedef struct cJSON {
+     VkAllocationCallbacks *pAllocator;
+ } cJSON;
+ 
+-/* Supply a block of JSON, and this returns a cJSON object you can interrogate.
+- * Call cJSON_Delete when finished. */
+-cJSON *cJSON_Parse(const VkAllocationCallbacks *pAllocator, const char *value);
+ /* Render a cJSON entity to text for transfer/storage. Free the char* when
+  * finished. */
+-char *cJSON_Print(cJSON *item);
++char *loader_cJSON_Print(cJSON *item);
+ /* Render a cJSON entity to text for transfer/storage without any formatting.
+  * Free the char* when finished. */
+-char *cJSON_PrintUnformatted(cJSON *item);
+-/* Render a cJSON entity to text using a buffered strategy. prebuffer is a guess
+- * at the final size. guessing well reduces reallocation. fmt=0 gives
+- * unformatted, =1 gives formatted */
+-char *cJSON_PrintBuffered(cJSON *item, int prebuffer, int fmt);
++char *loader_cJSON_PrintUnformatted(cJSON *item);
+ /* Delete a cJSON entity and all subentities. */
+-void cJSON_Delete(cJSON *c);
+-/* Delete an item allocated inside the JSON parser*/
+-void cJSON_Free(const VkAllocationCallbacks *pAllocator, void *p);
++void loader_cJSON_Delete(cJSON *c);
+ 
+ /* Returns the number of items in an array (or object). */
+-int cJSON_GetArraySize(cJSON *array);
++int loader_cJSON_GetArraySize(cJSON *array);
+ /* Retrieve item number "item" from array "array". Returns NULL if unsuccessful.
+  */
+-cJSON *cJSON_GetArrayItem(cJSON *array, int item);
++cJSON *loader_cJSON_GetArrayItem(cJSON *array, int item);
+ /* Get item "string" from object. Case insensitive. */
+-cJSON *cJSON_GetObjectItem(cJSON *object, const char *string);
+-
+-/* For analysing failed parses. This returns a pointer to the parse error.
+- * You'll probably need to look a few chars back to make sense of it. Defined
+- * when cJSON_Parse() returns 0. 0 when cJSON_Parse() succeeds. */
+-// commented out as its unused and required external locks to work correctly
+-// const char *cJSON_GetErrorPtr(void);
+-
+-/* These calls create a cJSON item of the appropriate type. */
+-cJSON *cJSON_CreateNull(const VkAllocationCallbacks *pAllocator);
+-cJSON *cJSON_CreateTrue(const VkAllocationCallbacks *pAllocator);
+-cJSON *cJSON_CreateFalse(const VkAllocationCallbacks *pAllocator);
+-cJSON *cJSON_CreateBool(const VkAllocationCallbacks *pAllocator, int b);
+-cJSON *cJSON_CreateNumber(const VkAllocationCallbacks *pAllocator, double num);
+-cJSON *cJSON_CreateString(const VkAllocationCallbacks *pAllocator, const char *string);
+-cJSON *cJSON_CreateArray(const VkAllocationCallbacks *pAllocator);
+-cJSON *cJSON_CreateObject(const VkAllocationCallbacks *pAllocator);
+-
+-/* These utilities create an Array of count items. */
+-cJSON *cJSON_CreateIntArray(const VkAllocationCallbacks *pAllocator, const int *numbers, int count);
+-cJSON *cJSON_CreateFloatArray(const VkAllocationCallbacks *pAllocator, const float *numbers, int count);
+-cJSON *cJSON_CreateDoubleArray(const VkAllocationCallbacks *pAllocator, const double *numbers, int count);
+-cJSON *cJSON_CreateStringArray(const VkAllocationCallbacks *pAllocator, const char **strings, int count);
+-
+-/* Append item to the specified array/object. */
+-void cJSON_AddItemToArray(cJSON *array, cJSON *item);
+-void cJSON_AddItemToObject(cJSON *object, const char *string, cJSON *item);
+-/* Use this when string is definitely const  (i.e. a literal, or as good as), and
+- * will definitely survive the cJSON object */
+-void cJSON_AddItemToObjectCS(cJSON *object, const char *string, cJSON *item);
+-/* Append reference to item to the specified array/object. Use this when you
+- * want to add an existing cJSON to a new cJSON, but don't want to corrupt your
+- * existing cJSON. */
+-void cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item);
+-void cJSON_AddItemReferenceToObject(cJSON *object, const char *string, cJSON *item);
+-
+-/* Remove/Detach items from Arrays/Objects. */
+-cJSON *cJSON_DetachItemFromArray(cJSON *array, int which);
+-void cJSON_DeleteItemFromArray(cJSON *array, int which);
+-cJSON *cJSON_DetachItemFromObject(cJSON *object, const char *string);
+-void cJSON_DeleteItemFromObject(cJSON *object, const char *string);
+-
+-/* Update array items. */
+-void cJSON_InsertItemInArray(cJSON *array, int which, cJSON *newitem); /* Shifts pre-existing items to the right. */
+-void cJSON_ReplaceItemInArray(cJSON *array, int which, cJSON *newitem);
+-void cJSON_ReplaceItemInObject(cJSON *object, const char *string, cJSON *newitem);
+-
+-/* Duplicate a cJSON item */
+-cJSON *cJSON_Duplicate(cJSON *item, int recurse);
+-/* Duplicate will create a new, identical cJSON item to the one you pass, in new
+-memory that will
+-need to be released. With recurse!=0, it will duplicate any children connected
+-to the item.
+-The item->next and ->prev pointers are always zero on return from Duplicate. */
+-
+-/* ParseWithOpts allows you to require (and check) that the JSON is null
+- * terminated, and to retrieve the pointer to the final byte parsed. */
+-cJSON *cJSON_ParseWithOpts(const VkAllocationCallbacks *pAllocator, const char *value, const char **return_parse_end,
+-                           int require_null_terminated);
+-
+-void cJSON_Minify(char *json);
++cJSON *loader_cJSON_GetObjectItem(cJSON *object, const char *string);
+ 
+ /* When assigning an integer value, it needs to be propagated to valuedouble
+  * too. */
+diff --git a/loader/loader.c b/loader/loader.c
+index 21ccc98fa..454fd8d2d 100644
+--- a/loader/loader.c
++++ b/loader/loader.c
+@@ -2395,10 +2395,10 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+     // Parse library_path
+ 
+     // Library path no longer required unless component_layers is also not defined
+-    cJSON *library_path = cJSON_GetObjectItem(layer_node, "library_path");
++    cJSON *library_path = loader_cJSON_GetObjectItem(layer_node, "library_path");
+ 
+     if (NULL != library_path) {
+-        if (NULL != cJSON_GetObjectItem(layer_node, "component_layers")) {
++        if (NULL != loader_cJSON_GetObjectItem(layer_node, "component_layers")) {
+             loader_log(inst, VULKAN_LOADER_WARN_BIT, 0,
+                        "Indicating meta-layer-specific component_layers, but also defining layer library path.  Both are not "
+                        "compatible, so skipping this layer");
+@@ -2409,7 +2409,7 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+         result = loader_copy_to_new_str(inst, filename, &props.manifest_file_name);
+         if (result == VK_ERROR_OUT_OF_HOST_MEMORY) goto out;
+ 
+-        char *library_path_str = cJSON_Print(library_path);
++        char *library_path_str = loader_cJSON_Print(library_path);
+         if (NULL == library_path_str) {
+             loader_log(inst, VULKAN_LOADER_WARN_BIT, 0,
+                        "Skipping layer due to problem accessing the library_path value in manifest JSON file %s", filename);
+@@ -2469,7 +2469,7 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+     // Parse disable_environment
+ 
+     if (is_implicit) {
+-        cJSON *disable_environment = cJSON_GetObjectItem(layer_node, "disable_environment");
++        cJSON *disable_environment = loader_cJSON_GetObjectItem(layer_node, "disable_environment");
+         if (disable_environment == NULL) {
+             loader_log(inst, VULKAN_LOADER_WARN_BIT, 0,
+                        "Didn't find required layer object disable_environment in manifest JSON file, skipping this layer");
+@@ -2501,7 +2501,7 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+     //    vkGetInstanceProcAddr
+     //    vkGetDeviceProcAddr
+     //    vkNegotiateLoaderLayerInterfaceVersion (starting with JSON file 1.1.0)
+-    cJSON *functions = cJSON_GetObjectItem(layer_node, "functions");
++    cJSON *functions = loader_cJSON_GetObjectItem(layer_node, "functions");
+     if (functions != NULL) {
+         if (loader_check_version_meets_required(loader_combine_version(1, 1, 0), version)) {
+             result = loader_parse_json_string(functions, "vkNegotiateLoaderLayerInterfaceVersion",
+@@ -2537,12 +2537,12 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+     //     spec_version
+     //   }
+ 
+-    cJSON *instance_extensions = cJSON_GetObjectItem(layer_node, "instance_extensions");
++    cJSON *instance_extensions = loader_cJSON_GetObjectItem(layer_node, "instance_extensions");
+     if (instance_extensions != NULL) {
+-        int count = cJSON_GetArraySize(instance_extensions);
++        int count = loader_cJSON_GetArraySize(instance_extensions);
+         for (int i = 0; i < count; i++) {
+             VkExtensionProperties ext_prop = {0};
+-            cJSON *ext_item = cJSON_GetArrayItem(instance_extensions, i);
++            cJSON *ext_item = loader_cJSON_GetArrayItem(instance_extensions, i);
+             result = loader_parse_json_string_to_existing_str(inst, ext_item, "name", VK_MAX_EXTENSION_NAME_SIZE,
+                                                               ext_prop.extensionName);
+             if (result == VK_ERROR_OUT_OF_HOST_MEMORY) goto out;
+@@ -2567,13 +2567,13 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+     //     spec_version
+     //     entrypoints
+     //   }
+-    cJSON *device_extensions = cJSON_GetObjectItem(layer_node, "device_extensions");
++    cJSON *device_extensions = loader_cJSON_GetObjectItem(layer_node, "device_extensions");
+     if (device_extensions != NULL) {
+-        int count = cJSON_GetArraySize(device_extensions);
++        int count = loader_cJSON_GetArraySize(device_extensions);
+         for (int i = 0; i < count; i++) {
+             VkExtensionProperties ext_prop = {0};
+ 
+-            cJSON *ext_item = cJSON_GetArrayItem(device_extensions, i);
++            cJSON *ext_item = loader_cJSON_GetArrayItem(device_extensions, i);
+ 
+             result = loader_parse_json_string_to_existing_str(inst, ext_item, "name", VK_MAX_EXTENSION_NAME_SIZE,
+                                                               ext_prop.extensionName);
+@@ -2587,7 +2587,7 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+             }
+             loader_instance_heap_free(inst, spec_version);
+ 
+-            cJSON *entrypoints = cJSON_GetObjectItem(ext_item, "entrypoints");
++            cJSON *entrypoints = loader_cJSON_GetObjectItem(ext_item, "entrypoints");
+             if (entrypoints == NULL) {
+                 result = loader_add_to_dev_ext_list(inst, &props.device_extension_list, &ext_prop, NULL);
+                 if (result == VK_ERROR_OUT_OF_HOST_MEMORY) goto out;
+@@ -2602,7 +2602,7 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+         }
+     }
+     if (is_implicit) {
+-        cJSON *enable_environment = cJSON_GetObjectItem(layer_node, "enable_environment");
++        cJSON *enable_environment = loader_cJSON_GetObjectItem(layer_node, "enable_environment");
+ 
+         // enable_environment is optional
+         if (enable_environment && enable_environment->child && enable_environment->child->type == cJSON_String) {
+@@ -2614,7 +2614,7 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+     }
+ 
+     // Read in the pre-instance stuff
+-    cJSON *pre_instance = cJSON_GetObjectItem(layer_node, "pre_instance_functions");
++    cJSON *pre_instance = loader_cJSON_GetObjectItem(layer_node, "pre_instance_functions");
+     if (NULL != pre_instance) {
+         // Supported versions started in 1.1.2, so anything newer
+         if (!loader_check_version_meets_required(loader_combine_version(1, 1, 2), version)) {
+@@ -2642,7 +2642,7 @@ VkResult loader_read_layer_json(const struct loader_instance *inst, struct loade
+         }
+     }
+ 
+-    if (cJSON_GetObjectItem(layer_node, "app_keys")) {
++    if (loader_cJSON_GetObjectItem(layer_node, "app_keys")) {
+         if (!props.is_override) {
+             loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_LAYER_BIT, 0,
+                        "Layer %s contains app_keys, but any app_keys can only be provided by the override metalayer. "
+@@ -2719,11 +2719,11 @@ VkResult loader_add_layer_properties(const struct loader_instance *inst, struct
+     if (!json || json->type != 6) {
+         goto out;
+     }
+-    item = cJSON_GetObjectItem(json, "file_format_version");
++    item = loader_cJSON_GetObjectItem(json, "file_format_version");
+     if (item == NULL) {
+         goto out;
+     }
+-    file_vers = cJSON_PrintUnformatted(item);
++    file_vers = loader_cJSON_PrintUnformatted(item);
+     if (NULL == file_vers) {
+         result = VK_ERROR_OUT_OF_HOST_MEMORY;
+         goto out;
+@@ -2739,9 +2739,9 @@ VkResult loader_add_layer_properties(const struct loader_instance *inst, struct
+     }
+ 
+     // If "layers" is present, read in the array of layer objects
+-    layers_node = cJSON_GetObjectItem(json, "layers");
++    layers_node = loader_cJSON_GetObjectItem(json, "layers");
+     if (layers_node != NULL) {
+-        int numItems = cJSON_GetArraySize(layers_node);
++        int numItems = loader_cJSON_GetArraySize(layers_node);
+         // Supported versions started in 1.0.1, so anything newer
+         if (!loader_check_version_meets_required(loader_combine_version(1, 0, 1), json_version)) {
+             loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_LAYER_BIT, 0,
+@@ -2750,7 +2750,7 @@ VkResult loader_add_layer_properties(const struct loader_instance *inst, struct
+                        filename, file_vers);
+         }
+         for (int curLayer = 0; curLayer < numItems; curLayer++) {
+-            layer_node = cJSON_GetArrayItem(layers_node, curLayer);
++            layer_node = loader_cJSON_GetArrayItem(layers_node, curLayer);
+             if (layer_node == NULL) {
+                 loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_LAYER_BIT, 0,
+                            "loader_add_layer_properties: Can not find 'layers' array element %d object in manifest JSON file %s.  "
+@@ -2762,7 +2762,7 @@ VkResult loader_add_layer_properties(const struct loader_instance *inst, struct
+         }
+     } else {
+         // Otherwise, try to read in individual layers
+-        layer_node = cJSON_GetObjectItem(json, "layer");
++        layer_node = loader_cJSON_GetObjectItem(json, "layer");
+         if (layer_node == NULL) {
+             loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_LAYER_BIT, 0,
+                        "loader_add_layer_properties: Can not find 'layer' object in manifest JSON file %s.  Skipping this file.",
+@@ -3444,7 +3444,7 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+         goto out;
+     }
+ 
+-    cJSON *item = cJSON_GetObjectItem(json, "file_format_version");
++    cJSON *item = loader_cJSON_GetObjectItem(json, "file_format_version");
+     if (item == NULL) {
+         loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
+                    "loader_parse_icd_manifest: ICD JSON %s does not have a \'file_format_version\' field. Skipping ICD JSON.",
+@@ -3453,7 +3453,7 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+         goto out;
+     }
+ 
+-    file_vers_str = cJSON_Print(item);
++    file_vers_str = loader_cJSON_Print(item);
+     if (NULL == file_vers_str) {
+         // Only reason the print can fail is if there was an allocation issue
+         loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
+@@ -3474,7 +3474,7 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+                    json_file_version.major, json_file_version.minor, json_file_version.patch);
+     }
+ 
+-    cJSON *itemICD = cJSON_GetObjectItem(json, "ICD");
++    cJSON *itemICD = loader_cJSON_GetObjectItem(json, "ICD");
+     if (itemICD == NULL) {
+         loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
+                    "loader_parse_icd_manifest: Can not find \'ICD\' object in ICD JSON file %s. Skipping ICD JSON", file_str);
+@@ -3482,7 +3482,7 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+         goto out;
+     }
+ 
+-    item = cJSON_GetObjectItem(itemICD, "library_path");
++    item = loader_cJSON_GetObjectItem(itemICD, "library_path");
+     if (item == NULL) {
+         loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
+                    "loader_parse_icd_manifest: Failed to find \'library_path\' object in ICD JSON file %s. Skipping ICD JSON.",
+@@ -3490,7 +3490,7 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+         res = VK_ERROR_INCOMPATIBLE_DRIVER;
+         goto out;
+     }
+-    char *library_path = cJSON_Print(item);
++    char *library_path = loader_cJSON_Print(item);
+     if (!library_path) {
+         loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
+                    "loader_parse_icd_manifest: Failed retrieving ICD JSON %s \'library_path\' field. Skipping ICD JSON.", file_str);
+@@ -3513,14 +3513,14 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+         goto out;
+     }
+ 
+-    item = cJSON_GetObjectItem(itemICD, "api_version");
++    item = loader_cJSON_GetObjectItem(itemICD, "api_version");
+     if (item == NULL) {
+         loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
+                    "loader_parse_icd_manifest: ICD JSON %s does not have an \'api_version\' field. Skipping ICD JSON.", file_str);
+         res = VK_ERROR_INCOMPATIBLE_DRIVER;
+         goto out;
+     }
+-    version_str = cJSON_Print(item);
++    version_str = loader_cJSON_Print(item);
+     if (NULL == version_str) {
+         // Only reason the print can fail is if there was an allocation issue
+         loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
+@@ -3542,7 +3542,7 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+ 
+     // Skip over ICD's which contain a true "is_portability_driver" value whenever the application doesn't enable
+     // portability enumeration.
+-    item = cJSON_GetObjectItem(itemICD, "is_portability_driver");
++    item = loader_cJSON_GetObjectItem(itemICD, "is_portability_driver");
+     if (item != NULL && item->type == cJSON_True && inst && !inst->portability_enumeration_enabled) {
+         if (skipped_portability_drivers) {
+             *skipped_portability_drivers = true;
+@@ -3551,9 +3551,9 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+         goto out;
+     }
+ 
+-    item = cJSON_GetObjectItem(itemICD, "library_arch");
++    item = loader_cJSON_GetObjectItem(itemICD, "library_arch");
+     if (item != NULL) {
+-        library_arch_str = cJSON_Print(item);
++        library_arch_str = loader_cJSON_Print(item);
+         if (NULL != library_arch_str) {
+             // cJSON includes the quotes by default, so we need to look for those here
+             if ((strncmp(library_arch_str, "32", 4) == 0 && sizeof(void *) != 4) ||
+@@ -3570,7 +3570,7 @@ VkResult loader_parse_icd_manifest(const struct loader_instance *inst, char *fil
+         }
+     }
+ out:
+-    cJSON_Delete(json);
++    loader_cJSON_Delete(json);
+     loader_instance_heap_free(inst, file_vers_str);
+     loader_instance_heap_free(inst, version_str);
+     loader_instance_heap_free(inst, library_arch_str);
+@@ -3754,7 +3754,7 @@ VkResult loader_parse_instance_layers(struct loader_instance *inst, enum loader_
+ 
+         local_res = loader_add_layer_properties(inst, instance_layers, json,
+                                                 manifest_type == LOADER_DATA_FILE_MANIFEST_IMPLICIT_LAYER, file_str);
+-        cJSON_Delete(json);
++        loader_cJSON_Delete(json);
+ 
+         // If the error is anything other than out of memory we still want to try to load the other layers
+         if (VK_ERROR_OUT_OF_HOST_MEMORY == local_res) {
+diff --git a/loader/settings.c b/loader/settings.c
+index 0edf9be4d..1d562ee0c 100644
+--- a/loader/settings.c
++++ b/loader/settings.c
+@@ -147,7 +147,7 @@ VkResult parse_layer_configuration(const struct loader_instance* inst, cJSON* la
+         goto out;
+     }
+ 
+-    cJSON* treat_as_implicit_manifest = cJSON_GetObjectItem(layer_configuration_json, "treat_as_implicit_manifest");
++    cJSON* treat_as_implicit_manifest = loader_cJSON_GetObjectItem(layer_configuration_json, "treat_as_implicit_manifest");
+     if (treat_as_implicit_manifest && treat_as_implicit_manifest->type == cJSON_True) {
+         layer_configuration->treat_as_implicit_manifest = true;
+     }
+@@ -161,12 +161,12 @@ out:
+ VkResult parse_layer_configurations(const struct loader_instance* inst, cJSON* settings_object, loader_settings* loader_settings) {
+     VkResult res = VK_SUCCESS;
+ 
+-    cJSON* layer_configurations = cJSON_GetObjectItem(settings_object, "layers");
++    cJSON* layer_configurations = loader_cJSON_GetObjectItem(settings_object, "layers");
+     if (NULL == layer_configurations) {
+         return VK_ERROR_INITIALIZATION_FAILED;
+     }
+ 
+-    uint32_t layer_configurations_count = cJSON_GetArraySize(layer_configurations);
++    uint32_t layer_configurations_count = loader_cJSON_GetArraySize(layer_configurations);
+     if (layer_configurations_count == 0) {
+         return VK_SUCCESS;
+     }
+@@ -181,7 +181,7 @@ VkResult parse_layer_configurations(const struct loader_instance* inst, cJSON* s
+     }
+ 
+     for (uint32_t i = 0; i < layer_configurations_count; i++) {
+-        cJSON* layer = cJSON_GetArrayItem(layer_configurations, i);
++        cJSON* layer = loader_cJSON_GetArrayItem(layer_configurations, i);
+         if (NULL == layer) {
+             res = VK_ERROR_INITIALIZATION_FAILED;
+             goto out;
+@@ -322,11 +322,11 @@ VkResult get_loader_settings(const struct loader_instance* inst, loader_settings
+     }
+     uint32_t settings_array_count = 0;
+     bool has_multi_setting_file = false;
+-    cJSON* settings_array = cJSON_GetObjectItem(json, "settings_array");
+-    cJSON* single_settings_object = cJSON_GetObjectItem(json, "settings");
++    cJSON* settings_array = loader_cJSON_GetObjectItem(json, "settings_array");
++    cJSON* single_settings_object = loader_cJSON_GetObjectItem(json, "settings");
+     if (NULL != settings_array) {
+         has_multi_setting_file = true;
+-        settings_array_count = cJSON_GetArraySize(settings_array);
++        settings_array_count = loader_cJSON_GetArraySize(settings_array);
+     } else if (NULL != single_settings_object) {
+         settings_array_count = 1;
+     }
+@@ -341,25 +341,25 @@ VkResult get_loader_settings(const struct loader_instance* inst, loader_settings
+ 
+     for (int i = 0; i < (int)settings_array_count; i++) {
+         if (has_multi_setting_file) {
+-            single_settings_object = cJSON_GetArrayItem(settings_array, i);
++            single_settings_object = loader_cJSON_GetArrayItem(settings_array, i);
+         }
+-        cJSON* app_keys = cJSON_GetObjectItem(single_settings_object, "app_keys");
++        cJSON* app_keys = loader_cJSON_GetObjectItem(single_settings_object, "app_keys");
+         if (NULL == app_keys) {
+             if (global_settings_index == -1) {
+                 global_settings_index = i;  // use the first 'global' settings that has no app keys as the global one
+             }
+             continue;
+         } else if (valid_exe_path) {
+-            int app_key_count = cJSON_GetArraySize(app_keys);
++            int app_key_count = loader_cJSON_GetArraySize(app_keys);
+             if (app_key_count == 0) {
+                 continue;  // empty array
+             }
+             for (int j = 0; j < app_key_count; j++) {
+-                cJSON* app_key_json = cJSON_GetArrayItem(app_keys, j);
++                cJSON* app_key_json = loader_cJSON_GetArrayItem(app_keys, j);
+                 if (NULL == app_key_json) {
+                     continue;
+                 }
+-                char* app_key = cJSON_Print(app_key_json);
++                char* app_key = loader_cJSON_Print(app_key_json);
+                 if (NULL == app_key) {
+                     continue;
+                 }
+@@ -387,7 +387,7 @@ VkResult get_loader_settings(const struct loader_instance* inst, loader_settings
+     // Now get the actual settings object to use - already have it if there is only one settings object
+     // If there are multiple settings, just need to set single_settings_object to the desired settings object
+     if (has_multi_setting_file) {
+-        single_settings_object = cJSON_GetArrayItem(settings_array, index_to_use);
++        single_settings_object = loader_cJSON_GetArrayItem(settings_array, index_to_use);
+         if (NULL == single_settings_object) {
+             res = VK_ERROR_INITIALIZATION_FAILED;
+             goto out;
+@@ -395,7 +395,7 @@ VkResult get_loader_settings(const struct loader_instance* inst, loader_settings
+     }
+ 
+     // optional
+-    cJSON* stderr_filter = cJSON_GetObjectItem(single_settings_object, "stderr_log");
++    cJSON* stderr_filter = loader_cJSON_GetObjectItem(single_settings_object, "stderr_log");
+     if (NULL != stderr_filter) {
+         struct loader_string_list stderr_log = {0};
+         res = loader_parse_json_array_of_strings(inst, single_settings_object, "stderr_log", &stderr_log);
+@@ -407,11 +407,11 @@ VkResult get_loader_settings(const struct loader_instance* inst, loader_settings
+     }
+ 
+     // optional
+-    cJSON* logs_to_use = cJSON_GetObjectItem(single_settings_object, "log_locations");
++    cJSON* logs_to_use = loader_cJSON_GetObjectItem(single_settings_object, "log_locations");
+     if (NULL != logs_to_use) {
+-        int log_count = cJSON_GetArraySize(logs_to_use);
++        int log_count = loader_cJSON_GetArraySize(logs_to_use);
+         for (int i = 0; i < log_count; i++) {
+-            cJSON* log_element = cJSON_GetArrayItem(logs_to_use, i);
++            cJSON* log_element = loader_cJSON_GetArrayItem(logs_to_use, i);
+             // bool is_valid = true;
+             if (NULL != log_element) {
+                 struct loader_string_list log_destinations = {0};
+@@ -449,7 +449,7 @@ VkResult get_loader_settings(const struct loader_instance* inst, loader_settings
+     loader_settings->settings_active = true;
+ out:
+     if (NULL != json) {
+-        cJSON_Delete(json);
++        loader_cJSON_Delete(json);
+     }
+ 
+     loader_instance_heap_free(inst, settings_file_path);
+@@ -575,7 +575,7 @@ VkResult get_settings_layers(const struct loader_instance* inst, struct loader_l
+ 
+         local_res =
+             loader_add_layer_properties(inst, settings_layers, json, layer_config->treat_as_implicit_manifest, layer_config->path);
+-        cJSON_Delete(json);
++        loader_cJSON_Delete(json);
+ 
+         // If the error is anything other than out of memory we still want to try to load the other layers
+         if (VK_ERROR_OUT_OF_HOST_MEMORY == local_res) {
+-- 
+2.41.0
+
