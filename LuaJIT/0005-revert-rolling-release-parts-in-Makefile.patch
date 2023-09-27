@@ -1,0 +1,31 @@
+From da10a2109c4f6174d97b04a05941aa4be57b3970 Mon Sep 17 00:00:00 2001
+From: waldonnis <ghostchris@gmail.com>
+Date: Wed, 27 Sep 2023 17:07:09 -0400
+Subject: [PATCH] Undo rolling release stuff since it's not useful to MABS and
+ complicates installation/updating luajit.
+
+---
+ Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 3aed365d..66b0baf8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -142,12 +142,11 @@ install: $(INSTALL_DEP)
+ 	  $(RM) $(FILE_PC).tmp
+ 	cd src && $(INSTALL_F) $(FILES_INC) $(INSTALL_INC)
+ 	cd src/jit && $(INSTALL_F) $(FILES_JITLIB) $(INSTALL_JITLIB)
+-	$(SYMLINK) $(INSTALL_TNAME) $(INSTALL_TSYM)
+ 	@echo "==== Successfully installed LuaJIT $(VERSION) to $(PREFIX) ===="
+ 
+ uninstall:
+ 	@echo "==== Uninstalling LuaJIT $(VERSION) from $(PREFIX) ===="
+-	$(UNINSTALL) $(INSTALL_TSYM) $(INSTALL_T) $(INSTALL_STATIC) $(INSTALL_DYN) $(INSTALL_SHORT1) $(INSTALL_SHORT2) $(INSTALL_MAN)/$(FILE_MAN) $(INSTALL_PC)
++	$(UNINSTALL) $(INSTALL_T) $(INSTALL_STATIC) $(INSTALL_DYN) $(INSTALL_SHORT1) $(INSTALL_SHORT2) $(INSTALL_MAN)/$(FILE_MAN) $(INSTALL_PC)
+ 	for file in $(FILES_JITLIB); do \
+ 	  $(UNINSTALL) $(INSTALL_JITLIB)/$$file; \
+ 	  done
+-- 
+2.41.0.windows.1
+
