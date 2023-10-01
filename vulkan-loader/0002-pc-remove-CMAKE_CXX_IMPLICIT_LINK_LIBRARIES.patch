@@ -1,37 +1,26 @@
-From 48fc57a8adc303c25dd0930029687bccb991c746 Mon Sep 17 00:00:00 2001
+From 14ea32254ea689c9106a1918dc8f343450328b2f Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 2/3] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- loader/CMakeLists.txt | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ loader/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 6bc4fcd53..7725f4f00 100644
+index 5ab681a2e..ec43a5758 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -410,14 +410,11 @@ endif()
+@@ -410,7 +410,7 @@ endif()
  find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
      set(PRIVATE_LIBS "")
 -    if (APPLE AND BUILD_STATIC_LOADER)
--        # Libs.private should only be present when building a static loader
--        foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
--            list(APPEND PRIVATE_LIBS "-l${LIB}")
--        endforeach()
--        list(REMOVE_DUPLICATES PRIVATE_LIBS)
--        set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
--    endif()
-+    foreach(LIB ${PLATFORM_LIBS})
-+        list(APPEND PRIVATE_LIBS "-l${LIB}")
-+    endforeach()
-+    list(REMOVE_DUPLICATES PRIVATE_LIBS)
-+    set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
-     if(WIN32)
-         if(MINGW)
-             set(VULKAN_LIB_SUFFIX "-1.dll")
++    if (BUILD_STATIC_LOADER)
+         # Libs.private should only be present when building a static loader
+         foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
+             list(APPEND PRIVATE_LIBS "-l${LIB}")
 -- 
 2.41.0
 

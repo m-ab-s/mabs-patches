@@ -1,4 +1,4 @@
-From dd97f6e1798e590e413a6d8f47126740c69e75cb Mon Sep 17 00:00:00 2001
+From d51cf339368c9210f8b32d01431ffc85504cd3d0 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Thu, 8 Oct 2020 18:46:50 +0100
 Subject: [PATCH 1/3] loader: cross-compile & static linking hacks
@@ -10,10 +10,10 @@ Subject: [PATCH 1/3] loader: cross-compile & static linking hacks
  3 files changed, 28 insertions(+), 3 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 3b7cdda1d..6bc4fcd53 100644
+index 7ccfbed87..5ab681a2e 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -257,7 +257,7 @@ if(USE_ASSEMBLY_FALLBACK)
+@@ -267,7 +267,7 @@ if(USE_ASSEMBLY_FALLBACK)
      endif()
  endif()
  
@@ -22,7 +22,7 @@ index 3b7cdda1d..6bc4fcd53 100644
      add_library(loader-opt STATIC ${OPT_LOADER_SRCS})
      target_link_libraries(loader-opt PUBLIC loader_specific_options)
      add_dependencies(loader-opt loader_asm_gen_files)
-@@ -307,16 +307,18 @@ if(WIN32)
+@@ -317,16 +317,18 @@ if(WIN32)
      add_dependencies(vulkan loader_asm_gen_files)
  
  else()
@@ -39,12 +39,12 @@ index 3b7cdda1d..6bc4fcd53 100644
                            PROPERTIES SOVERSION "1"
                            VERSION ${VULKAN_LOADER_VERSION})
 +    endif()
-     target_link_libraries(vulkan PRIVATE ${CMAKE_DL_LIBS} m)
-     if (NOT ANDROID)
-         target_link_libraries(vulkan PRIVATE Threads::Threads)
-@@ -377,6 +379,9 @@ else()
+     target_link_libraries(vulkan PRIVATE ${CMAKE_DL_LIBS} m Threads::Threads)
+ 
+     if (LOADER_ENABLE_ADDRESS_SANITIZER)
+@@ -382,6 +384,9 @@ else()
+             FRAMEWORK DESTINATION loader
          )
- # cmake-format: on
      endif()
 +    if(WIN32)
 +        target_link_libraries(vulkan PRIVATE loader-unknown-chain)
@@ -64,7 +64,7 @@ index 3b7cdda1d..6bc4fcd53 100644
  find_package(PkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index f9f2ddae8..d5bf050c7 100644
+index 0f6c2c88c..a24d17926 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -32,7 +32,7 @@
@@ -93,10 +93,10 @@ index f9f2ddae8..d5bf050c7 100644
  bool windows_add_json_entry(const struct loader_instance *inst,
                              char **reg_data,    // list of JSON files
 diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index 1fbdf97cc..aea314aa4 100644
+index 3a8cafb7e..7e229f5a8 100644
 --- a/loader/vk_loader_platform.h
 +++ b/loader/vk_loader_platform.h
-@@ -230,6 +230,20 @@ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*fu
+@@ -236,6 +236,20 @@ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*fu
  #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var) pthread_once_t var = PTHREAD_ONCE_INIT;
  #define LOADER_PLATFORM_THREAD_ONCE_EXTERN_DEFINITION(var) extern pthread_once_t var;
  #define LOADER_PLATFORM_THREAD_ONCE(ctl, func) loader_platform_thread_once_fn(ctl, func);
