@@ -1,0 +1,65 @@
+From 62e5c243bd73650888644d4798dc1d9dbeb0c616 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 2 Oct 2023 01:16:49 -0500
+Subject: [PATCH 3/5] loader: CMake related static hacks
+
+Adds additional hacks for CMake's side. Does not (yet) go for parity
+with shinchiro's patch yet.
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ loader/CMakeLists.txt | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
+index 325bd3c45..74f665ac4 100644
+--- a/loader/CMakeLists.txt
++++ b/loader/CMakeLists.txt
+@@ -265,11 +265,6 @@ if(USE_ASSEMBLY_FALLBACK)
+ endif()
+ 
+ if(WIN32)
+-    add_library(loader-opt STATIC ${OPT_LOADER_SRCS})
+-    target_link_libraries(loader-opt PUBLIC loader_specific_options)
+-    add_dependencies(loader-opt loader_asm_gen_files)
+-    set_target_properties(loader-opt PROPERTIES CMAKE_C_FLAGS_DEBUG "${MODIFIED_C_FLAGS_DEBUG}")
+-
+     # If BUILD_DLL_VERSIONINFO was set, use the loader.rc in the build dir, otherwise use the checked in file
+     set(RC_FILE_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/loader.rc)
+     if (NOT "$CACHE{BUILD_DLL_VERSIONINFO}" STREQUAL "")
+@@ -278,14 +273,19 @@ if(WIN32)
+ 
+     set(LOADER_UNKNOWN_CHAIN_LIBRARY $<$<TARGET_EXISTS:loader-unknown-chain>:$<TARGET_OBJECTS:loader-unknown-chain>>)
+ 
++    if (BUILD_STATIC_LOADER)
++        set(VULKAN_LIBRARY_TYPE STATIC)
++    else()
++        set(VULKAN_LIBRARY_TYPE SHARED)
++    endif()
++
+     add_library(vulkan
+-                SHARED
++                ${VULKAN_LIBRARY_TYPE}
+                 ${NORMAL_LOADER_SRCS}
+                 ${LOADER_UNKNOWN_CHAIN_LIBRARY}
+                 ${CMAKE_CURRENT_SOURCE_DIR}/vulkan-1.def
+-                ${RC_FILE_LOCATION})
+-
+-    target_link_libraries(vulkan PRIVATE loader_specific_options loader-opt)
++                ${RC_FILE_LOCATION}
++                ${OPT_LOADER_SRCS})
+ 
+     # when adding the suffix the import and runtime library names must be consistent
+     # mingw: libvulkan-1.dll.a / vulkan-1.dll
+@@ -383,7 +383,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
+ endif()
+ 
+ # common attributes of the vulkan library
+-target_link_libraries(vulkan PRIVATE loader_specific_options)
++target_link_libraries(vulkan PRIVATE $<BUILD_INTERFACE:loader_specific_options>)
+ 
+ set_target_properties(vulkan PROPERTIES ${LOADER_STANDARD_C_PROPERTIES})
+ if (TARGET asm_offset)
+-- 
+2.41.0
+
