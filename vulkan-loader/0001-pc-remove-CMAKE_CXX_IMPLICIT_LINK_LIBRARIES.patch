@@ -1,4 +1,4 @@
-From 50a1651ea0b051e5470f047aa59fd60af2f6be3e Mon Sep 17 00:00:00 2001
+From 2b04bd7952312ba33dea9bd2648e45c2030752a8 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 1/5] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
@@ -8,26 +8,18 @@ C++ compiler instead.
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- loader/CMakeLists.txt | 9 ---------
- 1 file changed, 9 deletions(-)
+ loader/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index e4b487cc2..82ca0f29c 100644
+index 8abf70eb4..9b4fd95ba 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -420,15 +420,6 @@ endif()
- find_package(PkgConfig QUIET)
- if(PKG_CONFIG_FOUND)
-     set(PRIVATE_LIBS "")
--    if (APPLE AND BUILD_STATIC_LOADER)
--        # Libs.private should only be present when building a static loader
--        foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
--            list(APPEND PRIVATE_LIBS "-l${LIB}")
--        endforeach()
--        list(REMOVE_DUPLICATES PRIVATE_LIBS)
--        set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
--    endif()
--
+@@ -435,6 +435,7 @@ install(EXPORT VulkanLoaderConfig DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulk
+ # https://gitlab.kitware.com/cmake/cmake/-/issues/22621
+ find_package(PkgConfig)
+ if (PKG_CONFIG_FOUND)
++    set(PRIVATE_LIBS "")
      if(WIN32)
          if(MINGW)
              set(VULKAN_LIB_SUFFIX "-1.dll")
