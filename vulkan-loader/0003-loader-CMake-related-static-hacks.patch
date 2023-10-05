@@ -1,4 +1,4 @@
-From 62e5c243bd73650888644d4798dc1d9dbeb0c616 Mon Sep 17 00:00:00 2001
+From bad9428d968841a7bc79db81a94afc4267d5e32e Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:16:49 -0500
 Subject: [PATCH 3/5] loader: CMake related static hacks
@@ -12,10 +12,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 325bd3c45..74f665ac4 100644
+index 82ca0f29c..f942c239c 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -265,11 +265,6 @@ if(USE_ASSEMBLY_FALLBACK)
+@@ -291,11 +291,6 @@ if(USE_ASSEMBLY_FALLBACK)
  endif()
  
  if(WIN32)
@@ -27,7 +27,7 @@ index 325bd3c45..74f665ac4 100644
      # If BUILD_DLL_VERSIONINFO was set, use the loader.rc in the build dir, otherwise use the checked in file
      set(RC_FILE_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/loader.rc)
      if (NOT "$CACHE{BUILD_DLL_VERSIONINFO}" STREQUAL "")
-@@ -278,14 +273,19 @@ if(WIN32)
+@@ -304,14 +299,19 @@ if(WIN32)
  
      set(LOADER_UNKNOWN_CHAIN_LIBRARY $<$<TARGET_EXISTS:loader-unknown-chain>:$<TARGET_OBJECTS:loader-unknown-chain>>)
  
@@ -51,7 +51,7 @@ index 325bd3c45..74f665ac4 100644
  
      # when adding the suffix the import and runtime library names must be consistent
      # mingw: libvulkan-1.dll.a / vulkan-1.dll
-@@ -383,7 +383,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
+@@ -409,7 +409,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
  endif()
  
  # common attributes of the vulkan library
