@@ -1,18 +1,21 @@
-From c238a50bcd2c5b88a4e1e2b9cc6bf21b7a5da930 Mon Sep 17 00:00:00 2001
+From cac707f7eda2ea82f384a5c60b7373e931ff9fa9 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:35:10 -0500
-Subject: [PATCH 4/5] loader: Add private libs to pc file
+Subject: [PATCH 4/5] loader: Re-add private libs to pc file
+
+Was removed due to lack of upstream support
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
  loader/CMakeLists.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ loader/vulkan.pc.in   |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 734aa62a0..c3a20db45 100644
+index bea91b6f2..ed13a558a 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -436,6 +436,16 @@ install(EXPORT VulkanLoaderConfig DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulk
+@@ -439,6 +439,16 @@ install(EXPORT VulkanLoaderConfig DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulk
  find_package(PkgConfig)
  if (PKG_CONFIG_FOUND)
      set(PRIVATE_LIBS "")
@@ -29,6 +32,16 @@ index 734aa62a0..c3a20db45 100644
      if(WIN32)
          if(MINGW)
              set(VULKAN_LIB_SUFFIX "-1.dll")
+diff --git a/loader/vulkan.pc.in b/loader/vulkan.pc.in
+index 16b0ded79..2b6f5cb18 100644
+--- a/loader/vulkan.pc.in
++++ b/loader/vulkan.pc.in
+@@ -1,4 +1,4 @@
+ Name: Vulkan-Loader
+ Description: Vulkan Loader
+ Version: @VULKAN_LOADER_VERSION@
+-Libs: -L@CMAKE_INSTALL_LIBDIR_PC@ -lvulkan@VULKAN_LIB_SUFFIX@
++Libs: -L@CMAKE_INSTALL_LIBDIR_PC@ -lvulkan@VULKAN_LIB_SUFFIX@ @PRIVATE_LIBS@
 -- 
 2.41.0
 
