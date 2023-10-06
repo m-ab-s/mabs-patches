@@ -1,4 +1,4 @@
-From 6a8663accd942b3997932506c9d463a1e5d09eff Mon Sep 17 00:00:00 2001
+From 7ee23d8157e21a6f781e23136f0f10d156248bb1 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 00:41:24 -0500
 Subject: [PATCH 2/5] loader/loader_windows: Static linking hacks
