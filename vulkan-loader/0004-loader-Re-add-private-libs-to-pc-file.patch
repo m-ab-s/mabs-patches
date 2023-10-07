@@ -1,4 +1,4 @@
-From 3fe2782398ff7726af932dab29dcb2b8711e786d Mon Sep 17 00:00:00 2001
+From ddc547e84ff6f99f21a90fe5cd593e9469a3dc27 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:35:10 -0500
 Subject: [PATCH 4/5] loader: Re-add private libs to pc file
@@ -12,7 +12,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  2 files changed, 13 insertions(+)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index bea91b6f2..2e0edc89f 100644
+index bea91b6f2..e0eb381f1 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -439,6 +439,18 @@ install(EXPORT VulkanLoaderConfig DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulk
@@ -21,7 +21,7 @@ index bea91b6f2..2e0edc89f 100644
      set(PRIVATE_LIBS "")
 +    get_target_property(vulkan_privates vulkan LINK_LIBRARIES) # get the list of private libraries
 +    foreach(LIB IN LISTS vulkan_privates)
-+        if (NOT LIB MATCHES "<") # Don't generator expressions
++        if (NOT LIB MATCHES "<" AND NOT LIB MATCHES "::") # Don't include generator expressions and targets
 +            list(APPEND PRIVATE_LIBS "-l${LIB}")
 +        endif()
 +    endforeach()
