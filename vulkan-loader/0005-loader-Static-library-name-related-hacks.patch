@@ -1,4 +1,4 @@
-From 22bfa865aa7f3eeaa4f877f8cc8eb654f2cdc855 Mon Sep 17 00:00:00 2001
+From e6094a9d98744c0b3344e3d49765762c60d7d592 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:38:44 -0500
 Subject: [PATCH 5/5] loader: Static library name related hacks
@@ -11,7 +11,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index ed13a558a..c15d4dcf1 100644
+index 2e0edc89f..6ecabb0d4 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -319,14 +319,16 @@ if(WIN32)
@@ -37,9 +37,9 @@ index ed13a558a..c15d4dcf1 100644
      endif()
  
      if(MSVC AND ENABLE_WIN10_ONECORE)
-@@ -449,7 +451,7 @@ if (PKG_CONFIG_FOUND)
-     string(REPLACE ";" " " PRIVATE_LIBS "${PRIVATE_LIBS}")
-     set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
+@@ -451,7 +453,7 @@ if (PKG_CONFIG_FOUND)
+         set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
+     endif()
  
 -    if(WIN32)
 +    if(WIN32 AND NOT BUILD_STATIC_LOADER)
