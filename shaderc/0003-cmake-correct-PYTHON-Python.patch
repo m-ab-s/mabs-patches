@@ -1,0 +1,47 @@
+From 2ddd94f7ae78aa35a4e184f3dea534ffa78e4f37 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 5 Dec 2023 21:36:02 -0600
+Subject: [PATCH 3/3] cmake: correct PYTHON -> Python
+
+Was causing issues on Windows as PYTHON_EXECUTABLE was not set, but
+Python_EXECUTABLE was, leading to cmake running the .py file without
+the interpreter.
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7bc8f5d..ce61405 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -99,14 +99,14 @@ endif ()
+ 
+ if (SHADERC_ENABLE_COPYRIGHT_CHECK)
+   add_custom_target(check-copyright ALL
+-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/utils/add_copyright.py
++    ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/utils/add_copyright.py
+     --check
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+     COMMENT "Check copyright")
+ endif()
+ 
+ add_custom_target(add-copyright
+-  ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/utils/add_copyright.py
++  ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/utils/add_copyright.py
+   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+   COMMENT "Add copyright")
+ 
+@@ -134,7 +134,7 @@ if(${SHADERC_ENABLE_EXAMPLES})
+ endif()
+ 
+ add_custom_target(build-version
+-  ${PYTHON_EXECUTABLE}
++  ${Python_EXECUTABLE}
+   ${CMAKE_CURRENT_SOURCE_DIR}/utils/update_build_version.py
+   ${shaderc_SOURCE_DIR} ${spirv-tools_SOURCE_DIR} ${glslang_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/build-version.inc
+   COMMENT "Update build-version.inc in the Shaderc build directory (if necessary).")
+-- 
+2.43.0
+
