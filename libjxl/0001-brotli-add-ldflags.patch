@@ -1,4 +1,4 @@
-From 3a04d697fd539c4d2eb8708df257cd82e8eb9452 Mon Sep 17 00:00:00 2001
+From 895e4835d0f3528755b62c0e55e0678e03cd8869 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 14 Dec 2021 01:44:09 -0600
 Subject: [PATCH 1/2] brotli: add ldflags
@@ -30,5 +30,5 @@ index 9fb78e47..95ab740f 100644
          INTERFACE ${PC_${BRPREFIX}_CFLAGS_OTHER})
      endif()
 -- 
-2.40.0
+2.43.0
 

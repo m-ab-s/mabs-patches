@@ -1,0 +1,28 @@
+From 55e429aba0ae4e21c8e82224b39195a7f050948d Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 7 Dec 2023 16:19:11 -0600
+Subject: [PATCH 2/2] jxl_cms.cmake: Add lcms2 to list of requires
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ lib/jxl_cms.cmake | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/lib/jxl_cms.cmake b/lib/jxl_cms.cmake
+index d3685dc4..fc2b74a9 100644
+--- a/lib/jxl_cms.cmake
++++ b/lib/jxl_cms.cmake
+@@ -57,7 +57,9 @@ install(TARGETS jxl_cms
+         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ 
+-set(JPEGXL_CMS_LIBRARY_REQUIRES "")
++if(NOT JPEGXL_ENABLE_SKCMS)
++  set(JPEGXL_CMS_LIBRARY_REQUIRES "lcms2")
++endif()
+ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/jxl/libjxl_cms.pc.in"
+                "libjxl_cms.pc" @ONLY)
+ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libjxl_cms.pc"
+-- 
+2.43.0
+
