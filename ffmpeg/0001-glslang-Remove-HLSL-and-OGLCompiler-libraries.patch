@@ -1,0 +1,29 @@
+From fdfa637e4049f409cb239edba455e9ea466e834a Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 8 Dec 2023 11:59:18 -0600
+Subject: [PATCH] glslang: Remove HLSL and OGLCompiler libraries
+
+Was removed upstream and does not seem to be needed
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ configure | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/configure b/configure
+index 7d2ee66000..174990415d 100755
+--- a/configure
++++ b/configure
+@@ -6737,6 +6737,9 @@ enabled libfreetype       && require_pkg_config libfreetype freetype2 "ft2build.
+ enabled libfribidi        && require_pkg_config libfribidi fribidi fribidi.h fribidi_version_info
+ enabled libharfbuzz       && require_pkg_config libharfbuzz harfbuzz hb.h hb_buffer_create
+ enabled libglslang && { check_lib spirv_compiler glslang/Include/glslang_c_interface.h glslang_initialize_process \
++                            -lglslang -lMachineIndependent -lOSDependent -lGenericCodeGen \
++                            -lSPVRemapper -lSPIRV -lSPIRV-Tools-opt -lSPIRV-Tools -lpthread -lstdc++ -lm ||
++                        check_lib spirv_compiler glslang/Include/glslang_c_interface.h glslang_initialize_process \
+                             -lglslang -lMachineIndependent -lOSDependent -lHLSL -lOGLCompiler -lGenericCodeGen \
+                             -lSPVRemapper -lSPIRV -lSPIRV-Tools-opt -lSPIRV-Tools -lpthread -lstdc++ -lm ||
+                         require spirv_compiler glslang/Include/glslang_c_interface.h glslang_initialize_process \
+-- 
+2.43.0
+
