@@ -1,4 +1,4 @@
-From 9334389df0f85b1331ec5ebc92b49dfe93f1b5db Mon Sep 17 00:00:00 2001
+From c08b8f41a2996eb1acd7114f5d5582039c09702c Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:16:49 -0500
 Subject: [PATCH 3/5] loader: CMake related static hacks
@@ -12,10 +12,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 85534b6a8..7317fc0e4 100644
+index a81c64ea6..4a63410c1 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -294,11 +294,6 @@ if(USE_ASSEMBLY_FALLBACK)
+@@ -312,11 +312,6 @@ if(USE_ASSEMBLY_FALLBACK)
  endif()
  
  if(WIN32)
@@ -27,7 +27,7 @@ index 85534b6a8..7317fc0e4 100644
      # If BUILD_DLL_VERSIONINFO was set, use the loader.rc in the build dir, otherwise use the checked in file
      set(RC_FILE_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/loader.rc)
      if (NOT "$CACHE{BUILD_DLL_VERSIONINFO}" STREQUAL "")
-@@ -307,14 +302,19 @@ if(WIN32)
+@@ -325,14 +320,19 @@ if(WIN32)
  
      set(LOADER_UNKNOWN_CHAIN_LIBRARY $<$<TARGET_EXISTS:loader-unknown-chain>:$<TARGET_OBJECTS:loader-unknown-chain>>)
  
@@ -42,7 +42,7 @@ index 85534b6a8..7317fc0e4 100644
 +                ${VULKAN_LIBRARY_TYPE}
                  ${NORMAL_LOADER_SRCS}
                  ${LOADER_UNKNOWN_CHAIN_LIBRARY}
-                 ${CMAKE_CURRENT_SOURCE_DIR}/vulkan-1.def
+                 ${CMAKE_CURRENT_SOURCE_DIR}/${API_TYPE}-1.def
 -                ${RC_FILE_LOCATION})
 -
 -    target_link_libraries(vulkan PRIVATE loader_specific_options loader-opt)
@@ -51,15 +51,15 @@ index 85534b6a8..7317fc0e4 100644
  
      # when adding the suffix the import and runtime library names must be consistent
      # mingw: libvulkan-1.dll.a / vulkan-1.dll
-@@ -412,7 +412,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
+@@ -461,7 +461,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
  endif()
  
  # common attributes of the vulkan library
 -target_link_libraries(vulkan PRIVATE loader_specific_options)
 +target_link_libraries(vulkan PRIVATE $<BUILD_INTERFACE:loader_specific_options>)
  
- set_target_properties(vulkan PROPERTIES ${LOADER_STANDARD_C_PROPERTIES})
- if (TARGET asm_offset)
+ target_link_libraries(vulkan PRIVATE Vulkan::Headers)
+ add_library(Vulkan::Loader ALIAS vulkan)
 -- 
-2.41.0
+2.43.0
 
