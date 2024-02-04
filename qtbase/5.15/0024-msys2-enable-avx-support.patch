@@ -1,0 +1,29 @@
+From fc3e7d65384fc6605513def14f934e6956faf91f Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 21:36:25 -0600
+Subject: [PATCH 24/25] msys2: enable avx support
+
+From Mehdi Chinoune
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ config.tests/x86_simd/main.cpp | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/config.tests/x86_simd/main.cpp b/config.tests/x86_simd/main.cpp
+index 0e7ebed8d9..29c8b97c12 100644
+--- a/config.tests/x86_simd/main.cpp
++++ b/config.tests/x86_simd/main.cpp
+@@ -161,9 +161,6 @@ attribute_target("sha") void test_shani()
+ #endif
+ 
+ #if T(AVX)
+-#  if defined(__WIN64__) && defined(__GNUC__) && !defined(__clang__)
+-#    error "AVX support is broken in 64-bit MinGW - https://gcc.gnu.org/bugzilla/show_bug.cgi?id=49001"
+-#  endif
+ attribute_target("avx") void test_avx()
+ {
+     __m256d a = _mm256_setzero_pd();
+-- 
+2.43.0
+

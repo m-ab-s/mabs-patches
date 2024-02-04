@@ -1,7 +1,7 @@
 From ba22bbad65b9ea6569534e912ff375a655ecb774 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 26 Feb 2020 05:14:13 +0000
-Subject: [PATCH 01/10] Allow ccache for Windows
+Subject: [PATCH 01/25] Allow ccache for Windows
 
 ---
  configure.json                    |  3 +--

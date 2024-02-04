@@ -1,0 +1,27 @@
+From eab0ab4d6af47ac644896a78f26cb66b78696007 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 21:08:53 -0600
+Subject: [PATCH 14/25] configure: limit pkg-config to not msvc rather than
+ win32
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ configure.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.json b/configure.json
+index 9c108d465c..2894cf0fa8 100644
+--- a/configure.json
++++ b/configure.json
+@@ -787,7 +787,7 @@
+         },
+         "pkg-config": {
+             "label": "Using pkg-config",
+-            "autoDetect": "!config.darwin && !config.win32",
++            "autoDetect": "!config.darwin && !config.msvc",
+             "condition": "tests.pkg-config",
+             "output": [
+                 "publicFeature",
+-- 
+2.43.0
+

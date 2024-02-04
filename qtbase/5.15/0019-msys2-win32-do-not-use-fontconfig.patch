@@ -1,0 +1,28 @@
+From 547265c3adc125f389af97f997c381896ca5dde9 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 21:25:43 -0600
+Subject: [PATCH 19/25] msys2: win32 do not use fontconfig
+
+From Mehdi Chinoune
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ src/plugins/platforms/minimal/qminimalintegration.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/plugins/platforms/minimal/qminimalintegration.cpp b/src/plugins/platforms/minimal/qminimalintegration.cpp
+index b69e603b01..ca1c9d64b7 100644
+--- a/src/plugins/platforms/minimal/qminimalintegration.cpp
++++ b/src/plugins/platforms/minimal/qminimalintegration.cpp
+@@ -163,7 +163,7 @@ QPlatformFontDatabase *QMinimalIntegration::fontDatabase() const
+ #endif
+ 
+         if (!m_fontDatabase) {
+-#if QT_CONFIG(fontconfig)
++#if QT_CONFIG(fontconfig) && !defined(Q_OS_WIN)
+             m_fontDatabase = new QGenericUnixFontDatabase;
+ #else
+             m_fontDatabase = QPlatformIntegration::fontDatabase();
+-- 
+2.43.0
+

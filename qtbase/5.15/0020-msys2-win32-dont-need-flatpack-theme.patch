@@ -1,0 +1,27 @@
+From dabe2cb0bad2726cac932be1fe5e48df9a093594 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 21:26:42 -0600
+Subject: [PATCH 20/25] msys2: win32 dont need flatpack theme
+
+From Mehdi Chinoune
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ src/plugins/platformthemes/platformthemes.pro | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/plugins/platformthemes/platformthemes.pro b/src/plugins/platformthemes/platformthemes.pro
+index 3bcc659199..d121e26e21 100644
+--- a/src/plugins/platformthemes/platformthemes.pro
++++ b/src/plugins/platformthemes/platformthemes.pro
+@@ -1,6 +1,6 @@
+ TEMPLATE = subdirs
+ QT_FOR_CONFIG += widgets-private
+ 
+-qtConfig(dbus):qtConfig(regularexpression):qtConfig(mimetype): SUBDIRS += xdgdesktopportal
++qtConfig(dbus):qtConfig(regularexpression):qtConfig(mimetype):!win32: SUBDIRS += xdgdesktopportal
+ 
+ qtHaveModule(widgets):qtConfig(gtk3): SUBDIRS += gtk3
+-- 
+2.43.0
+

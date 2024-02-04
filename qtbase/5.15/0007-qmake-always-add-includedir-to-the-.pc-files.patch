@@ -1,7 +1,7 @@
 From 42d46f37dd5626d14bf63020e1fa62874b375b8f Mon Sep 17 00:00:00 2001
 From: Johannes Kauffmann <johanneskauffmann@hotmail.com>
 Date: Mon, 12 Dec 2022 13:36:45 +0100
-Subject: [PATCH 07/10] qmake: always add includedir to the .pc files
+Subject: [PATCH 07/25] qmake: always add includedir to the .pc files
 
 The generated .pc files do not contain -I${includedir}, only
 -I${includedir}/$QTMODULE. This is because QMake finds out that our

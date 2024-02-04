@@ -1,0 +1,28 @@
+From 7d8a6e274028b261c619d393ace4934c0e9da87d Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 21:20:41 -0600
+Subject: [PATCH 16/25] msys2: don't add resource files to qmake libs
+
+From Mehdi Chinoune
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ qmake/generators/win32/mingw_make.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/qmake/generators/win32/mingw_make.cpp b/qmake/generators/win32/mingw_make.cpp
+index ee9a41838b..8d1dcae85b 100644
+--- a/qmake/generators/win32/mingw_make.cpp
++++ b/qmake/generators/win32/mingw_make.cpp
+@@ -147,7 +147,7 @@ void MingwMakefileGenerator::init()
+ 
+     processVars();
+ 
+-    project->values("LIBS") += project->values("RES_FILE");
++    project->values("OBJECTS") += project->values("RES_FILE");
+ 
+     if (project->isActiveConfig("dll")) {
+         QString destDir = "";
+-- 
+2.43.0
+

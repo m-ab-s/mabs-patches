@@ -1,0 +1,42 @@
+From 5a493e00f60033abedfa82ca4d1a29252035cec6 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 21:06:12 -0600
+Subject: [PATCH 13/25] msys2: win32 g++ Enable static builds
+
+From Mehdi Chinoune
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ mkspecs/common/g++-win32.conf     | 1 +
+ mkspecs/features/default_post.prf | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mkspecs/common/g++-win32.conf b/mkspecs/common/g++-win32.conf
+index 1484d31efb..e260b2a1cf 100644
+--- a/mkspecs/common/g++-win32.conf
++++ b/mkspecs/common/g++-win32.conf
+@@ -49,6 +49,7 @@ QMAKE_LFLAGS_RELEASE    = -Wl,-s
+ QMAKE_LFLAGS_CONSOLE    = -Wl,-subsystem,console
+ QMAKE_LFLAGS_WINDOWS    = -Wl,-subsystem,windows
+ QMAKE_LFLAGS_DLL        = -shared
++QMAKE_LFLAGS_STATIC_LIB = -static
+ QMAKE_LFLAGS_GCSECTIONS = -Wl,--gc-sections
+ equals(QMAKE_HOST.os, Windows) {
+     QMAKE_LINK_OBJECT_MAX = 10
+diff --git a/mkspecs/features/default_post.prf b/mkspecs/features/default_post.prf
+index ac799047ab..228a438926 100644
+--- a/mkspecs/features/default_post.prf
++++ b/mkspecs/features/default_post.prf
+@@ -87,8 +87,8 @@ stack_protector_strong {
+     enable_gdb_index: QMAKE_LFLAGS += $$QMAKE_LFLAGS_GDB_INDEX
+ }
+ 
++static: QMAKE_LFLAGS += $$QMAKE_LFLAGS_STATIC_LIB
+ dll:win32: QMAKE_LFLAGS += $$QMAKE_LFLAGS_DLL
+-static:mac: QMAKE_LFLAGS += $$QMAKE_LFLAGS_STATIC_LIB
+ staticlib:unix {
+     QMAKE_CFLAGS += $$QMAKE_CFLAGS_STATIC_LIB
+     QMAKE_CXXFLAGS += $$QMAKE_CXXFLAGS_STATIC_LIB
+-- 
+2.43.0
+

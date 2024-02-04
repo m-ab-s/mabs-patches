@@ -1,0 +1,28 @@
+From 93f62df4a595acac252eaa51fe1e0c2abc33469d Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 21:33:14 -0600
+Subject: [PATCH 23/25] msys2: enable mingw schannel alpn
+
+From Mehdi Chinoune
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp b/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
+index 5dd5f66eba..2425658577 100644
+--- a/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
++++ b/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
+@@ -87,7 +87,7 @@ typedef QSharedPointer<QSslSocket> QSslSocketPtr;
+ #define ALPN_SUPPORTED 1
+ #endif
+ 
+-#if QT_CONFIG(schannel) && !defined(Q_CC_MINGW)
++#if QT_CONFIG(schannel)
+ #define ALPN_SUPPORTED 1
+ #endif
+ 
+-- 
+2.43.0
+

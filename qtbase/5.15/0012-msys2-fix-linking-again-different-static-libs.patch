@@ -1,0 +1,44 @@
+From 12b68857b7ba71d515a604c8ee1e826acc0d5cba Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 20:59:58 -0600
+Subject: [PATCH 12/25] msys2: fix linking again different static libs
+
+From Mehdi Chinoune
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ src/corelib/text/qregularexpression.cpp | 4 ++++
+ src/network/configure.json              | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/corelib/text/qregularexpression.cpp b/src/corelib/text/qregularexpression.cpp
+index 1f10150435..6a97b47773 100644
+--- a/src/corelib/text/qregularexpression.cpp
++++ b/src/corelib/text/qregularexpression.cpp
+@@ -57,6 +57,10 @@
+ #endif
+ 
+ #define PCRE2_CODE_UNIT_WIDTH 16
++#ifdef QT_STATIC
++#define PCRE_STATIC
++#define PCRE2_STATIC
++#endif
+ 
+ #include <pcre2.h>
+ 
+diff --git a/src/network/configure.json b/src/network/configure.json
+index 271ff164ac..fe6ea42ebd 100644
+--- a/src/network/configure.json
++++ b/src/network/configure.json
+@@ -98,7 +98,7 @@
+                     "condition": "config.android"
+                 },
+                 {
+-                    "libs": "-lssl -lcrypto",
++                    "libs": "-lssl -lcrypto -lws2_32 -lcrypt32 -lgdi32",
+                     "condition": "!config.msvc"
+                 }
+             ]
+-- 
+2.43.0
+

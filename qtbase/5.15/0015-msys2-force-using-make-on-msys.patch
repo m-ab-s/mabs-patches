@@ -1,0 +1,33 @@
+From e683f3f315a3bc071e958045176a06af8cc356ff Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 21:16:00 -0600
+Subject: [PATCH 15/25] msys2: force using make on msys
+
+From Mehdi Chinoune
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ mkspecs/features/configure_base.prf | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/mkspecs/features/configure_base.prf b/mkspecs/features/configure_base.prf
+index 73e0273f18..127fda2f34 100644
+--- a/mkspecs/features/configure_base.prf
++++ b/mkspecs/features/configure_base.prf
+@@ -10,10 +10,10 @@ QMAKE_MAKE = $$(MAKE)
+ !isEmpty(QMAKE_MAKE) {
+     # We were called recursively. Use the same make.
+ } else: if(equals(MAKEFILE_GENERATOR, UNIX)|equals(MAKEFILE_GENERATOR, MINGW)) {
+-    !equals(QMAKE_HOST.os, Windows): \
+-        QMAKE_MAKE = make
+-    else: \
++    equals(QMAKE_HOST.os, Windows):isEmpty(QMAKE_SH): \
+         QMAKE_MAKE = mingw32-make
++    else: \
++        QMAKE_MAKE = make
+ } else: if(equals(MAKEFILE_GENERATOR, MSVC.NET)|equals(MAKEFILE_GENERATOR, MSBUILD)) {
+     QMAKE_MAKE = nmake
+ } else {
+-- 
+2.43.0
+
