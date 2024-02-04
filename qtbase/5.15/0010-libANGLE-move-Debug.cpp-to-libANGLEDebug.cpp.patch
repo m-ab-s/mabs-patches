@@ -1,7 +1,7 @@
 From b14dafa2b3bba74736d90bcac105932e9ec2cebe Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 20:07:02 -0600
-Subject: [PATCH 10/25] libANGLE: move Debug.cpp to libANGLEDebug.cpp
+Subject: [PATCH 10/26] libANGLE: move Debug.cpp to libANGLEDebug.cpp
 
 old name causes a conflict with debug.cpp
 resulting in the same .o filename and overwriting

@@ -1,7 +1,7 @@
 From fc3e7d65384fc6605513def14f934e6956faf91f Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:36:25 -0600
-Subject: [PATCH 24/25] msys2: enable avx support
+Subject: [PATCH 24/26] msys2: enable avx support
 
 From Mehdi Chinoune
 

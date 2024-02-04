@@ -1,7 +1,7 @@
 From e24489d3c65edeacbdae1e6e2bf1b2e4b77f2b1a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Hugo=20Beauz=C3=A9e-Luyssen?= <hugo@beauzee.fr>
 Date: Fri, 15 Jun 2018 09:59:42 +0300
-Subject: [PATCH 02/25] Windows QPA: Disable systray notification sounds
+Subject: [PATCH 02/26] Windows QPA: Disable systray notification sounds
 
 ---
  src/plugins/platforms/windows/qwindowssystemtrayicon.cpp | 4 ++++

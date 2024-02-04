@@ -1,7 +1,7 @@
 From 5a493e00f60033abedfa82ca4d1a29252035cec6 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:06:12 -0600
-Subject: [PATCH 13/25] msys2: win32 g++ Enable static builds
+Subject: [PATCH 13/26] msys2: win32 g++ Enable static builds
 
 From Mehdi Chinoune
 

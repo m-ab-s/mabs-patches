@@ -1,7 +1,7 @@
 From 2802d5cc6d608b570b7ab508c957620cbdf2282b Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 25 Sep 2020 03:17:10 +0000
-Subject: [PATCH 09/25] qmake: Patch win32-*g++ for static builds
+Subject: [PATCH 09/26] qmake: Patch win32-*g++ for static builds
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---

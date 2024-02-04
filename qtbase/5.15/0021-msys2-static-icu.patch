@@ -1,7 +1,7 @@
 From 74b41109bcc991406e5b3fff4c1517ad08d1a677 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:28:11 -0600
-Subject: [PATCH 21/25] msys2: static icu
+Subject: [PATCH 21/26] msys2: static icu
 
 From Mehdi Chinoune
 

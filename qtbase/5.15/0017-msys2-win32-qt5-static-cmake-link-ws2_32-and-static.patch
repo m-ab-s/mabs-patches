@@ -1,7 +1,7 @@
 From deed3a65212f5ee17cf6715660a884c9e9d7a66b Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:22:21 -0600
-Subject: [PATCH 17/25] msys2: win32 qt5 static cmake link ws2_32 and -static
+Subject: [PATCH 17/26] msys2: win32 qt5 static cmake link ws2_32 and -static
 
 From Mehdi Chinoune
 
