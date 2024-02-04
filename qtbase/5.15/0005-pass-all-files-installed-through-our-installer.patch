@@ -1,0 +1,39 @@
+From 5dc189e2ea4bedb4c38260d5d2d03b5ee9a69e00 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 20:00:28 -0600
+Subject: [PATCH 05/10] pass all files installed through our installer
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ qmake/generators/makefile.cpp | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/qmake/generators/makefile.cpp b/qmake/generators/makefile.cpp
+index 7ff921549d..c0b39bcf4f 100644
+--- a/qmake/generators/makefile.cpp
++++ b/qmake/generators/makefile.cpp
+@@ -3471,11 +3471,16 @@ QString MakefileGenerator::installMetaFile(const ProKey &replace_rule, const QSt
+ {
+     QString ret;
+     QString sedargs = createSedArgs(replace_rule);
+-    if (sedargs.isEmpty()) {
+-        ret = "$(INSTALL_FILE) " + escapeFilePath(src) + ' ' + escapeFilePath(dst);
+-    } else {
+-        ret = "$(SED) " + sedargs + ' ' + escapeFilePath(src) + " > " + escapeFilePath(dst);
+-    }
++    QString escaped_src = escapeFilePath(src);
++    if (!sedargs.isEmpty()) {
++        int pos = src.lastIndexOf('.');
++        QString filename = src.left(pos);
++        QString ext = src.mid(pos + 1);
++        escaped_src = escapeFilePath(filename + ".qmakereplace." + ext);
++        ret += "$(SED) " + sedargs + ' ' + escapeFilePath(src) + " > "
++                + escaped_src + " && ";
++    }
++    ret += "$(INSTALL_FILE) " + escaped_src + ' ' + escapeFilePath(dst);
+     return ret;
+ }
+ 
+-- 
+2.43.0
+

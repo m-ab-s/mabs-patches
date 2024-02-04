@@ -1,0 +1,44 @@
+From 61a0aa09fb935d7c84aaa34e2dd7978b8a070a3b Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 20:01:59 -0600
+Subject: [PATCH 06/10] fix missing QMAKE_PKGCONFIG_VERSION in Windows targets
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ mkspecs/features/qml_plugin.prf | 2 +-
+ mkspecs/features/qt_plugin.prf  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mkspecs/features/qml_plugin.prf b/mkspecs/features/qml_plugin.prf
+index b64479c435..56e539d975 100644
+--- a/mkspecs/features/qml_plugin.prf
++++ b/mkspecs/features/qml_plugin.prf
+@@ -34,9 +34,9 @@ darwin:!no_app_extension_api_only: CONFIG += app_extension_api_only
+ }
+ isEmpty(TARGETPATH): TARGETPATH = $$eval(QT.$${CXX_MODULE}.name)
+ 
++isEmpty(VERSION): VERSION = $$MODULE_VERSION
+ win32:CONFIG(shared, static|shared) {
+     # Embed a VERSIONINFO resource into the plugin's DLL.
+-    isEmpty(VERSION): VERSION = $$MODULE_VERSION
+     CONFIG += skip_target_version_ext
+ }
+ 
+diff --git a/mkspecs/features/qt_plugin.prf b/mkspecs/features/qt_plugin.prf
+index 47fe96c8e0..2e8e158f0e 100644
+--- a/mkspecs/features/qt_plugin.prf
++++ b/mkspecs/features/qt_plugin.prf
+@@ -21,9 +21,9 @@ pluginpclib_replace.CONFIG = path
+ QMAKE_PKGCONFIG_INSTALL_REPLACE += pluginpclib_replace
+ DESTDIR = $$MODULE_BASE_OUTDIR/plugins/$$PLUGIN_TYPE
+ 
++isEmpty(VERSION): VERSION = $$QT_VERSION
+ win32:CONFIG(shared, static|shared) {
+     # Embed a VERSIONINFO resource into the plugin's DLL.
+-    isEmpty(VERSION): VERSION = $$QT_VERSION
+     CONFIG += skip_target_version_ext
+ }
+ 
+-- 
+2.43.0
+

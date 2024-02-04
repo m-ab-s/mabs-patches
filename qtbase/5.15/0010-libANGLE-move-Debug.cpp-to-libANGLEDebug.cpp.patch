@@ -1,0 +1,36 @@
+From b14dafa2b3bba74736d90bcac105932e9ec2cebe Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 3 Feb 2024 20:07:02 -0600
+Subject: [PATCH 10/10] libANGLE: move Debug.cpp to libANGLEDebug.cpp
+
+old name causes a conflict with debug.cpp
+resulting in the same .o filename and overwriting
+the other file.
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ .../angle/src/libANGLE/{Debug.cpp => libANGLEDebug.cpp}         | 0
+ src/angle/src/common/gles_common.pri                            | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename src/3rdparty/angle/src/libANGLE/{Debug.cpp => libANGLEDebug.cpp} (100%)
+
+diff --git a/src/3rdparty/angle/src/libANGLE/Debug.cpp b/src/3rdparty/angle/src/libANGLE/libANGLEDebug.cpp
+similarity index 100%
+rename from src/3rdparty/angle/src/libANGLE/Debug.cpp
+rename to src/3rdparty/angle/src/libANGLE/libANGLEDebug.cpp
+diff --git a/src/angle/src/common/gles_common.pri b/src/angle/src/common/gles_common.pri
+index 70b65dd4cc..ce76964ebd 100644
+--- a/src/angle/src/common/gles_common.pri
++++ b/src/angle/src/common/gles_common.pri
+@@ -159,7 +159,7 @@ SOURCES += \
+     $$ANGLE_DIR/src/libANGLE/Config.cpp \
+     $$ANGLE_DIR/src/libANGLE/Context.cpp \
+     $$ANGLE_DIR/src/libANGLE/ContextState.cpp \
+-    $$ANGLE_DIR/src/libANGLE/Debug.cpp \
++    $$ANGLE_DIR/src/libANGLE/libANGLEDebug.cpp \
+     $$ANGLE_DIR/src/libANGLE/Device.cpp \
+     $$ANGLE_DIR/src/libANGLE/Display.cpp \
+     $$ANGLE_DIR/src/libANGLE/Error.cpp \
+-- 
+2.43.0
+
