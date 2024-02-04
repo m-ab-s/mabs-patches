@@ -1,7 +1,7 @@
 From 46c75c426710ee2566f202bef3d455fbb70f1df2 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:31:54 -0600
-Subject: [PATCH 22/26] msys2: fix and enable iconv codec
+Subject: [PATCH 22/27] msys2: fix and enable iconv codec
 
 From Mehdi Chinoune
 

@@ -1,7 +1,7 @@
 From 7efef7d8cad310802f1eb66360935d9cf9a2e988 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 4 Feb 2024 00:12:36 -0600
-Subject: [PATCH 26/26] ShaderVars: include cstdint for uint64_t
+Subject: [PATCH 26/27] ShaderVars: include cstdint for uint64_t
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---

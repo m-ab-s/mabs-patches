@@ -1,7 +1,7 @@
 From 7d8a6e274028b261c619d393ace4934c0e9da87d Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:20:41 -0600
-Subject: [PATCH 16/26] msys2: don't add resource files to qmake libs
+Subject: [PATCH 16/27] msys2: don't add resource files to qmake libs
 
 From Mehdi Chinoune
 

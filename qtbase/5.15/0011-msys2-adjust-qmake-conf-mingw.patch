@@ -1,7 +1,7 @@
 From 62c62725004b3776a3dd9bb91b58f917a3f05bf1 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 20:55:45 -0600
-Subject: [PATCH 11/26] msys2: adjust qmake conf mingw
+Subject: [PATCH 11/27] msys2: adjust qmake conf mingw
 
 From Mehdi Chinoune
 

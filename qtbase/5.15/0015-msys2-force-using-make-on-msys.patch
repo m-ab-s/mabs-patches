@@ -1,7 +1,7 @@
 From e683f3f315a3bc071e958045176a06af8cc356ff Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:16:00 -0600
-Subject: [PATCH 15/26] msys2: force using make on msys
+Subject: [PATCH 15/27] msys2: force using make on msys
 
 From Mehdi Chinoune
 

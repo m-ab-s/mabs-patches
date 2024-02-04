@@ -1,7 +1,7 @@
 From 547265c3adc125f389af97f997c381896ca5dde9 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:25:43 -0600
-Subject: [PATCH 19/26] msys2: win32 do not use fontconfig
+Subject: [PATCH 19/27] msys2: win32 do not use fontconfig
 
 From Mehdi Chinoune
 

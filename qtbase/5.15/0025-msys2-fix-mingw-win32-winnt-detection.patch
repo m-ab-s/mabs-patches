@@ -1,7 +1,7 @@
 From 69d0306db540ff51f319086e77e41cd54cbd54cc Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:36:56 -0600
-Subject: [PATCH 25/26] msys2: fix mingw win32 winnt detection
+Subject: [PATCH 25/27] msys2: fix mingw win32 winnt detection
 
 From Mehdi Chinoune
 

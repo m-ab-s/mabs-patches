@@ -1,7 +1,7 @@
 From 12b68857b7ba71d515a604c8ee1e826acc0d5cba Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 20:59:58 -0600
-Subject: [PATCH 12/26] msys2: fix linking again different static libs
+Subject: [PATCH 12/27] msys2: fix linking again different static libs
 
 From Mehdi Chinoune
 

@@ -1,7 +1,7 @@
 From 4b531d0dfa33e25c4805888d70b3be50448b25f9 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 21:24:23 -0600
-Subject: [PATCH 18/26] msys2: win32 Avoid platformNativeInterface segfaults
+Subject: [PATCH 18/27] msys2: win32 Avoid platformNativeInterface segfaults
  with minimal platform
 
 From Mehdi Chinoune

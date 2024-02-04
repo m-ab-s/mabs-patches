@@ -1,7 +1,7 @@
 From d07b2d9835ef12b036baf2244538a7ca99658e27 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 24 Sep 2020 03:37:24 +0000
-Subject: [PATCH 08/26] qt_module.prf: don't create libtool if not unix
+Subject: [PATCH 08/27] qt_module.prf: don't create libtool if not unix
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---

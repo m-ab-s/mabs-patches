@@ -1,7 +1,7 @@
 From 8cd6db74b53f12895590eb512a76ef7c815c00e0 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sat, 3 Feb 2024 19:55:37 -0600
-Subject: [PATCH 04/26] force path replacement in pkg-config output files
+Subject: [PATCH 04/27] force path replacement in pkg-config output files
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
