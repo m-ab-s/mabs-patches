@@ -1,0 +1,37 @@
+From c2af799d176b4470b5adbcf4c909fc95886375f1 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Wed, 3 Apr 2024 13:55:49 -0500
+Subject: [PATCH] InterSearch: use vector to replace VLA
+
+VLAs aren't really supposed to be in C++ and clang will warn about it
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ source/Lib/EncoderLib/InterSearch.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/source/Lib/EncoderLib/InterSearch.cpp b/source/Lib/EncoderLib/InterSearch.cpp
+index 9233fae..e13c0c1 100644
+--- a/source/Lib/EncoderLib/InterSearch.cpp
++++ b/source/Lib/EncoderLib/InterSearch.cpp
+@@ -59,6 +59,7 @@ POSSIBILITY OF SUCH DAMAGE.
+ #include "CommonLib/TimeProfiler.h"
+ 
+ #include <math.h>
++#include <vector>
+ 
+  //! \ingroup EncoderLib
+  //! \{
+@@ -2061,7 +2062,8 @@ void InterSearch::xMotionEstimation(CodingUnit& cu, CPelUnitBuf& origBuf, RefPic
+     Distortion uiBestSad = m_cDistParam.distFunc(m_cDistParam);
+     uiBestSad += m_pcRdCost->getCostOfVectorWithPredictor(cTmpMv.hor, cTmpMv.ver, cStruct.imvShift);
+ 
+-    Mv prevMv[m_BlkUniMvInfoBuffer->m_uniMvListMaxSize];
++    // Mv prevMv[m_BlkUniMvInfoBuffer->m_uniMvListMaxSize];
++    std::vector<Mv> prevMv(m_BlkUniMvInfoBuffer->m_uniMvListMaxSize);
+ 
+     for( int i = 0; i < m_BlkUniMvInfoBuffer->m_uniMvListSize; i++ )
+     {
+-- 
+2.44.0
+
