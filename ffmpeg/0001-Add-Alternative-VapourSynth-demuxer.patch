@@ -1,4 +1,4 @@
-From cdb9de5f3ac5470341e8e04978e7790d17be1622 Mon Sep 17 00:00:00 2001
+From 20542541f8fa6fdb398857849215d0e901b2610d Mon Sep 17 00:00:00 2001
 From: Helenerineium <photosynthesis2728@gmail.com>
 Date: Sun, 30 Jun 2019 20:13:49 +0800
 Subject: [PATCH] Add Alternative VapourSynth demuxer
@@ -8,15 +8,15 @@ Usage: ffmpeg -f vapoursynth_alt
  configure                     |   1 +
  libavformat/Makefile          |   1 +
  libavformat/allformats.c      |   1 +
- libavformat/vapoursynth_alt.c | 363 ++++++++++++++++++++++++++++++++++
- 4 files changed, 366 insertions(+)
+ libavformat/vapoursynth_alt.c | 365 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 368 insertions(+)
  create mode 100644 libavformat/vapoursynth_alt.c
 
 diff --git a/configure b/configure
-index 1535dc3c5b..c9cf045003 100755
+index 8101b4fce6..73a89bd2f4 100755
 --- a/configure
 +++ b/configure
-@@ -3376,6 +3376,7 @@ libxavs2_encoder_deps="libxavs2"
+@@ -3564,6 +3564,7 @@ libxeve_encoder_deps="libxeve"
  libxvid_encoder_deps="libxvid"
  libzvbi_teletext_decoder_deps="libzvbi"
  vapoursynth_demuxer_deps="vapoursynth"
@@ -25,35 +25,35 @@ index 1535dc3c5b..c9cf045003 100755
  videotoolbox_deps="corefoundation coremedia corevideo"
  videotoolbox_encoder_deps="videotoolbox VTCompressionSessionPrepareToEncodeFrames"
 diff --git a/libavformat/Makefile b/libavformat/Makefile
-index 6566e40cac..4e75a9384e 100644
+index 8efe26b6df..a7721a038d 100644
 --- a/libavformat/Makefile
 +++ b/libavformat/Makefile
-@@ -618,6 +618,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
+@@ -659,6 +659,7 @@ OBJS-$(CONFIG_LIBGME_DEMUXER)            += libgme.o
  OBJS-$(CONFIG_LIBMODPLUG_DEMUXER)        += libmodplug.o
  OBJS-$(CONFIG_LIBOPENMPT_DEMUXER)        += libopenmpt.o
  OBJS-$(CONFIG_VAPOURSYNTH_DEMUXER)       += vapoursynth.o
 +OBJS-$(CONFIG_VAPOURSYNTH_ALT_DEMUXER)   += vapoursynth_alt.o
  
  # protocols I/O
- OBJS-$(CONFIG_ASYNC_PROTOCOL)            += async.o
+ OBJS-$(CONFIG_ANDROID_CONTENT_PROTOCOL)  += file.o
 diff --git a/libavformat/allformats.c b/libavformat/allformats.c
-index d066a7745b..490d16aaa5 100644
+index 305fa46532..ca10a5d41e 100644
 --- a/libavformat/allformats.c
 +++ b/libavformat/allformats.c
-@@ -535,6 +535,7 @@ extern const AVInputFormat  ff_libgme_demuxer;
- extern const AVInputFormat  ff_libmodplug_demuxer;
- extern const AVInputFormat  ff_libopenmpt_demuxer;
- extern const AVInputFormat  ff_vapoursynth_demuxer;
-+extern const AVInputFormat  ff_vapoursynth_alt_demuxer;
+@@ -575,6 +575,7 @@ extern const FFInputFormat  ff_libgme_demuxer;
+ extern const FFInputFormat  ff_libmodplug_demuxer;
+ extern const FFInputFormat  ff_libopenmpt_demuxer;
+ extern const FFInputFormat  ff_vapoursynth_demuxer;
++extern const FFInputFormat  ff_vapoursynth_alt_demuxer;
  
  #include "libavformat/muxer_list.c"
  #include "libavformat/demuxer_list.c"
 diff --git a/libavformat/vapoursynth_alt.c b/libavformat/vapoursynth_alt.c
 new file mode 100644
-index 0000000000..efbf90f588
+index 0000000000..e5aa3fef1f
 --- /dev/null
 +++ b/libavformat/vapoursynth_alt.c
-@@ -0,0 +1,363 @@
+@@ -0,0 +1,365 @@
 +/*
 + * This file is part of FFmpeg.
 + *
@@ -89,6 +89,7 @@ index 0000000000..efbf90f588
 +#include "libavutil/pixdesc.h"
 +#include "libavutil/time.h"
 +#include "libavcodec/internal.h"
++#include "demux.h"
 +#include "avformat.h"
 +#include "internal.h"
 +
@@ -407,10 +408,11 @@ index 0000000000..efbf90f588
 +    return 0;
 +}
 +
-+const AVInputFormat ff_vapoursynth_alt_demuxer = {
-+    .name           = "vapoursynth_alt",
-+    .long_name      = NULL_IF_CONFIG_SMALL("Alternative VapourSynth demuxer"),
++const FFInputFormat ff_vapoursynth_alt_demuxer = {
++    .p.name         = "vapoursynth_alt",
++    .p.long_name    = NULL_IF_CONFIG_SMALL("Alternative VapourSynth demuxer"),
 +    .priv_data_size = sizeof(VSContext),
++    .flags_internal = FF_INFMT_FLAG_INIT_CLEANUP,
 +    .read_probe     = read_probe,
 +    .read_header    = read_header,
 +    .read_packet    = read_packet,
@@ -418,5 +420,5 @@ index 0000000000..efbf90f588
 +    .read_seek      = read_seek,
 +};
 -- 
-2.35.1
+2.44.0
 
