@@ -1,7 +1,10 @@
-From 1def904c548b75148b68d82f92e85fe44379f2b1 Mon Sep 17 00:00:00 2001
+From 26abea79ee0184fdc55646b49e7eaa9f82ef9ae0 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 8 Mar 2021 17:52:30 -0600
-Subject: [PATCH 3/3] tiffgt: link gl after glut
+Subject: [PATCH 2/2] tiffgt: link gl after glut
+
+fixes a lot of errors with libglut with undefined reference to
+__imp_gl* functions
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -9,18 +12,18 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
-index 0488ea26..5eeaf9a5 100755
+index 5aea2347..6a35ee8c 100755
 --- a/tools/CMakeLists.txt
 +++ b/tools/CMakeLists.txt
-@@ -128,7 +128,7 @@ if(HAVE_OPENGL)
-   add_executable(tiffgt)
+@@ -136,7 +136,7 @@ if(OPENGL_SUPPORT)
+   add_executable(tiffgt ../placeholder.h)
    target_sources(tiffgt PRIVATE tiffgt.c)
-   target_link_libraries(tiffgt PRIVATE tiff port)
+   target_link_libraries(tiffgt PRIVATE tiff tiff_port)
 -  target_link_libraries(tiffgt PRIVATE OpenGL::GL GLUT::GLUT)
 +  target_link_libraries(tiffgt PRIVATE GLUT::GLUT OpenGL::GL)
    if(WIN32)
      target_link_libraries(tiffgt PRIVATE winmm)
    endif()
 -- 
-2.25.1
+2.45.0
 
