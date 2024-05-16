@@ -1,4 +1,4 @@
-From 64fb9a4212fe455f6889899f66026a16ab30ead4 Mon Sep 17 00:00:00 2001
+From da99bf49e27b567edf0cb2dbb55f2e39ce95ce69 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:16:49 -0500
 Subject: [PATCH 3/5] loader: CMake related static hacks
@@ -8,40 +8,46 @@ with shinchiro's patch yet.
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- loader/CMakeLists.txt | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ loader/CMakeLists.txt | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 298c6d1fb..7a3575f3c 100644
+index 298c6d1fb..64fbc0bf0 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -321,13 +321,21 @@ if(WIN32)
+@@ -321,18 +321,23 @@ if(WIN32)
          set(RC_FILE_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/loader.rc)
      endif()
  
-+
+-    add_library(vulkan
+-                SHARED
+-                ${NORMAL_LOADER_SRCS}
+-                ${CMAKE_CURRENT_SOURCE_DIR}/${API_TYPE}-1.def
+-                ${RC_FILE_LOCATION})
+ 
+-    target_link_libraries(vulkan PRIVATE loader_specific_options)
 +    set(LOADER_UNKNOWN_CHAIN_LIBRARY $<$<TARGET_EXISTS:loader-unknown-chain>:$<TARGET_OBJECTS:loader-unknown-chain>>)
-+
+ 
+-    if(UNKNOWN_FUNCTIONS_SUPPORTED)
+-        target_link_libraries(vulkan PRIVATE loader-unknown-chain)
 +    if (BUILD_STATIC_LOADER)
 +        set(VULKAN_LIBRARY_TYPE STATIC)
 +    else()
 +        set(VULKAN_LIBRARY_TYPE SHARED)
-+    endif()
-+
-     add_library(vulkan
--                SHARED
-+                ${VULKAN_LIBRARY_TYPE}
-                 ${NORMAL_LOADER_SRCS}
-                 ${CMAKE_CURRENT_SOURCE_DIR}/${API_TYPE}-1.def
--                ${RC_FILE_LOCATION})
--
--    target_link_libraries(vulkan PRIVATE loader_specific_options)
-+                ${RC_FILE_LOCATION}
-+                ${OPT_LOADER_SRCS})
+     endif()
  
-     if(UNKNOWN_FUNCTIONS_SUPPORTED)
-         target_link_libraries(vulkan PRIVATE loader-unknown-chain)
-@@ -458,7 +466,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
++    add_library(vulkan
++                ${VULKAN_LIBRARY_TYPE}
++                ${NORMAL_LOADER_SRCS}
++                ${CMAKE_CURRENT_SOURCE_DIR}/${API_TYPE}-1.def
++                ${RC_FILE_LOCATION}
++                ${LOADER_UNKNOWN_CHAIN_LIBRARY}
++                ${OPT_LOADER_SRCS})
++
+     # when adding the suffix the import and runtime library names must be consistent
+     # mingw: libvulkan-1.dll.a / vulkan-1.dll
+     # msvc: vulkan-1.lib / vulkan-1.dll
+@@ -458,7 +463,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
  endif()
  
  # common attributes of the vulkan library
