@@ -1,4 +1,4 @@
-From 1f3f8f988516394330541fc35eb58e0ddddbc827 Mon Sep 17 00:00:00 2001
+From 92c36b94ca527a5195b0eca48670e6bdad8e90b9 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:16:49 -0500
 Subject: [PATCH 3/5] loader: CMake related static hacks
@@ -8,14 +8,14 @@ with shinchiro's patch yet.
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- loader/CMakeLists.txt | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ loader/CMakeLists.txt | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 001adb9cd..cd9ed71c3 100644
+index 001adb9cd..87ad1df83 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -318,12 +318,22 @@ if(WIN32)
+@@ -318,14 +318,22 @@ if(WIN32)
          set(RC_FILE_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/loader.rc)
      endif()
  
@@ -35,12 +35,14 @@ index 001adb9cd..cd9ed71c3 100644
                  ${LOADER_UNKNOWN_CHAIN_LIBRARY}
                  ${CMAKE_CURRENT_SOURCE_DIR}/${API_TYPE}-1.def
 -                ${RC_FILE_LOCATION})
+-
+-    target_link_libraries(vulkan PRIVATE loader_specific_options)
 +                ${RC_FILE_LOCATION}
 +                ${OPT_LOADER_SRCS})
  
-     target_link_libraries(vulkan PRIVATE loader_specific_options)
- 
-@@ -452,7 +462,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
+     # when adding the suffix the import and runtime library names must be consistent
+     # mingw: libvulkan-1.dll.a / vulkan-1.dll
+@@ -452,7 +460,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
  endif()
  
  # common attributes of the vulkan library
