@@ -1,4 +1,4 @@
-From 53b9024e39878b71828d4266954e3fafeeebb8d2 Mon Sep 17 00:00:00 2001
+From 5ff94450e749834eb052d71368a5ae43d3663f7b Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Wed, 18 Aug 2021 11:02:41 -0500
 Subject: [PATCH 1/5] pc: remove CMAKE_CXX_IMPLICIT_LINK_LIBRARIES
@@ -12,10 +12,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 5a4caec28..001adb9cd 100644
+index a9e625b5c..298c6d1fb 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -485,6 +485,7 @@ install(FILES "${version_config}" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulk
+@@ -491,6 +491,7 @@ install(FILES "${version_config}" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulk
  # https://gitlab.kitware.com/cmake/cmake/-/issues/22621
  find_package(PkgConfig)
  if (PKG_CONFIG_FOUND)
