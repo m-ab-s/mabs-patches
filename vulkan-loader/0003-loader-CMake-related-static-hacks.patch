@@ -1,4 +1,4 @@
-From da99bf49e27b567edf0cb2dbb55f2e39ce95ce69 Mon Sep 17 00:00:00 2001
+From 19749e88c44b9a6538bfc8b63df6464fde72d762 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:16:49 -0500
 Subject: [PATCH 3/5] loader: CMake related static hacks
@@ -8,14 +8,14 @@ with shinchiro's patch yet.
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- loader/CMakeLists.txt | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ loader/CMakeLists.txt | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 298c6d1fb..64fbc0bf0 100644
+index 8e2f3e9a1..dc069a359 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -321,18 +321,23 @@ if(WIN32)
+@@ -324,18 +324,22 @@ if(WIN32)
          set(RC_FILE_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/loader.rc)
      endif()
  
@@ -28,7 +28,7 @@ index 298c6d1fb..64fbc0bf0 100644
 -    target_link_libraries(vulkan PRIVATE loader_specific_options)
 +    set(LOADER_UNKNOWN_CHAIN_LIBRARY $<$<TARGET_EXISTS:loader-unknown-chain>:$<TARGET_OBJECTS:loader-unknown-chain>>)
  
--    if(UNKNOWN_FUNCTIONS_SUPPORTED)
+-    if(UNKNOWN_FUNCTIONS_SUPPORTED AND TARGET loader-unknown-chain)
 -        target_link_libraries(vulkan PRIVATE loader-unknown-chain)
 +    if (BUILD_STATIC_LOADER)
 +        set(VULKAN_LIBRARY_TYPE STATIC)
@@ -41,13 +41,12 @@ index 298c6d1fb..64fbc0bf0 100644
 +                ${NORMAL_LOADER_SRCS}
 +                ${CMAKE_CURRENT_SOURCE_DIR}/${API_TYPE}-1.def
 +                ${RC_FILE_LOCATION}
-+                ${LOADER_UNKNOWN_CHAIN_LIBRARY}
-+                ${OPT_LOADER_SRCS})
++                ${LOADER_UNKNOWN_CHAIN_LIBRARY})
 +
      # when adding the suffix the import and runtime library names must be consistent
      # mingw: libvulkan-1.dll.a / vulkan-1.dll
      # msvc: vulkan-1.lib / vulkan-1.dll
-@@ -458,7 +463,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
+@@ -461,7 +465,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
  endif()
  
  # common attributes of the vulkan library

@@ -1,4 +1,4 @@
-From f7dee68e2d9e5a342f3b60412cf59053a7d6f3b4 Mon Sep 17 00:00:00 2001
+From c59556b9d3f3959e54e1d52dde600954a4d4d562 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:38:44 -0500
 Subject: [PATCH 5/5] loader: Static library name related hacks
@@ -11,10 +11,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 7fd98800d..618507319 100644
+index 04a0a8558..040a4b2dd 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -341,14 +341,16 @@ if(WIN32)
+@@ -343,14 +343,16 @@ if(WIN32)
      # when adding the suffix the import and runtime library names must be consistent
      # mingw: libvulkan-1.dll.a / vulkan-1.dll
      # msvc: vulkan-1.lib / vulkan-1.dll
@@ -37,7 +37,7 @@ index 7fd98800d..618507319 100644
      endif()
  
      if(MSVC AND ENABLE_WIN10_ONECORE)
-@@ -509,7 +511,7 @@ if (PKG_CONFIG_FOUND)
+@@ -511,7 +513,7 @@ if (PKG_CONFIG_FOUND)
          set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
      endif()
  
