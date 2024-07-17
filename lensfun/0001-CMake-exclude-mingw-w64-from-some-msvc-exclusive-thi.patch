@@ -1,4 +1,4 @@
-From 1f6e6b0f0b7bd87ef36c70222082ea64054a18a9 Mon Sep 17 00:00:00 2001
+From fb6b534020ad4a99b83aa1b0a72026733d0aee07 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 2 May 2021 20:14:30 -0500
 Subject: [PATCH 1/2] CMake: exclude mingw-w64 from some msvc exclusive things
@@ -9,7 +9,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9bd474de..f338b5ab 100644
+index 3e97d7bb..c1305480 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -71,7 +71,7 @@ IF(WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -37,8 +37,8 @@ index 9bd474de..f338b5ab 100644
 -IF(WIN32 AND NOT BUILD_STATIC)
 +IF(MSVC AND NOT BUILD_STATIC)
    FIND_FILE(GLIB2_DLL
-             NAMES glib-2.dll glib-2-vs9.dll
+             NAMES glib-2.0-0.dll glib-2.dll glib-2-vs9.dll
              PATHS "${GLIB2_BASE_DIR}/bin"
 -- 
-2.35.1
+2.45.2
 

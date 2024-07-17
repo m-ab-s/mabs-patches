@@ -1,4 +1,4 @@
-From aceff0972f4241c79d1f961039a913fa01301ee2 Mon Sep 17 00:00:00 2001
+From c25c278cd8fe43b224d26c918c23d3a835558444 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 25 Mar 2022 18:39:24 -0500
 Subject: [PATCH 2/2] CMake: don't add glib2's includes as SYSTEM dirs
@@ -11,7 +11,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f338b5ab..2ef7b9e5 100644
+index c1305480..55b33a83 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -116,7 +116,7 @@ ELSE()
@@ -24,5 +24,5 @@ index f338b5ab..2ef7b9e5 100644
  
  
 -- 
-2.35.1
+2.45.2
 
