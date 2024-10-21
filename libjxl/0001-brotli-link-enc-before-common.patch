@@ -1,4 +1,4 @@
-From b9b74d75cf58c8f1e7a1ec20f9713d88ea5e421a Mon Sep 17 00:00:00 2001
+From a14e88ed355b84dfecbc6ed6a5b812548793496d Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Tue, 14 Dec 2021 01:44:09 -0600
 Subject: [PATCH] brotli: link enc before common
@@ -7,35 +7,9 @@ fixes static linking
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- cmake/FindBrotli.cmake | 6 +++---
- lib/jxl.cmake          | 2 +-
- third_party/brotli     | 2 +-
- third_party/googletest | 2 +-
- third_party/libpng     | 2 +-
- third_party/sjpeg      | 2 +-
- third_party/skcms      | 2 +-
- third_party/zlib       | 2 +-
- 8 files changed, 10 insertions(+), 10 deletions(-)
+ lib/jxl.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/cmake/FindBrotli.cmake b/cmake/FindBrotli.cmake
-index 9fb78e47..95ab740f 100644
---- a/cmake/FindBrotli.cmake
-+++ b/cmake/FindBrotli.cmake
-@@ -34,11 +34,11 @@ foreach(brlib IN ITEMS ${brlibs})
-     else()
-     add_library(${brlib} INTERFACE IMPORTED GLOBAL)
-       target_include_directories(${brlib}
--        INTERFACE ${BROTLI_INCLUDE_DIR})
-+        INTERFACE ${BROTLI_INCLUDE_DIR} ${PC_${BRPREFIX}_CFLAGS})
-       target_link_libraries(${brlib}
--        INTERFACE ${${BRPREFIX}_LIBRARY})
-+        INTERFACE ${${BRPREFIX}_LIBRARY} ${PC_${BRPREFIX}_LDFLAGS})
-       target_link_options(${brlib}
--        INTERFACE ${PC_${BRPREFIX}_LDFLAGS_OTHER})
-+        INTERFACE ${PC_${BRPREFIX}_LDFLAGS_OTHER} ${PC_${BRPREFIX}_LDFLAGS})
-       target_compile_options(${brlib}
-         INTERFACE ${PC_${BRPREFIX}_CFLAGS_OTHER})
-     endif()
 diff --git a/lib/jxl.cmake b/lib/jxl.cmake
 index 59b2cca4..654b3384 100644
 --- a/lib/jxl.cmake
@@ -50,48 +24,6 @@ index 59b2cca4..654b3384 100644
  )
  
  if (JPEGXL_ENABLE_TRANSCODE_JPEG)
-diff --git a/third_party/brotli b/third_party/brotli
-index 36533a86..35ef5c55 160000
---- a/third_party/brotli
-+++ b/third_party/brotli
-@@ -1 +1 @@
--Subproject commit 36533a866ed1ca4b75cf049f4521e4ec5fe24727
-+Subproject commit 35ef5c554d888bef217d449346067de05e269b30
-diff --git a/third_party/googletest b/third_party/googletest
-index 58d77fa8..0ea2d8f8 160000
---- a/third_party/googletest
-+++ b/third_party/googletest
-@@ -1 +1 @@
--Subproject commit 58d77fa8070e8cec2dc1ed015d66b454c8d78850
-+Subproject commit 0ea2d8f8fa1601abb9ce713b7414e7b86f90bc61
-diff --git a/third_party/libpng b/third_party/libpng
-index f135775a..a40189cf 160000
---- a/third_party/libpng
-+++ b/third_party/libpng
-@@ -1 +1 @@
--Subproject commit f135775ad4e5d4408d2e12ffcc71bb36e6b48551
-+Subproject commit a40189cf881e9f0db80511c382292a5604c3c3d1
-diff --git a/third_party/sjpeg b/third_party/sjpeg
-index e5ab1300..868ab558 160000
---- a/third_party/sjpeg
-+++ b/third_party/sjpeg
-@@ -1 +1 @@
--Subproject commit e5ab13008bb214deb66d5f3e17ca2f8dbff150bf
-+Subproject commit 868ab558fad70fcbe8863ba4e85179eeb81cc840
-diff --git a/third_party/skcms b/third_party/skcms
-index 42030a77..64374756 160000
---- a/third_party/skcms
-+++ b/third_party/skcms
-@@ -1 +1 @@
--Subproject commit 42030a771244ba67f86b1c1c76a6493f873c5f91
-+Subproject commit 64374756e03700d649f897dbd98c95e78c30c7da
-diff --git a/third_party/zlib b/third_party/zlib
-index 51b7f2ab..cacf7f1d 160000
---- a/third_party/zlib
-+++ b/third_party/zlib
-@@ -1 +1 @@
--Subproject commit 51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf
-+Subproject commit cacf7f1d4e3d44d871b605da3b647f07d718623f
 -- 
 2.46.1
 
