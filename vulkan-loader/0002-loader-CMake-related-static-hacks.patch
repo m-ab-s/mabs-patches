@@ -1,0 +1,68 @@
+From bb4a160248d99d635b2d83eab41393b9ca20261e Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 2 Oct 2023 01:16:49 -0500
+Subject: [PATCH 2/4] loader: CMake related static hacks
+
+Adds additional hacks for CMake's side. Does not (yet) go for parity
+with shinchiro's patch yet.
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ loader/CMakeLists.txt | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
+index 76c2150a5..36b957788 100644
+--- a/loader/CMakeLists.txt
++++ b/loader/CMakeLists.txt
+@@ -236,9 +236,9 @@ end
+         set_target_properties(loader_asm_gen_files PROPERTIES FOLDER ${LOADER_HELPER_FOLDER})
+ 
+         if(SYSTEM_PROCESSOR MATCHES "arm")
+-            add_library(loader-unknown-chain STATIC unknown_ext_chain_marmasm.asm)
++            add_library(loader-unknown-chain OBJECT unknown_ext_chain_marmasm.asm)
+         else()
+-            add_library(loader-unknown-chain STATIC unknown_ext_chain_masm.asm)
++            add_library(loader-unknown-chain OBJECT unknown_ext_chain_masm.asm)
+         endif()
+         target_include_directories(loader-unknown-chain PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+         add_dependencies(loader-unknown-chain loader_asm_gen_files)
+@@ -383,17 +383,18 @@ if(WIN32)
+         set(RC_FILE_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/loader.rc)
+     endif()
+ 
++    if (BUILD_STATIC_LOADER)
++        set(VULKAN_LIBRARY_TYPE STATIC)
++    else()
++        set(VULKAN_LIBRARY_TYPE SHARED)
++    endif()
++
+     add_library(vulkan
+-                SHARED
++                ${VULKAN_LIBRARY_TYPE}
+                 ${NORMAL_LOADER_SRCS}
+                 ${CMAKE_CURRENT_SOURCE_DIR}/${API_TYPE}-1.def
+-                ${RC_FILE_LOCATION})
+-
+-    target_link_libraries(vulkan PRIVATE loader_specific_options)
+-
+-    if(UNKNOWN_FUNCTIONS_SUPPORTED AND TARGET loader-unknown-chain)
+-        target_link_libraries(vulkan PRIVATE loader-unknown-chain)
+-    endif()
++                ${RC_FILE_LOCATION}
++                $<$<TARGET_EXISTS:loader-unknown-chain>:$<TARGET_OBJECTS:loader-unknown-chain>>)
+ 
+     # when adding the suffix the import and runtime library names must be consistent
+     # mingw: libvulkan-1.dll.a / vulkan-1.dll
+@@ -520,7 +521,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
+ endif()
+ 
+ # common attributes of the vulkan library
+-target_link_libraries(vulkan PRIVATE loader_specific_options)
++target_link_libraries(vulkan PRIVATE $<BUILD_INTERFACE:loader_specific_options>)
+ 
+ target_link_libraries(vulkan PRIVATE Vulkan::Headers)
+ add_library(Vulkan::Loader ALIAS vulkan)
+-- 
+2.46.1
+
