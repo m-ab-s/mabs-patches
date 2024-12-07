@@ -1,0 +1,58 @@
+From 51018bc985744f89b41394e6b23a3f70178b976a Mon Sep 17 00:00:00 2001
+From: L4cache <42721712+L4cache@users.noreply.github.com>
+Date: Wed, 11 Dec 2024 21:53:11 +0800
+Subject: [PATCH] Edit CMakeLists
+
+This patch updates VVdeC version and bypasses some problems during build process and not configurable.
+---
+ CMakeLists.txt        | 6 +++---
+ heifio/CMakeLists.txt | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c26ea684..83bfa4bc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -160,7 +160,7 @@ plugin_option(VVDEC "vvdec VVC decoder (experimental)" OFF OFF)
+ if (WITH_VVDEC)
+     # TODO: how to do configure vvdec cleanly?
+     find_package(Threads REQUIRED)
+-    find_package(vvdec 2.3.0)
++    find_package(vvdec 3.0.0)
+     if (vvdec_FOUND)
+         set(vvdec_LIBRARIES vvdec::vvdec)
+     endif()
+@@ -456,7 +456,7 @@ if (WITH_HEADER_COMPRESSION OR WITH_UNCOMPRESSED_CODEC)
+         message("zlib not found")
+     endif()
+ 
+-    find_package(Brotli)
++    # find_package(Brotli)
+     if (Brotli_FOUND)
+         message("Brotli found")
+         list(APPEND REQUIRES_PRIVATE "libbrotlidec")
+@@ -508,7 +508,7 @@ endif()
+ # --- API documentation
+ 
+ # check if Doxygen is installed
+-find_package(Doxygen)
++# find_package(Doxygen)
+ if (DOXYGEN_FOUND)
+     # set input and output files
+     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/libheif/Doxyfile.in)
+diff --git a/heifio/CMakeLists.txt b/heifio/CMakeLists.txt
+index 920eeca5..46010dc9 100644
+--- a/heifio/CMakeLists.txt
++++ b/heifio/CMakeLists.txt
+@@ -25,7 +25,7 @@ target_compile_definitions(heifio
+         LIBHEIF_EXPORTS
+         HAVE_VISIBILITY)
+ 
+-find_package(TIFF)
++# find_package(TIFF)
+ if (TIFF_FOUND)
+     target_sources(heifio PRIVATE decoder_tiff.cc decoder_tiff.h encoder_tiff.h encoder_tiff.cc)
+     target_link_libraries(heifio PRIVATE TIFF::TIFF)
+-- 
+2.47.1.windows.1
+
