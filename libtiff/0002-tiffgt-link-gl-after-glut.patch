@@ -1,4 +1,4 @@
-From 26abea79ee0184fdc55646b49e7eaa9f82ef9ae0 Mon Sep 17 00:00:00 2001
+From 3a44914854cb11a32bf51b91a289aec5a3e84e0f Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 8 Mar 2021 17:52:30 -0600
 Subject: [PATCH 2/2] tiffgt: link gl after glut
@@ -12,12 +12,12 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
-index 5aea2347..6a35ee8c 100755
+index ffafbbcc..851dadc0 100755
 --- a/tools/CMakeLists.txt
 +++ b/tools/CMakeLists.txt
-@@ -136,7 +136,7 @@ if(OPENGL_SUPPORT)
-   add_executable(tiffgt ../placeholder.h)
+@@ -157,7 +157,7 @@ if(OPENGL_SUPPORT)
    target_sources(tiffgt PRIVATE tiffgt.c)
+   set_target_properties(tiffgt PROPERTIES LINKER_LANGUAGE CXX)
    target_link_libraries(tiffgt PRIVATE tiff tiff_port)
 -  target_link_libraries(tiffgt PRIVATE OpenGL::GL GLUT::GLUT)
 +  target_link_libraries(tiffgt PRIVATE GLUT::GLUT OpenGL::GL)
@@ -25,5 +25,5 @@ index 5aea2347..6a35ee8c 100755
      target_link_libraries(tiffgt PRIVATE winmm)
    endif()
 -- 
-2.45.0
+2.47.1
 
