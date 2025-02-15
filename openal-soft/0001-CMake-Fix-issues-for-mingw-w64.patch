@@ -1,4 +1,4 @@
-From 5a630d635ba7f57926bc4d22df7b0a3c2030cd8f Mon Sep 17 00:00:00 2001
+From 8bacb3fb933c4fb112762972f5ff108fc70a3c64 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Sun, 19 Jul 2020 18:49:51 +0000
 Subject: [PATCH] CMake: Fix issues for mingw-w64
@@ -11,11 +11,11 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9eb7aa07..633e5087 100644
+index 6562e988..ffb6195f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1166,7 +1166,7 @@ if(ALSOFT_EXAMPLES)
-     endif()
+@@ -1338,7 +1338,7 @@ if(ALSOFT_EXAMPLES AND SDL3_FOUND)
+     find_package(FFmpeg COMPONENTS AVFORMAT AVCODEC AVUTIL SWSCALE SWRESAMPLE)
  endif()
  
 -if(NOT WIN32)
@@ -24,5 +24,5 @@ index 9eb7aa07..633e5087 100644
  else()
      set(LIBNAME "OpenAL32")
 -- 
-2.25.1
+2.48.1
 
