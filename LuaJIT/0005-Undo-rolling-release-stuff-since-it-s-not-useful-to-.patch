@@ -1,18 +1,18 @@
-From da10a2109c4f6174d97b04a05941aa4be57b3970 Mon Sep 17 00:00:00 2001
+From d0378357e242fa4a79f1fad28fa3f757e8b25a6e Mon Sep 17 00:00:00 2001
 From: waldonnis <ghostchris@gmail.com>
 Date: Wed, 27 Sep 2023 17:07:09 -0400
-Subject: [PATCH] Undo rolling release stuff since it's not useful to MABS and
- complicates installation/updating luajit.
+Subject: [PATCH 5/5] Undo rolling release stuff since it's not useful to MABS
+ and complicates installation/updating luajit.
 
 ---
  Makefile | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 3aed365d..66b0baf8 100644
+index c41b3345..bf513dad 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -142,12 +142,11 @@ install: $(INSTALL_DEP)
+@@ -144,12 +144,11 @@ install: $(INSTALL_DEP)
  	  $(RM) $(FILE_PC).tmp
  	cd src && $(INSTALL_F) $(FILES_INC) $(INSTALL_INC)
  	cd src/jit && $(INSTALL_F) $(FILES_JITLIB) $(INSTALL_JITLIB)
@@ -27,5 +27,5 @@ index 3aed365d..66b0baf8 100644
  	  $(UNINSTALL) $(INSTALL_JITLIB)/$$file; \
  	  done
 -- 
-2.41.0.windows.1
+2.48.1
 

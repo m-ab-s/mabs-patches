@@ -1,7 +1,7 @@
-From 83d91250be40a31800f31ff5bb09b324010d4178 Mon Sep 17 00:00:00 2001
+From e33e848375903f0101fa4636c9e62a8636060c37 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 28 May 2020 15:25:41 +0000
-Subject: [PATCH 2/4] win32 UTF-8: Remove va arg and ... and unused functions
+Subject: [PATCH 2/5] win32 UTF-8: Remove va arg and ... and unused functions
 
 ---
  src/lj_fs_io.c         | 43 ------------------------------------------
@@ -119,5 +119,5 @@ index 604e279f..fac7691a 100644
  
  #ifndef O_BINARY
 -- 
-2.36.1
+2.48.1
 
