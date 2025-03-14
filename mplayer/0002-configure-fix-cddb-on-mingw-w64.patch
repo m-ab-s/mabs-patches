@@ -1,19 +1,19 @@
-From a7beb5386e56f66ef1d42b7a769f640e2637b67b Mon Sep 17 00:00:00 2001
+From 3bde669e40e4130cbdf388f405888ed1319db528 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 13 Mar 2025 19:22:06 -0500
 Subject: [PATCH 2/2] configure: fix cddb on mingw-w64
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- configure            | 20 ++++++++++++++++++++
+ configure            | 31 +++++++++++++++++++++++++++++++
  stream/stream_cddb.c |  4 ++++
- 2 files changed, 24 insertions(+)
+ 2 files changed, 35 insertions(+)
 
 diff --git a/configure b/configure
-index 1fb9a4d6bd..6f2e962ec2 100755
+index 1fb9a4d6bd..9d4597e7a0 100755
 --- a/configure
 +++ b/configure
-@@ -3786,6 +3786,24 @@ else
+@@ -3786,6 +3786,35 @@ else
    cc_check_winsock2_h='-DHAVE_WINSOCK2_H=0'
  fi
  
@@ -21,24 +21,35 @@ index 1fb9a4d6bd..6f2e962ec2 100755
 +# _cddb
 +# on windows, this can either be in ddk/ntddcdrm.h or in ntddcdrm.h, depending if wdk is used or mingw-w64/wine.
 +ntddcdrm_h=no
-+if header_check ddk/ntddcdrm.h; then
++def_ddkntddcdrm_h='#define HAVE_DDKNTDDCDRM_H 0'
++def_ntddcdrm_h='#define HAVE_NTDDCDRM_H 0'
++cat > $TMPC << EOF
++#include <windows.h>
++#include <ddk/ntddcdrm.h>
++int main(void) { CDROM_TOC toc; return sizeof(toc); }
++EOF
++if cc_check; then
 +  ntddcdrm_h=yes
 +  def_ddkntddcdrm_h='#define HAVE_DDKNTDDCDRM_H 1'
 +  def_ntddcdrm_h='#define HAVE_NTDDCDRM_H 0'
-+elif header_check ntddcdrm.h; then
++fi
++
++cat > $TMPC << EOF
++#include <windows.h>
++#include <ntddcdrm.h>
++int main(void) { CDROM_TOC toc; return sizeof(toc); }
++EOF
++if test $ntddcdrm_h = no && cc_check; then
 +  ntddcdrm_h=yes
 +  def_ddkntddcdrm_h='#define HAVE_DDKNTDDCDRM_H 0'
 +  def_ntddcdrm_h='#define HAVE_NTDDCDRM_H 1'
-+else
-+  def_ddkntddcdrm_h='#define HAVE_DDKNTDDCDRM_H 0'
-+  def_ntddcdrm_h='#define HAVE_NTDDCDRM_H 0'
 +fi
 +echores "$ntddcdrm_h"
 +
  echocheck "struct pollfd"
  if test "$_struct_pollfd" = auto; then
    _struct_pollfd=no
-@@ -9485,6 +9503,8 @@ $def_direct_h
+@@ -9485,6 +9514,8 @@ $def_direct_h
  $def_io_h
  $def_poll_h
  $def_windows_h
