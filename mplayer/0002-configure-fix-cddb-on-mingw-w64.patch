@@ -1,0 +1,68 @@
+From a7beb5386e56f66ef1d42b7a769f640e2637b67b Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 13 Mar 2025 19:22:06 -0500
+Subject: [PATCH 2/2] configure: fix cddb on mingw-w64
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ configure            | 20 ++++++++++++++++++++
+ stream/stream_cddb.c |  4 ++++
+ 2 files changed, 24 insertions(+)
+
+diff --git a/configure b/configure
+index 1fb9a4d6bd..6f2e962ec2 100755
+--- a/configure
++++ b/configure
+@@ -3786,6 +3786,24 @@ else
+   cc_check_winsock2_h='-DHAVE_WINSOCK2_H=0'
+ fi
+ 
++echocheck "ntddcdrm.h"
++# _cddb
++# on windows, this can either be in ddk/ntddcdrm.h or in ntddcdrm.h, depending if wdk is used or mingw-w64/wine.
++ntddcdrm_h=no
++if header_check ddk/ntddcdrm.h; then
++  ntddcdrm_h=yes
++  def_ddkntddcdrm_h='#define HAVE_DDKNTDDCDRM_H 1'
++  def_ntddcdrm_h='#define HAVE_NTDDCDRM_H 0'
++elif header_check ntddcdrm.h; then
++  ntddcdrm_h=yes
++  def_ddkntddcdrm_h='#define HAVE_DDKNTDDCDRM_H 0'
++  def_ntddcdrm_h='#define HAVE_NTDDCDRM_H 1'
++else
++  def_ddkntddcdrm_h='#define HAVE_DDKNTDDCDRM_H 0'
++  def_ntddcdrm_h='#define HAVE_NTDDCDRM_H 0'
++fi
++echores "$ntddcdrm_h"
++
+ echocheck "struct pollfd"
+ if test "$_struct_pollfd" = auto; then
+   _struct_pollfd=no
+@@ -9485,6 +9503,8 @@ $def_direct_h
+ $def_io_h
+ $def_poll_h
+ $def_windows_h
++$def_ddkntddcdrm_h
++$def_ntddcdrm_h
+ $def_emmintrin_h
+ #if ARCH_X86_32
+ #define ATTR_TARGET_SSE2 __attribute__((target("sse2")))
+diff --git a/stream/stream_cddb.c b/stream/stream_cddb.c
+index ed319cbc29..26ea890eed 100644
+--- a/stream/stream_cddb.c
++++ b/stream/stream_cddb.c
+@@ -60,7 +60,11 @@
+ #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+ #include <sys/cdio.h>
+ #elif defined(__MINGW32__) || defined(__CYGWIN__)
++#if HAVE_DDKNTDDCDRM_H
+ #include <ddk/ntddcdrm.h>
++#elif HAVE_NTDDCDRM_H
++#include <ntddcdrm.h>
++#endif
+ #elif defined(__bsdi__)
+ #include <dvd.h>
+ #elif defined(__APPLE__) || defined(__DARWIN__)
+-- 
+2.48.1
+
