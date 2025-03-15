@@ -1,0 +1,53 @@
+From af3b06f4af2ff11b966d734922eac0aee1bf6859 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 14 Mar 2025 22:12:40 -0500
+Subject: [PATCH 3/3] w32_common: add casts for -Wint-conversion
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ libvo/w32_common.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/libvo/w32_common.c b/libvo/w32_common.c
+index ac90565813..4e94a2ee41 100644
+--- a/libvo/w32_common.c
++++ b/libvo/w32_common.c
+@@ -108,7 +108,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
+             break;
+         case WM_WINDOWPOSCHANGING:
+             if (vo_keepaspect && !vo_fs && WinID < 0) {
+-                WINDOWPOS *wpos = lParam;
++                WINDOWPOS *wpos = (WINDOWPOS *)lParam;
+                 int xborder, yborder;
+                 r.left = r.top = 0;
+                 r.right = wpos->cx;
+@@ -215,10 +215,10 @@ int vo_w32_check_events(void) {
+             vo_dx = p.x; vo_dy = p.y;
+             event_flags |= VO_EVENT_MOVE;
+         }
+-        res = GetClientRect(WinID, &r);
++        res = GetClientRect((HWND)WinID, &r);
+         if (res && (r.right != vo_dwidth || r.bottom != vo_dheight))
+             MoveWindow(vo_window, 0, 0, r.right, r.bottom, FALSE);
+-        if (!IsWindow(WinID))
++        if (!IsWindow((HWND)WinID))
+             // Window has probably been closed, e.g. due to program crash
+             mplayer_put_key(KEY_CLOSE_WIN);
+     }
+@@ -500,11 +500,11 @@ int vo_w32_init(void) {
+     if (WinID >= 0)
+     {
+         RECT r;
+-        GetClientRect(WinID, &r);
++        GetClientRect((HWND)WinID, &r);
+         vo_dwidth = r.right; vo_dheight = r.bottom;
+         vo_window = CreateWindowEx(WS_EX_NOPARENTNOTIFY, classname, classname,
+                      WS_CHILD | WS_VISIBLE,
+-                     0, 0, vo_dwidth, vo_dheight, WinID, 0, hInstance, 0);
++                     0, 0, vo_dwidth, vo_dheight, (HWND)WinID, 0, hInstance, 0);
+         EnableWindow(vo_window, 0);
+     } else
+         vo_window = CreateWindowEx(0, classname, classname,
+-- 
+2.48.1
+

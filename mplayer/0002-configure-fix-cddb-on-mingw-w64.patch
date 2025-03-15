@@ -1,7 +1,7 @@
 From 3bde669e40e4130cbdf388f405888ed1319db528 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 13 Mar 2025 19:22:06 -0500
-Subject: [PATCH 2/2] configure: fix cddb on mingw-w64
+Subject: [PATCH 2/3] configure: fix cddb on mingw-w64
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
