@@ -1,0 +1,27 @@
+From 97fd7e5cfc3dca7cc9b563928708da5e406381ee Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 15 Mar 2025 00:09:05 -0500
+Subject: [PATCH 2/2] CodingStructure: cast memset with void * to silence
+ nontrivial-memcall warning
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ source/Lib/CommonLib/CodingStructure.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/source/Lib/CommonLib/CodingStructure.cpp b/source/Lib/CommonLib/CodingStructure.cpp
+index fbf22dd..0576185 100644
+--- a/source/Lib/CommonLib/CodingStructure.cpp
++++ b/source/Lib/CommonLib/CodingStructure.cpp
+@@ -335,7 +335,7 @@ void CodingStructure::initStructData()
+   m_ctuWidthLog2[1] = m_ctuWidthLog2[0]; // same for luma and chroma, because of the 2x2 blocks
+ 
+   GCC_WARNING_DISABLE_class_memaccess
+-  memset( m_ctuData,             0, sizeof( CtuData             ) * m_ctuDataSize );
++  memset( (void*)m_ctuData,             0, sizeof( CtuData             ) * m_ctuDataSize );
+   memset( m_cuMap,               0, sizeof( CodingUnit*         ) * m_cuMapSize );
+   memset( m_colMiMap, CO_NOT_VALID, sizeof( ColocatedMotionInfo ) * m_colMiMapSize );
+   GCC_WARNING_RESET
+-- 
+2.48.1
+

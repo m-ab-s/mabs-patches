@@ -1,8 +1,8 @@
 From 194a85bb411a5d275e1854ae544ca90df4f06d56 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 14 Mar 2025 23:50:00 -0500
-Subject: [PATCH] TypeDef: cast mem{cpy,set}(this, ...) with void * to silence
- nontrivial-memcall warning
+Subject: [PATCH 1/2] TypeDef: cast mem{cpy,set}(this, ...) with void * to
+ silence nontrivial-memcall warning
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
