@@ -1,0 +1,53 @@
+From 194a85bb411a5d275e1854ae544ca90df4f06d56 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Fri, 14 Mar 2025 23:50:00 -0500
+Subject: [PATCH] TypeDef: cast mem{cpy,set}(this, ...) with void * to silence
+ nontrivial-memcall warning
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ source/Lib/CommonLib/TypeDef.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/source/Lib/CommonLib/TypeDef.h b/source/Lib/CommonLib/TypeDef.h
+index 782b251..d6364c5 100644
+--- a/source/Lib/CommonLib/TypeDef.h
++++ b/source/Lib/CommonLib/TypeDef.h
+@@ -1002,7 +1002,7 @@ struct AlfSliceParam
+     static_assert( std::is_standard_layout<AlfSliceParam>::value, "AlfSliceParam must be standard layout type for offsetof to work" );
+ 
+     GCC_WARNING_DISABLE_class_memaccess
+-      memset( this, 0, offsetof( AlfSliceParam, recostructMutex ) );
++      memset( (void*)this, 0, offsetof( AlfSliceParam, recostructMutex ) );
+     GCC_WARNING_RESET
+ 
+     numLumaFilters = 1;
+@@ -1012,7 +1012,7 @@ struct AlfSliceParam
+   const AlfSliceParam& operator=( const AlfSliceParam& src )
+   {
+     GCC_WARNING_DISABLE_class_memaccess
+-      std::memcpy( this, &src, offsetof( AlfSliceParam, recostructMutex ) );
++      std::memcpy( (void*)this, &src, offsetof( AlfSliceParam, recostructMutex ) );
+     GCC_WARNING_RESET
+ 
+     return *this;
+@@ -1034,14 +1034,14 @@ struct CcAlfFilterParam
+ 
+   void reset()
+   {
+-    std::memset( this, 0, sizeof( *this ) );
++    std::memset( (void*)this, 0, sizeof( *this ) );
+ 
+     ccAlfFilterCount[0] = ccAlfFilterCount[1] = MAX_NUM_CC_ALF_FILTERS;
+   }
+ 
+   const CcAlfFilterParam& operator=( const CcAlfFilterParam& src )
+   {
+-    std::memcpy( this, &src, sizeof( CcAlfFilterParam ) );
++    std::memcpy( (void*)this, &src, sizeof( CcAlfFilterParam ) );
+     return *this;
+   }
+ };
+-- 
+2.48.1
+
