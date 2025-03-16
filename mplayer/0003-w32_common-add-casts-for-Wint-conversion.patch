@@ -1,7 +1,7 @@
 From af3b06f4af2ff11b966d734922eac0aee1bf6859 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 14 Mar 2025 22:12:40 -0500
-Subject: [PATCH 3/3] w32_common: add casts for -Wint-conversion
+Subject: [PATCH 3/4] w32_common: add casts for -Wint-conversion
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---

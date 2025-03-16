@@ -1,0 +1,35 @@
+From c6c62a57e7529f462dc9c16f71fbcf99c09284a4 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Sat, 15 Mar 2025 21:33:38 -0500
+Subject: [PATCH 4/4] configure: add checking libass from pkg-config
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ configure | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 9d4597e7a0..02c5653971 100755
+--- a/configure
++++ b/configure
+@@ -6760,7 +6760,16 @@ int main(void) {
+   return 0;
+ }
+ EOF
+-        if cc_check -lass ; then
++        if $_pkg_config --exists libass > /dev/null 2>&1; then
++          inc_tmp="$($_pkg_config --cflags libass)"
++          ld_tmp="$($_pkg_config --libs libass)"
++          cc_check $inc_tmp $ld_tmp &&
++            extra_cflags="$extra_cflags $inc_tmp" &&
++            extra_ldflags="$extra_ldflags $ld_tmp" &&
++            res_comment="external" ||
++            _ass=no
++
++        elif cc_check -lass; then
+             res_comment="external"
+             extra_ldflags="$extra_ldflags -lass"
+         elif test "$ass_internal" = auto ; then
+-- 
+2.48.1
+
