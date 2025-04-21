@@ -1,0 +1,28 @@
+From 21305b85be1fdaa5455b659e5fb0cceb1fe32083 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 21 Apr 2025 09:58:28 -0500
+Subject: [PATCH] utf8: add empty convert_free_charset for Windows
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ share/utf8.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/share/utf8.c b/share/utf8.c
+index e1199bc..f032339 100644
+--- a/share/utf8.c
++++ b/share/utf8.c
+@@ -33,6 +33,10 @@
+ 
+ #ifdef _WIN32
+ 
++void convert_free_charset(void)
++{
++}
++
+ 	/* Thanks to Peter Harris <peter.harris@hummingbird.com> for this win32
+ 	 * code.
+ 	 */
+-- 
+2.49.0
+
