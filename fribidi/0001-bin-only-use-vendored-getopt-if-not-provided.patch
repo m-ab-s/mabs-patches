@@ -1,0 +1,92 @@
+From b515361d8d54fa9059c80244269031e3164a2b24 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 28 Apr 2025 16:38:56 -0500
+Subject: [PATCH] bin: only use vendored getopt if not provided
+
+mingw-w64 has getopt and getopt_long, and the declaration from the
+in-tree one conflicts and create compilation errors with gcc 15.
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ bin/Makefile.am               |  2 +-
+ bin/{ => getopt}/getopt.c     |  0
+ bin/{ => getopt}/getopt.h     |  0
+ bin/{ => getopt}/getopt1.c    |  0
+ bin/{ => getopt}/getopt_int.h |  0
+ bin/meson.build               | 18 ++++++++++++++----
+ 6 files changed, 15 insertions(+), 5 deletions(-)
+ rename bin/{ => getopt}/getopt.c (100%)
+ rename bin/{ => getopt}/getopt.h (100%)
+ rename bin/{ => getopt}/getopt1.c (100%)
+ rename bin/{ => getopt}/getopt_int.h (100%)
+
+diff --git a/bin/Makefile.am b/bin/Makefile.am
+index 5993577..583ce8c 100644
+--- a/bin/Makefile.am
++++ b/bin/Makefile.am
+@@ -2,7 +2,7 @@ bin_PROGRAMS = fribidi
+ 
+ noinst_PROGRAMS = fribidi-benchmark fribidi-bidi-types fribidi-caprtl2utf8
+ 
+-getopt_SOURCES = getopt.c getopt1.c getopt_int.h getopt.h gettext.h
++getopt_SOURCES = getopt/getopt.c getopt/getopt1.c getopt/getopt_int.h getopt/getopt.h getopt/gettext.h
+ 
+ fribidi_SOURCES = fribidi-main.c $(getopt_SOURCES)
+ 
+diff --git a/bin/getopt.c b/bin/getopt/getopt.c
+similarity index 100%
+rename from bin/getopt.c
+rename to bin/getopt/getopt.c
+diff --git a/bin/getopt.h b/bin/getopt/getopt.h
+similarity index 100%
+rename from bin/getopt.h
+rename to bin/getopt/getopt.h
+diff --git a/bin/getopt1.c b/bin/getopt/getopt1.c
+similarity index 100%
+rename from bin/getopt1.c
+rename to bin/getopt/getopt1.c
+diff --git a/bin/getopt_int.h b/bin/getopt/getopt_int.h
+similarity index 100%
+rename from bin/getopt_int.h
+rename to bin/getopt/getopt_int.h
+diff --git a/bin/meson.build b/bin/meson.build
+index b4bbd68..ebb2005 100644
+--- a/bin/meson.build
++++ b/bin/meson.build
+@@ -1,9 +1,19 @@
++cc = meson.get_compiler('c')
++
++if cc.check_header('getopt.h')
++  getopt_src =[]
++  getopt_inc = []
++else
++  getopt_src = ['getopt/getopt.c', 'getopt/getopt1.c']
++  getopt_inc = include_directories('getopt')
++endif
++
+ # The fribidi binary is used by the test setup, so if bin=false we still
+ # need to build it for internal usage, we just won't install it.
+ fribidi = executable('fribidi',
+-  'fribidi-main.c', 'getopt.c', 'getopt1.c', fribidi_unicode_version_h,
++  'fribidi-main.c', getopt_src, fribidi_unicode_version_h,
+   c_args: ['-DHAVE_CONFIG_H'] + fribidi_static_cargs,
+-  include_directories: incs,
++  include_directories: [incs, getopt_inc],
+   link_with: libfribidi,
+   install: get_option('bin'))
+ 
+@@ -12,9 +22,9 @@ if not get_option('bin')
+ endif
+ 
+ executable('fribidi-benchmark',
+-  'fribidi-benchmark.c', 'getopt.c', 'getopt1.c', fribidi_unicode_version_h,
++  'fribidi-benchmark.c', getopt_src, fribidi_unicode_version_h,
+   c_args: ['-DHAVE_CONFIG_H'] + fribidi_static_cargs,
+-  include_directories: incs,
++  include_directories: [incs, getopt_inc],
+   link_with: libfribidi,
+   install: false)
+ 
+-- 
+2.49.0
+
