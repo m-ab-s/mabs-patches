@@ -1,0 +1,46 @@
+From 3885bfb03dd6dbae20f4bfba1b92690ed1ec866b Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 8 May 2025 16:56:50 -0500
+Subject: [PATCH 5/5] loader: dllmain related hacks
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ loader/CMakeLists.txt   | 1 +
+ loader/loader_windows.c | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
+index 548c7f379..231d0bd67 100644
+--- a/loader/CMakeLists.txt
++++ b/loader/CMakeLists.txt
+@@ -376,6 +376,7 @@ if(WIN32)
+ 
+     if (BUILD_STATIC_LOADER)
+         set(VULKAN_LIBRARY_TYPE STATIC)
++        target_compile_definitions(loader_specific_options INTERFACE BUILD_STATIC_LOADER)
+     else()
+         set(VULKAN_LIBRARY_TYPE SHARED)
+     endif()
+diff --git a/loader/loader_windows.c b/loader/loader_windows.c
+index f73659c09..43492520a 100644
+--- a/loader/loader_windows.c
++++ b/loader/loader_windows.c
+@@ -95,6 +95,7 @@ void windows_initialization(void) {
+ #endif
+ }
+ 
++#if !defined(BUILD_STATIC_LOADER)
+ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+     (void)hinst;
+     switch (reason) {
+@@ -116,6 +117,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+     }
+     return TRUE;
+ }
++#endif
+ 
+ bool windows_add_json_entry(const struct loader_instance *inst,
+                             char **reg_data,    // list of JSON files
+-- 
+2.49.0
+

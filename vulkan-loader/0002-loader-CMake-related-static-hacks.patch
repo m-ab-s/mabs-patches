@@ -1,7 +1,7 @@
-From 48d958b6ce6e1a34db632048d7be24975071d66d Mon Sep 17 00:00:00 2001
+From 7522e01d1b4425c92546d8b43f92ea9c87096814 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:16:49 -0500
-Subject: [PATCH 2/4] loader: CMake related static hacks
+Subject: [PATCH 2/5] loader: CMake related static hacks
 
 Adds additional hacks for CMake's side. Does not (yet) go for parity
 with shinchiro's patch yet.
@@ -12,10 +12,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index ed48d051f..e0da5fe5a 100644
+index 2c190eb58..a7bffa782 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -214,7 +214,7 @@ end
+@@ -216,7 +216,7 @@ end
  
      if(ASM_COMPILER_WORKS)
          add_executable(asm_offset asm_offset.c)
@@ -24,7 +24,7 @@ index ed48d051f..e0da5fe5a 100644
          # If am emulator is provided (Like Wine), or running on native, run asm_offset to generate gen_defines.asm
          if (CMAKE_CROSSCOMPILING_EMULATOR OR NOT CMAKE_CROSSCOMPILING)
              add_custom_command(OUTPUT gen_defines.asm DEPENDS asm_offset COMMAND asm_offset ${LOADER_ASM_DIALECT})
-@@ -309,7 +309,7 @@ elseif(UNIX OR MINGW OR (WIN32 AND USE_GAS)) # i.e.: Linux & Apple & MinGW & Win
+@@ -311,7 +311,7 @@ elseif(UNIX OR MINGW OR (WIN32 AND USE_GAS)) # i.e.: Linux & Apple & MinGW & Win
  
      if(ASSEMBLER_WORKS)
          add_executable(asm_offset asm_offset.c)
@@ -33,7 +33,7 @@ index ed48d051f..e0da5fe5a 100644
          # If not cross compiling, run asm_offset to generage gen_defines.asm
          if (NOT CMAKE_CROSSCOMPILING)
              add_custom_command(OUTPUT gen_defines.asm DEPENDS asm_offset COMMAND asm_offset GAS)
-@@ -372,13 +372,19 @@ if(WIN32)
+@@ -374,13 +374,19 @@ if(WIN32)
          set(RC_FILE_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/loader.rc)
      endif()
  
@@ -55,7 +55,7 @@ index ed48d051f..e0da5fe5a 100644
  
      # when adding the suffix the import and runtime library names must be consistent
      # mingw: libvulkan-1.dll.a / vulkan-1.dll
-@@ -458,7 +464,7 @@ else()
+@@ -460,7 +466,7 @@ else()
          endif()
  
          target_link_libraries(vulkan-framework ${CMAKE_DL_LIBS} Threads::Threads -lm "-framework CoreFoundation")
@@ -64,7 +64,7 @@ index ed48d051f..e0da5fe5a 100644
  
          if (MODIFY_UNKNOWN_FUNCTION_DECLS)
              # Modifies the names of functions as they appearin the assembly code so that the
-@@ -505,7 +511,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
+@@ -507,7 +513,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
  endif()
  
  # common attributes of the vulkan library
@@ -74,5 +74,5 @@ index ed48d051f..e0da5fe5a 100644
  target_link_libraries(vulkan PRIVATE Vulkan::Headers)
  add_library(Vulkan::Loader ALIAS vulkan)
 -- 
-2.46.1
+2.49.0
 
