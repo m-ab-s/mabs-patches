@@ -1,7 +1,7 @@
-From 21305b85be1fdaa5455b659e5fb0cceb1fe32083 Mon Sep 17 00:00:00 2001
+From 3c5c895df8918a1ee9bcd3c7149208c6df494bad Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 21 Apr 2025 09:58:28 -0500
-Subject: [PATCH] utf8: add empty convert_free_charset for Windows
+Subject: [PATCH 1/2] utf8: add empty convert_free_charset for Windows
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
