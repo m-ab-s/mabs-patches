@@ -1,0 +1,30 @@
+From 8b5545cf25e3d3962d640b53ecc58d034e3d281c Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Thu, 8 May 2025 22:38:13 -0500
+Subject: [PATCH 2/2] uiddefs: guard KSDATAFORMAT_SUBTYPE_{PCM,IEEE_FLOAT}
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ core/uiddefs.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/core/uiddefs.cpp b/core/uiddefs.cpp
+index e52a9ae3..6fc3bb0e 100644
+--- a/core/uiddefs.cpp
++++ b/core/uiddefs.cpp
+@@ -9,8 +9,12 @@
+ #include <windows.h>
+ #include <guiddef.h>
+ 
++#ifndef KSDATAFORMAT_SUBTYPE_PCM
+ DEFINE_GUID(KSDATAFORMAT_SUBTYPE_PCM,        0x00000001, 0x0000, 0x0010, 0x80,0x00, 0x00,0xaa,0x00,0x38,0x9b,0x71);
++#endif
++#ifndef KSDATAFORMAT_SUBTYPE_IEEE_FLOAT
+ DEFINE_GUID(KSDATAFORMAT_SUBTYPE_IEEE_FLOAT, 0x00000003, 0x0000, 0x0010, 0x80,0x00, 0x00,0xaa,0x00,0x38,0x9b,0x71);
++#endif
+ 
+ DEFINE_GUID(IID_IDirectSoundNotify,   0xb0210783, 0x89cd, 0x11d0, 0xaf,0x08, 0x00,0xa0,0xc9,0x25,0xcd,0x16);
+ 
+-- 
+2.49.0
+
