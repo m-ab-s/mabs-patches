@@ -1,4 +1,4 @@
-From 1058038534715a884d8eab9b28c060a7b80d9ea1 Mon Sep 17 00:00:00 2001
+From 3d315f7958d775e345d05cf7383e2364942e11a6 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 9 May 2025 00:00:22 -0500
 Subject: [PATCH 2/2] uiddefs: limit AL_NO_UID_DEFS to DEVPKEY stuff
@@ -8,19 +8,20 @@ not predefined in a library provided by mingw-w64.
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- core/uiddefs.cpp | 5 +++++
- 1 file changed, 5 insertions(+)
+ core/uiddefs.cpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/core/uiddefs.cpp b/core/uiddefs.cpp
-index e52a9ae3..c9b8d2f1 100644
+index e52a9ae3..e9ff2586 100644
 --- a/core/uiddefs.cpp
 +++ b/core/uiddefs.cpp
-@@ -26,4 +26,9 @@ DEFINE_PROPERTYKEY(PKEY_AudioEndpoint_GUID, 0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x
+@@ -26,4 +26,10 @@ DEFINE_PROPERTYKEY(PKEY_AudioEndpoint_GUID, 0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x
  #endif
  #endif
  
 +#else
 +
++#include <windows.h>
 +#include <initguid.h>
 +#include <devpkey.h>
 +
