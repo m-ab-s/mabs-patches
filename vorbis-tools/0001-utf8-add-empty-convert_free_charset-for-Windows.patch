@@ -1,4 +1,4 @@
-From 3c5c895df8918a1ee9bcd3c7149208c6df494bad Mon Sep 17 00:00:00 2001
+From 682775828a6d4ba4092b4226ddb83ed3ce62374e Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 21 Apr 2025 09:58:28 -0500
 Subject: [PATCH 1/2] utf8: add empty convert_free_charset for Windows
@@ -24,5 +24,5 @@ index e1199bc..f032339 100644
  	 * code.
  	 */
 -- 
-2.49.0
+2.49.0.windows.1
 
