@@ -1,4 +1,4 @@
-From 9447b763432b709967ad6173adea811034d16856 Mon Sep 17 00:00:00 2001
+From 6abe7c42cf380a59dfdd02de816b9e7c75066a8a Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 8 May 2025 11:09:04 -0500
 Subject: [PATCH 2/2] getopt: just remove it
@@ -21,7 +21,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  delete mode 100644 share/getopt1.c
 
 diff --git a/configure.ac b/configure.ac
-index 6751ec8..c7f4672 100644
+index 8cd0305..c4fae97 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -193,7 +193,7 @@ fi
@@ -34,14 +34,14 @@ index 6751ec8..c7f4672 100644
  
  I18N_CFLAGS='-I$(top_srcdir)/intl'
 diff --git a/include/Makefile.am b/include/Makefile.am
-index ad90d8a..d4d249a 100644
+index bea9c4f..142cadb 100644
 --- a/include/Makefile.am
 +++ b/include/Makefile.am
 @@ -1,3 +1,3 @@
  ## Process this file with automake to produce Makefile.in
  
--EXTRA_DIST = utf8.h getopt.h i18n.h base64.h picture.h
-+EXTRA_DIST = utf8.h i18n.h base64.h picture.h
+-EXTRA_DIST = utf8.h getopt.h gettext.h i18n.h base64.h picture.h
++EXTRA_DIST = utf8.h gettext.h i18n.h base64.h picture.h
 diff --git a/include/getopt.h b/include/getopt.h
 deleted file mode 100644
 index cfcc92c..0000000
@@ -1509,5 +1509,5 @@ index 2f1e17a..58015ab 100644
  #include "i18n.h"
  
 -- 
-2.49.0
+2.49.0.windows.1
 
