@@ -1,7 +1,7 @@
-From 3d315f7958d775e345d05cf7383e2364942e11a6 Mon Sep 17 00:00:00 2001
+From c0e66123c094478416ae6f1a44f5b3973e42ade1 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Fri, 9 May 2025 00:00:22 -0500
-Subject: [PATCH 2/2] uiddefs: limit AL_NO_UID_DEFS to DEVPKEY stuff
+Subject: [PATCH 2/3] uiddefs: limit AL_NO_UID_DEFS to DEVPKEY stuff
 
 unfortunately, those symbols seem to be the only ones necessary that are
 not predefined in a library provided by mingw-w64.
@@ -27,5 +27,5 @@ index e52a9ae3..e9ff2586 100644
 +
  #endif /* AL_NO_UID_DEFS */
 -- 
-2.49.0
+2.50.0
 

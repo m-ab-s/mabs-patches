@@ -1,0 +1,25 @@
+From a80ffb7dfc29363a189bfac170a7ac0d0a95da85 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Mon, 30 Jun 2025 13:20:43 -0500
+Subject: [PATCH 3/3] CMake: include gsl/include for main lib too
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 50044428..63ab5e78 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1563,6 +1563,7 @@ target_include_directories(${IMPL_TARGET}
+     ${OpenAL_BINARY_DIR}
+     ${OpenAL_SOURCE_DIR}
+     ${OpenAL_SOURCE_DIR}/common
++    ${OpenAL_SOURCE_DIR}/gsl/include
+ )
+ 
+ set_target_properties(${IMPL_TARGET} PROPERTIES ${ALSOFT_STD_VERSION_PROPS}
+-- 
+2.50.0
+
