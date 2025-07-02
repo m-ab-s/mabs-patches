@@ -1,0 +1,26 @@
+From 3f6b65a835caf56c3f92520ae9317153931ecac4 Mon Sep 17 00:00:00 2001
+From: Christopher Degawa <ccom@randomderp.com>
+Date: Tue, 1 Jul 2025 23:24:09 -0500
+Subject: [PATCH] os_compat: re-add cast for gcc 15 compat
+
+Signed-off-by: Christopher Degawa <ccom@randomderp.com>
+---
+ src/os_compat.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/os_compat.h b/src/os_compat.h
+index 5507df7..80b1e72 100644
+--- a/src/os_compat.h
++++ b/src/os_compat.h
+@@ -57,7 +57,7 @@ static inline int crip_stat(const char *filename_utf8, struct stat* statbuf)
+         return -1;
+     /* Assume struct stat is the same as struct _stat64, which should be true
+      * because Meson sets _FILE_OFFSET_BITS=64 for mingw64 */
+-    ret = _wstat64(filename_w, statbuf);
++    ret = _wstat64(filename_w, (struct __stat64 *)statbuf);
+     av_free(filename_w);
+     return ret;
+ }
+-- 
+2.50.0
+
