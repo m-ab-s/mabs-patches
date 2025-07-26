@@ -1,28 +1,19 @@
-From 51018bc985744f89b41394e6b23a3f70178b976a Mon Sep 17 00:00:00 2001
+From 4085caa42ae746c2f186e5e14d495bf33fd208b7 Mon Sep 17 00:00:00 2001
 From: L4cache <42721712+L4cache@users.noreply.github.com>
 Date: Wed, 11 Dec 2024 21:53:11 +0800
 Subject: [PATCH] Edit CMakeLists
 
 This patch updates VVdeC version and bypasses some problems during build process and not configurable.
 ---
- CMakeLists.txt        | 6 +++---
+ CMakeLists.txt        | 4 ++--
  heifio/CMakeLists.txt | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c26ea684..83bfa4bc 100644
+index bf0d8d06..00939d18 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -160,7 +160,7 @@ plugin_option(VVDEC "vvdec VVC decoder (experimental)" OFF OFF)
- if (WITH_VVDEC)
-     # TODO: how to do configure vvdec cleanly?
-     find_package(Threads REQUIRED)
--    find_package(vvdec 2.3.0)
-+    find_package(vvdec 3.0.0)
-     if (vvdec_FOUND)
-         set(vvdec_LIBRARIES vvdec::vvdec)
-     endif()
-@@ -456,7 +456,7 @@ if (WITH_HEADER_COMPRESSION OR WITH_UNCOMPRESSED_CODEC)
+@@ -468,7 +468,7 @@ if (WITH_HEADER_COMPRESSION OR WITH_UNCOMPRESSED_CODEC)
          message("zlib not found")
      endif()
  
@@ -31,7 +22,7 @@ index c26ea684..83bfa4bc 100644
      if (Brotli_FOUND)
          message("Brotli found")
          list(APPEND REQUIRES_PRIVATE "libbrotlidec")
-@@ -508,7 +508,7 @@ endif()
+@@ -521,7 +521,7 @@ endif()
  # --- API documentation
  
  # check if Doxygen is installed
@@ -54,5 +45,5 @@ index 920eeca5..46010dc9 100644
      target_sources(heifio PRIVATE decoder_tiff.cc decoder_tiff.h encoder_tiff.h encoder_tiff.cc)
      target_link_libraries(heifio PRIVATE TIFF::TIFF)
 -- 
-2.47.1.windows.1
+2.50.1
 
