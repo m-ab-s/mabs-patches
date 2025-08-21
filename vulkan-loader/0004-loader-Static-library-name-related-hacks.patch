@@ -1,4 +1,4 @@
-From f4c0e627bd1b575047ad8fe0b9c3fc89c957fb42 Mon Sep 17 00:00:00 2001
+From cba568f8bc77e83a592ec1e3fa19936fba994d16 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:38:44 -0500
 Subject: [PATCH 4/5] loader: Static library name related hacks
@@ -7,14 +7,14 @@ Re-adds the lib prefix and removes the so-ver suffixes
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- loader/CMakeLists.txt | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ loader/CMakeLists.txt | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index d81d52917..548c7f379 100644
+index 58a9be58a..439ab06d6 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -391,14 +391,16 @@ if(WIN32)
+@@ -391,14 +391,18 @@ if(WIN32)
      # when adding the suffix the import and runtime library names must be consistent
      # mingw: libvulkan-1.dll.a / vulkan-1.dll
      # msvc: vulkan-1.lib / vulkan-1.dll
@@ -34,10 +34,12 @@ index d81d52917..548c7f379 100644
 +                                  PROPERTIES
 +                                  PREFIX "")
 +        endif()
-     endif()
- 
-     if(MSVC AND ENABLE_WIN10_ONECORE)
-@@ -563,7 +565,7 @@ if (PKG_CONFIG_FOUND)
++    endif()
++    if(MINGW)
+         # let the linker just fix up the stdcall mangling, like on msvc
+         if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+             target_link_options(vulkan PRIVATE "-Wl,--enable-stdcall-fixup")
+@@ -563,7 +567,7 @@ if (PKG_CONFIG_FOUND)
          set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
      endif()
  
@@ -47,5 +49,5 @@ index d81d52917..548c7f379 100644
              set(VULKAN_LIB_SUFFIX "-1.dll")
          else()
 -- 
-2.49.0
+2.50.1
 
