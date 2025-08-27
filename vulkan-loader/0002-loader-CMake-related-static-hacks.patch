@@ -1,4 +1,4 @@
-From 87c6e976010244f1462e62fe73bbe71f6071739b Mon Sep 17 00:00:00 2001
+From 2777d14ed087fc5f22bb266a3c99cdab52479e07 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:16:49 -0500
 Subject: [PATCH 2/5] loader: CMake related static hacks
@@ -12,7 +12,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 7c91f4d0d..d0ae55bd6 100644
+index b7b795747..ae66ec0ea 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -216,7 +216,7 @@ end
@@ -30,7 +30,7 @@ index 7c91f4d0d..d0ae55bd6 100644
          add_executable(asm_offset asm_offset.c)
 -        target_link_libraries(asm_offset loader_specific_options)
 +        target_link_libraries(asm_offset PRIVATE $<BUILD_INTERFACE:loader_specific_options>)
-         # If not cross compiling, run asm_offset to generage gen_defines.asm
+         # If not cross compiling, run asm_offset to generate gen_defines.asm
          if (NOT CMAKE_CROSSCOMPILING)
              add_custom_command(OUTPUT gen_defines.asm DEPENDS asm_offset COMMAND asm_offset GAS)
 @@ -374,13 +374,19 @@ if(WIN32)

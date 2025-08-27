@@ -1,4 +1,4 @@
-From cba568f8bc77e83a592ec1e3fa19936fba994d16 Mon Sep 17 00:00:00 2001
+From b49754d0a545d66d1c548d2f8dc57b93cc7bcb92 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:38:44 -0500
 Subject: [PATCH 4/5] loader: Static library name related hacks
@@ -11,7 +11,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 11 insertions(+), 7 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 58a9be58a..439ab06d6 100644
+index 3d03c6377..eceeb5e16 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -391,14 +391,18 @@ if(WIN32)

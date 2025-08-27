@@ -1,4 +1,4 @@
-From 7a673d100f3b1dea0adc9faa6ee0645d8c93329e Mon Sep 17 00:00:00 2001
+From 4cc33049143fafbd52b9af9b647f4928f5effd01 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 8 May 2025 16:56:50 -0500
 Subject: [PATCH 5/5] loader: dllmain related hacks
@@ -10,7 +10,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  2 files changed, 3 insertions(+)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 439ab06d6..35d55ead7 100644
+index eceeb5e16..1e9a8e166 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -376,6 +376,7 @@ if(WIN32)
@@ -22,7 +22,7 @@ index 439ab06d6..35d55ead7 100644
          set(VULKAN_LIBRARY_TYPE SHARED)
      endif()
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index f73659c09..43492520a 100644
+index a3d5d5d3d..a55da8987 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -95,6 +95,7 @@ void windows_initialization(void) {
