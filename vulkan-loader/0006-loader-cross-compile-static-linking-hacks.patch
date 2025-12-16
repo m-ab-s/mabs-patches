@@ -1,0 +1,116 @@
+From 12c35e4b3174a87ed65e1f5668ea52de17c3f4c5 Mon Sep 17 00:00:00 2001
+From: shinchiro <shinchiro@users.noreply.github.com>
+Date: Tue, 24 Sep 2024 22:27:16 +0800
+Subject: [PATCH 6/6] loader: cross-compile & static linking hacks
+
+---
+ loader/loader.c             |  4 ++--
+ loader/loader.h             |  4 +++-
+ loader/loader.rc.in         |  4 ++++
+ loader/vk_loader_platform.h | 11 ++++-------
+ 4 files changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/loader/loader.c b/loader/loader.c
+index e751fd6..83bbba5 100644
+--- a/loader/loader.c
++++ b/loader/loader.c
+@@ -2290,7 +2290,7 @@ out:
+     return res;
+ }
+ 
+-#if defined(_WIN32)
++#if defined(LOADER_DYNAMIC_LIB)
+ BOOL __stdcall loader_initialize(PINIT_ONCE InitOnce, PVOID Parameter, PVOID *Context) {
+     (void)InitOnce;
+     (void)Parameter;
+@@ -2328,7 +2328,7 @@ void loader_initialize(void) {
+ #if defined(LOADER_USE_UNSAFE_FILE_SEARCH)
+     loader_log(NULL, VULKAN_LOADER_WARN_BIT, 0, "Vulkan Loader: unsafe searching is enabled");
+ #endif
+-#if defined(_WIN32)
++#if defined(LOADER_DYNAMIC_LIB)
+     return TRUE;
+ #endif
+ }
+diff --git a/loader/loader.h b/loader/loader.h
+index 0ed8f16..d4f497e 100644
+--- a/loader/loader.h
++++ b/loader/loader.h
+@@ -33,7 +33,9 @@
+ #include "cJSON.h"
+ 
+ // Declare the once_init variable
++#if defined(_WIN32) && !defined(LOADER_DYNAMIC_LIB)
+ LOADER_PLATFORM_THREAD_ONCE_EXTERN_DEFINITION(once_init)
++#endif
+ 
+ static inline VkPhysicalDevice loader_unwrap_physical_device(VkPhysicalDevice physicalDevice) {
+     struct loader_physical_device_tramp *phys_dev = (struct loader_physical_device_tramp *)physicalDevice;
+@@ -94,7 +96,7 @@ VkResult loader_validate_instance_extensions(struct loader_instance *inst, const
+                                              const struct loader_envvar_all_filters *layer_filters,
+                                              const VkInstanceCreateInfo *pCreateInfo);
+ 
+-#if defined(_WIN32)
++#if defined(LOADER_DYNAMIC_LIB)
+ BOOL __stdcall loader_initialize(PINIT_ONCE InitOnce, PVOID Parameter, PVOID *Context);
+ #else
+ void loader_initialize(void);
+diff --git a/loader/loader.rc.in b/loader/loader.rc.in
+index 0dc4227..e7fcea0 100644
+--- a/loader/loader.rc.in
++++ b/loader/loader.rc.in
+@@ -19,7 +19,11 @@
+ // Author: Charles Giessen <charles@lunarg.com>
+ //
+ 
++#ifdef __MINGW64__
++#include <winresrc.h>
++#else // MSVC
+ #include "winres.h"
++#endif
+ 
+ // All set through CMake
+ #define VER_FILE_VERSION ${LOADER_VER_FILE_VERSION}
+diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
+index 987337c..5acc00f 100644
+--- a/loader/vk_loader_platform.h
++++ b/loader/vk_loader_platform.h
+@@ -71,15 +71,12 @@
+ #include <io.h>
+ #include <shlwapi.h>
+ #include <direct.h>
++#include <pthread.h> // for mingw
+ 
+ #include "stack_allocation.h"
+ #endif  // defined(_WIN32)
+ 
+-#if defined(APPLE_STATIC_LOADER) && !defined(__APPLE__)
+-#error "APPLE_STATIC_LOADER can only be defined on Apple platforms!"
+-#endif
+-
+-#if defined(APPLE_STATIC_LOADER)
++#if defined(BUILD_STATIC_LOADER)
+ #define LOADER_EXPORT
+ #elif defined(__GNUC__) && __GNUC__ >= 4
+ #define LOADER_EXPORT __attribute__((visibility("default")))
+@@ -256,7 +253,7 @@ static inline bool loader_platform_is_path(const char *path) { return strchr(pat
+ // API call made, using InitOnceExecuteOnce, except for initialization primitives which must be done in DllMain. This is because
+ // there is no way to clean up the resources allocated by anything allocated by once init.
+ 
+-#if defined(APPLE_STATIC_LOADER)
++#if defined(BUILD_STATIC_LOADER)
+ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*func)(void)) {
+     assert(func != NULL);
+     assert(ctl != NULL);
+@@ -265,7 +262,7 @@ static inline void loader_platform_thread_once_fn(pthread_once_t *ctl, void (*fu
+ #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var) pthread_once_t var = PTHREAD_ONCE_INIT;
+ #define LOADER_PLATFORM_THREAD_ONCE_EXTERN_DEFINITION(var) extern pthread_once_t var;
+ #define LOADER_PLATFORM_THREAD_ONCE(ctl, func) loader_platform_thread_once_fn(ctl, func);
+-#elif defined(WIN32)
++#elif defined(LOADER_DYNAMIC_LIB)
+ static inline void loader_platform_thread_win32_once_fn(INIT_ONCE *ctl, PINIT_ONCE_FN func) {
+     InitOnceExecuteOnce(ctl, func, NULL, NULL);
+ }
+-- 
+2.49.0.windows.1
+
