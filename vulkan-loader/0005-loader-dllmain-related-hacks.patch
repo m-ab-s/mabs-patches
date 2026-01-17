@@ -1,7 +1,7 @@
-From 4cc33049143fafbd52b9af9b647f4928f5effd01 Mon Sep 17 00:00:00 2001
+From cdb3364b413fc4c23a0141e22c96f8a01f6eddc0 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 8 May 2025 16:56:50 -0500
-Subject: [PATCH 5/5] loader: dllmain related hacks
+Subject: [PATCH 5/6] loader: dllmain related hacks
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
@@ -10,10 +10,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  2 files changed, 3 insertions(+)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index eceeb5e16..1e9a8e166 100644
+index 6797e86bb..54a30cdef 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -376,6 +376,7 @@ if(WIN32)
+@@ -372,6 +372,7 @@ if(WIN32)
  
      if (BUILD_STATIC_LOADER)
          set(VULKAN_LIBRARY_TYPE STATIC)
@@ -22,7 +22,7 @@ index eceeb5e16..1e9a8e166 100644
          set(VULKAN_LIBRARY_TYPE SHARED)
      endif()
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index a3d5d5d3d..a55da8987 100644
+index 91cdfd00b..64ef9b357 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -95,6 +95,7 @@ void windows_initialization(void) {
@@ -42,5 +42,5 @@ index a3d5d5d3d..a55da8987 100644
  bool windows_add_json_entry(const struct loader_instance *inst,
                              char **reg_data,    // list of JSON files
 -- 
-2.50.1
+2.52.0
 

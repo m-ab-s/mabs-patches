@@ -1,7 +1,7 @@
-From 2777d14ed087fc5f22bb266a3c99cdab52479e07 Mon Sep 17 00:00:00 2001
+From a8d8db840dbd3ddd45fdfc1dbee72179375ce964 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:16:49 -0500
-Subject: [PATCH 2/5] loader: CMake related static hacks
+Subject: [PATCH 2/6] loader: CMake related static hacks
 
 Adds additional hacks for CMake's side. Does not (yet) go for parity
 with shinchiro's patch yet.
@@ -12,7 +12,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index b7b795747..ae66ec0ea 100644
+index 90d582c3f..3df4b134d 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -216,7 +216,7 @@ end
@@ -24,16 +24,16 @@ index b7b795747..ae66ec0ea 100644
          # If am emulator is provided (Like Wine), or running on native, run asm_offset to generate gen_defines.asm
          if (CMAKE_CROSSCOMPILING_EMULATOR OR NOT CMAKE_CROSSCOMPILING)
              add_custom_command(OUTPUT gen_defines.asm DEPENDS asm_offset COMMAND asm_offset ${LOADER_ASM_DIALECT})
-@@ -311,7 +311,7 @@ elseif(UNIX OR MINGW OR (WIN32 AND USE_GAS)) # i.e.: Linux & Apple & MinGW & Win
- 
-     if(ASSEMBLER_WORKS)
-         add_executable(asm_offset asm_offset.c)
--        target_link_libraries(asm_offset loader_specific_options)
-+        target_link_libraries(asm_offset PRIVATE $<BUILD_INTERFACE:loader_specific_options>)
+@@ -313,7 +313,7 @@ elseif(UNIX OR MINGW OR (WIN32 AND USE_GAS)) # i.e.: Linux & Apple & MinGW & Win
          # If not cross compiling, run asm_offset to generate gen_defines.asm
          if (NOT CMAKE_CROSSCOMPILING)
+             add_executable(asm_offset asm_offset.c)
+-            target_link_libraries(asm_offset loader_specific_options)
++            target_link_libraries(asm_offset PRIVATE $<BUILD_INTERFACE:loader_specific_options>)
              add_custom_command(OUTPUT gen_defines.asm DEPENDS asm_offset COMMAND asm_offset GAS)
-@@ -374,13 +374,19 @@ if(WIN32)
+         else()
+             add_library(asm_offset OBJECT asm_offset.c)
+@@ -370,13 +370,19 @@ if(WIN32)
          set(RC_FILE_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/loader.rc)
      endif()
  
@@ -55,7 +55,7 @@ index b7b795747..ae66ec0ea 100644
  
      # when adding the suffix the import and runtime library names must be consistent
      # mingw: libvulkan-1.dll.a / vulkan-1.dll
-@@ -460,7 +466,7 @@ else()
+@@ -456,7 +462,7 @@ else()
          endif()
  
          target_link_libraries(vulkan-framework ${CMAKE_DL_LIBS} Threads::Threads -lm "-framework CoreFoundation")
@@ -64,7 +64,7 @@ index b7b795747..ae66ec0ea 100644
  
          if (MODIFY_UNKNOWN_FUNCTION_DECLS)
              # Modifies the names of functions as they appearin the assembly code so that the
-@@ -507,7 +513,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
+@@ -503,7 +509,7 @@ if (LOADER_USE_UNSAFE_FILE_SEARCH)
  endif()
  
  # common attributes of the vulkan library
@@ -74,5 +74,5 @@ index b7b795747..ae66ec0ea 100644
  target_link_libraries(vulkan PRIVATE Vulkan::Headers)
  add_library(Vulkan::Loader ALIAS vulkan)
 -- 
-2.50.1
+2.52.0
 

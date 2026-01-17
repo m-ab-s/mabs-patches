@@ -1,4 +1,4 @@
-From 12c35e4b3174a87ed65e1f5668ea52de17c3f4c5 Mon Sep 17 00:00:00 2001
+From 4400974213578edbb48bacdc9a7dae6f03aa13e5 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Tue, 24 Sep 2024 22:27:16 +0800
 Subject: [PATCH 6/6] loader: cross-compile & static linking hacks
@@ -11,7 +11,7 @@ Subject: [PATCH 6/6] loader: cross-compile & static linking hacks
  4 files changed, 13 insertions(+), 10 deletions(-)
 
 diff --git a/loader/loader.c b/loader/loader.c
-index e751fd6..83bbba5 100644
+index f8b01b6df..738adb063 100644
 --- a/loader/loader.c
 +++ b/loader/loader.c
 @@ -2290,7 +2290,7 @@ out:
@@ -33,7 +33,7 @@ index e751fd6..83bbba5 100644
  #endif
  }
 diff --git a/loader/loader.h b/loader/loader.h
-index 0ed8f16..d4f497e 100644
+index 0ed8f1690..d4f497e2f 100644
 --- a/loader/loader.h
 +++ b/loader/loader.h
 @@ -33,7 +33,9 @@
@@ -56,7 +56,7 @@ index 0ed8f16..d4f497e 100644
  #else
  void loader_initialize(void);
 diff --git a/loader/loader.rc.in b/loader/loader.rc.in
-index 0dc4227..e7fcea0 100644
+index 0dc4227da..e7fcea06f 100644
 --- a/loader/loader.rc.in
 +++ b/loader/loader.rc.in
 @@ -19,7 +19,11 @@
@@ -72,7 +72,7 @@ index 0dc4227..e7fcea0 100644
  // All set through CMake
  #define VER_FILE_VERSION ${LOADER_VER_FILE_VERSION}
 diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index 987337c..5acc00f 100644
+index 987337c93..5acc00f77 100644
 --- a/loader/vk_loader_platform.h
 +++ b/loader/vk_loader_platform.h
 @@ -71,15 +71,12 @@
@@ -112,5 +112,5 @@ index 987337c..5acc00f 100644
      InitOnceExecuteOnce(ctl, func, NULL, NULL);
  }
 -- 
-2.49.0.windows.1
+2.52.0
 
