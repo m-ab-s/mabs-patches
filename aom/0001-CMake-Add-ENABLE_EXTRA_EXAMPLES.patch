@@ -1,18 +1,18 @@
-From b7641ff010c7708bd79dd816c4b98598064d0171 Mon Sep 17 00:00:00 2001
+From 79d380790fd574a8f6aeac4cdb04f99fcbeb1886 Mon Sep 17 00:00:00 2001
 From: woot000 <woot000@woot000.com>
-Date: Fri, 11 Jul 2025 19:16:34 -0500
+Date: Sat, 21 Feb 2026 22:15:53 -0600
 Subject: [PATCH] CMake: Add ENABLE_EXTRA_EXAMPLES
 
 Separate executables enabled with ENABLE_EXAMPLES that are not installed by default (i.e. not aomenc or aomdec) behind ENABLE_EXTRA_EXAMPLES, to reduce build times and save space by creating less executables
 ---
- CMakeLists.txt | 166 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 87 insertions(+), 79 deletions(-)
+ CMakeLists.txt | 190 +++++++++++++++++++++++++------------------------
+ 1 file changed, 98 insertions(+), 92 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 48d92f6a4b..ef17a40400 100644
+index d9973c47c0..980f474557 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -457,18 +457,23 @@ if(CONFIG_AV1_DECODER AND ENABLE_EXAMPLES)
+@@ -459,18 +459,23 @@ if(CONFIG_AV1_DECODER AND ENABLE_EXAMPLES)
    add_executable(aomdec "${AOM_ROOT}/apps/aomdec.c"
                          $<TARGET_OBJECTS:aom_common_app_util>
                          $<TARGET_OBJECTS:aom_decoder_app_util>)
@@ -41,12 +41,12 @@ index 48d92f6a4b..ef17a40400 100644
 +                                    $<TARGET_OBJECTS:aom_common_app_util>
 +                                    $<TARGET_OBJECTS:aom_decoder_app_util>)
 +    list(APPEND AOM_DECODER_EXAMPLE_TARGETS decode_to_md5 decode_with_drops
-+               scalable_decoder simple_decoder)
++                scalable_decoder simple_decoder)
 +  endif()
  
    if(CONFIG_ANALYZER)
      add_executable(analyzer "${AOM_ROOT}/examples/analyzer.cc"
-@@ -509,8 +514,7 @@ if(CONFIG_AV1_DECODER AND ENABLE_EXAMPLES)
+@@ -511,8 +516,7 @@ if(CONFIG_AV1_DECODER AND ENABLE_EXAMPLES)
    endif()
  
    # Maintain a list of decoder example targets.
@@ -56,12 +56,11 @@ index 48d92f6a4b..ef17a40400 100644
  
    # Add decoder examples to the app targets list.
    list(APPEND AOM_APP_TARGETS ${AOM_DECODER_EXAMPLE_TARGETS})
-@@ -541,45 +545,47 @@ if(CONFIG_AV1_ENCODER)
+@@ -543,45 +547,45 @@ if(CONFIG_AV1_ENCODER)
                            $<TARGET_OBJECTS:aom_common_app_util>
                            $<TARGET_OBJECTS:aom_encoder_app_util>
                            $<TARGET_OBJECTS:aom_encoder_stats>)
 -    add_executable(lossless_encoder "${AOM_ROOT}/examples/lossless_encoder.c"
-+
 +    if(ENABLE_EXTRA_EXAMPLES)
 +      add_executable(lossless_encoder "${AOM_ROOT}/examples/lossless_encoder.c"
 +                                      $<TARGET_OBJECTS:aom_common_app_util>
@@ -98,7 +97,6 @@ index 48d92f6a4b..ef17a40400 100644
 +                       "${AOM_ROOT}/examples/photon_noise_table.c"
 +                       $<TARGET_OBJECTS:aom_common_app_util>
 +                       $<TARGET_OBJECTS:aom_encoder_app_util>)
-+        list(APPEND AOM_ENCODER_EXAMPLE_TARGETS noise_model photon_noise_table)
 +      endif()
 +      add_executable(scalable_encoder "${AOM_ROOT}/examples/scalable_encoder.c"
 +                                      $<TARGET_OBJECTS:aom_common_app_util>
@@ -107,8 +105,8 @@ index 48d92f6a4b..ef17a40400 100644
 +                                     $<TARGET_OBJECTS:aom_common_app_util>
 +                                     $<TARGET_OBJECTS:aom_encoder_app_util>)
 +      target_link_libraries(svc_encoder_rtc ${AOM_LIB_LINK_TYPE} aom_av1_rc)
-+    list(APPEND AOM_ENCODER_EXAMPLE_TARGETS lossless_encoder set_maps
-+                simple_encoder scalable_encoder svc_encoder_rtc twopass_encoder)
++      list(APPEND AOM_ENCODER_EXAMPLE_TARGETS lossless_encoder set_maps
++                  simple_encoder scalable_encoder svc_encoder_rtc twopass_encoder)
      endif()
 -    add_executable(scalable_encoder "${AOM_ROOT}/examples/scalable_encoder.c"
 -                                    $<TARGET_OBJECTS:aom_common_app_util>
@@ -133,7 +131,7 @@ index 48d92f6a4b..ef17a40400 100644
      if(CONFIG_ENTROPY_STATS AND NOT BUILD_SHARED_LIBS)
  
        # TODO(tomfinegan): Sort out why a simple link command with
-@@ -737,7 +743,7 @@ if(ENABLE_EXAMPLES)
+@@ -739,7 +743,7 @@ if(ENABLE_EXAMPLES)
  endif()
  
  if(ENABLE_TOOLS)
@@ -142,7 +140,7 @@ index 48d92f6a4b..ef17a40400 100644
      add_executable(dump_obu "${AOM_ROOT}/tools/dump_obu.cc"
                              "${AOM_ROOT}/tools/obu_parser.cc"
                              "${AOM_ROOT}/tools/obu_parser.h"
-@@ -756,47 +762,49 @@ if(ENABLE_TOOLS)
+@@ -758,56 +762,58 @@ if(ENABLE_TOOLS)
    endif()
  endif()
  
@@ -153,15 +151,7 @@ index 48d92f6a4b..ef17a40400 100644
 -  list(APPEND AOM_EXAMPLE_TARGETS aom_cx_set_ref)
 -  list(APPEND AOM_APP_TARGETS aom_cx_set_ref)
 -endif()
-+if(ENABLE_EXTRA_EXAMPLES)
-+  if(ENABLE_EXAMPLES AND CONFIG_AV1_DECODER AND CONFIG_AV1_ENCODER)
-+    add_executable(aom_cx_set_ref "${AOM_ROOT}/examples/aom_cx_set_ref.c"
-+                                  $<TARGET_OBJECTS:aom_common_app_util>
-+                                  $<TARGET_OBJECTS:aom_encoder_app_util>)
-+    list(APPEND AOM_EXAMPLE_TARGETS aom_cx_set_ref)
-+    list(APPEND AOM_APP_TARGETS aom_cx_set_ref)
-+  endif()
- 
+-
 -if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER)
 -  add_executable(lightfield_encoder "${AOM_ROOT}/examples/lightfield_encoder.c"
 -                                    $<TARGET_OBJECTS:aom_common_app_util>
@@ -169,14 +159,7 @@ index 48d92f6a4b..ef17a40400 100644
 -  list(APPEND AOM_EXAMPLE_TARGETS lightfield_encoder)
 -  list(APPEND AOM_APP_TARGETS lightfield_encoder)
 -endif()
-+  if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER)
-+    add_executable(lightfield_encoder "${AOM_ROOT}/examples/lightfield_encoder.c"
-+                                      $<TARGET_OBJECTS:aom_common_app_util>
-+                                      $<TARGET_OBJECTS:aom_encoder_app_util>)
-+    list(APPEND AOM_EXAMPLE_TARGETS lightfield_encoder)
-+    list(APPEND AOM_APP_TARGETS lightfield_encoder)
-+  endif()
- 
+-
 -if(ENABLE_EXAMPLES AND CONFIG_AV1_DECODER)
 -  add_executable(lightfield_tile_list_decoder
 -                 "${AOM_ROOT}/examples/lightfield_tile_list_decoder.c"
@@ -185,15 +168,7 @@ index 48d92f6a4b..ef17a40400 100644
 -  list(APPEND AOM_EXAMPLE_TARGETS lightfield_tile_list_decoder)
 -  list(APPEND AOM_APP_TARGETS lightfield_tile_list_decoder)
 -endif()
-+  if(ENABLE_EXAMPLES AND CONFIG_AV1_DECODER)
-+    add_executable(lightfield_tile_list_decoder
-+                   "${AOM_ROOT}/examples/lightfield_tile_list_decoder.c"
-+                   $<TARGET_OBJECTS:aom_common_app_util>
-+                   $<TARGET_OBJECTS:aom_decoder_app_util>)
-+    list(APPEND AOM_EXAMPLE_TARGETS lightfield_tile_list_decoder)
-+    list(APPEND AOM_APP_TARGETS lightfield_tile_list_decoder)
-+  endif()
- 
+-
 -if(ENABLE_EXAMPLES AND CONFIG_AV1_DECODER)
 -  add_executable(lightfield_decoder "${AOM_ROOT}/examples/lightfield_decoder.c"
 -                                    $<TARGET_OBJECTS:aom_common_app_util>
@@ -201,14 +176,7 @@ index 48d92f6a4b..ef17a40400 100644
 -  list(APPEND AOM_EXAMPLE_TARGETS lightfield_decoder)
 -  list(APPEND AOM_APP_TARGETS lightfield_decoder)
 -endif()
-+  if(ENABLE_EXAMPLES AND CONFIG_AV1_DECODER)
-+    add_executable(lightfield_decoder "${AOM_ROOT}/examples/lightfield_decoder.c"
-+                                      $<TARGET_OBJECTS:aom_common_app_util>
-+                                      $<TARGET_OBJECTS:aom_decoder_app_util>)
-+    list(APPEND AOM_EXAMPLE_TARGETS lightfield_decoder)
-+    list(APPEND AOM_APP_TARGETS lightfield_decoder)
-+  endif()
- 
+-
 -if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER AND CONFIG_AV1_DECODER)
 -  add_executable(lightfield_bitstream_parsing
 -                 "${AOM_ROOT}/examples/lightfield_bitstream_parsing.c"
@@ -217,6 +185,49 @@ index 48d92f6a4b..ef17a40400 100644
 -                 $<TARGET_OBJECTS:aom_decoder_app_util>)
 -  list(APPEND AOM_EXAMPLE_TARGETS lightfield_bitstream_parsing)
 -  list(APPEND AOM_APP_TARGETS lightfield_bitstream_parsing)
+-endif()
+-
+-if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER)
+-  add_executable(low_complexity_mode_encoder
+-                 "${AOM_ROOT}/examples/low_complexity_mode_encoder.c"
+-                 $<TARGET_OBJECTS:aom_common_app_util>
+-                 $<TARGET_OBJECTS:aom_encoder_app_util>)
+-  list(APPEND AOM_EXAMPLE_TARGETS low_complexity_mode_encoder)
+-  list(APPEND AOM_APP_TARGETS low_complexity_mode_encoder)
++if(ENABLE_EXTRA_EXAMPLES)
++  if(ENABLE_EXAMPLES AND CONFIG_AV1_DECODER AND CONFIG_AV1_ENCODER)
++    add_executable(aom_cx_set_ref "${AOM_ROOT}/examples/aom_cx_set_ref.c"
++                                  $<TARGET_OBJECTS:aom_common_app_util>
++                                  $<TARGET_OBJECTS:aom_encoder_app_util>)
++    list(APPEND AOM_EXAMPLE_TARGETS aom_cx_set_ref)
++    list(APPEND AOM_APP_TARGETS aom_cx_set_ref)
++  endif()
++  
++  if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER)
++    add_executable(lightfield_encoder "${AOM_ROOT}/examples/lightfield_encoder.c"
++                                      $<TARGET_OBJECTS:aom_common_app_util>
++                                      $<TARGET_OBJECTS:aom_encoder_app_util>)
++    list(APPEND AOM_EXAMPLE_TARGETS lightfield_encoder)
++    list(APPEND AOM_APP_TARGETS lightfield_encoder)
++  endif()
++  
++  if(ENABLE_EXAMPLES AND CONFIG_AV1_DECODER)
++    add_executable(lightfield_tile_list_decoder
++                   "${AOM_ROOT}/examples/lightfield_tile_list_decoder.c"
++                   $<TARGET_OBJECTS:aom_common_app_util>
++                   $<TARGET_OBJECTS:aom_decoder_app_util>)
++    list(APPEND AOM_EXAMPLE_TARGETS lightfield_tile_list_decoder)
++    list(APPEND AOM_APP_TARGETS lightfield_tile_list_decoder)
++  endif()
++  
++  if(ENABLE_EXAMPLES AND CONFIG_AV1_DECODER)
++    add_executable(lightfield_decoder "${AOM_ROOT}/examples/lightfield_decoder.c"
++                                      $<TARGET_OBJECTS:aom_common_app_util>
++                                      $<TARGET_OBJECTS:aom_decoder_app_util>)
++    list(APPEND AOM_EXAMPLE_TARGETS lightfield_decoder)
++    list(APPEND AOM_APP_TARGETS lightfield_decoder)
++  endif()
++  
 +  if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER AND CONFIG_AV1_DECODER)
 +    add_executable(lightfield_bitstream_parsing
 +                   "${AOM_ROOT}/examples/lightfield_bitstream_parsing.c"
@@ -226,9 +237,18 @@ index 48d92f6a4b..ef17a40400 100644
 +    list(APPEND AOM_EXAMPLE_TARGETS lightfield_bitstream_parsing)
 +    list(APPEND AOM_APP_TARGETS lightfield_bitstream_parsing)
 +  endif()
++  
++  if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER)
++    add_executable(low_complexity_mode_encoder
++                   "${AOM_ROOT}/examples/low_complexity_mode_encoder.c"
++                   $<TARGET_OBJECTS:aom_common_app_util>
++                   $<TARGET_OBJECTS:aom_encoder_app_util>)
++    list(APPEND AOM_EXAMPLE_TARGETS low_complexity_mode_encoder)
++    list(APPEND AOM_APP_TARGETS low_complexity_mode_encoder)
++  endif()
  endif()
  
  foreach(aom_app ${AOM_APP_TARGETS})
 -- 
-2.50.1
+2.53.0
 
