@@ -1,4 +1,4 @@
-From cdb3364b413fc4c23a0141e22c96f8a01f6eddc0 Mon Sep 17 00:00:00 2001
+From 6d115b7d69468062d62366bb44904b61c2b35d34 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Thu, 8 May 2025 16:56:50 -0500
 Subject: [PATCH 5/6] loader: dllmain related hacks
@@ -10,7 +10,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  2 files changed, 3 insertions(+)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 6797e86bb..54a30cdef 100644
+index 10d7b032a..78a3e08da 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -372,6 +372,7 @@ if(WIN32)
@@ -22,7 +22,7 @@ index 6797e86bb..54a30cdef 100644
          set(VULKAN_LIBRARY_TYPE SHARED)
      endif()
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index 91cdfd00b..64ef9b357 100644
+index 310a905b7..e906f45e8 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -95,6 +95,7 @@ void windows_initialization(void) {
@@ -33,7 +33,7 @@ index 91cdfd00b..64ef9b357 100644
  BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      (void)hinst;
      switch (reason) {
-@@ -116,6 +117,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+@@ -115,6 +116,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
      }
      return TRUE;
  }

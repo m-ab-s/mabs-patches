@@ -1,4 +1,4 @@
-From 4400974213578edbb48bacdc9a7dae6f03aa13e5 Mon Sep 17 00:00:00 2001
+From 659e3050de7eba825f46fb61854ea59a9d2c6763 Mon Sep 17 00:00:00 2001
 From: shinchiro <shinchiro@users.noreply.github.com>
 Date: Tue, 24 Sep 2024 22:27:16 +0800
 Subject: [PATCH 6/6] loader: cross-compile & static linking hacks
@@ -11,10 +11,10 @@ Subject: [PATCH 6/6] loader: cross-compile & static linking hacks
  4 files changed, 13 insertions(+), 10 deletions(-)
 
 diff --git a/loader/loader.c b/loader/loader.c
-index f8b01b6df..738adb063 100644
+index fcae9265a..c61027ec7 100644
 --- a/loader/loader.c
 +++ b/loader/loader.c
-@@ -2290,7 +2290,7 @@ out:
+@@ -2289,7 +2289,7 @@ out:
      return res;
  }
  
@@ -23,7 +23,7 @@ index f8b01b6df..738adb063 100644
  BOOL __stdcall loader_initialize(PINIT_ONCE InitOnce, PVOID Parameter, PVOID *Context) {
      (void)InitOnce;
      (void)Parameter;
-@@ -2328,7 +2328,7 @@ void loader_initialize(void) {
+@@ -2326,7 +2326,7 @@ void loader_initialize(void) {
  #if defined(LOADER_USE_UNSAFE_FILE_SEARCH)
      loader_log(NULL, VULKAN_LOADER_WARN_BIT, 0, "Vulkan Loader: unsafe searching is enabled");
  #endif
@@ -33,7 +33,7 @@ index f8b01b6df..738adb063 100644
  #endif
  }
 diff --git a/loader/loader.h b/loader/loader.h
-index 0ed8f1690..d4f497e2f 100644
+index 6d48ce55e..2b4b0f149 100644
 --- a/loader/loader.h
 +++ b/loader/loader.h
 @@ -33,7 +33,9 @@
@@ -45,8 +45,8 @@ index 0ed8f1690..d4f497e2f 100644
 +#endif
  
  static inline VkPhysicalDevice loader_unwrap_physical_device(VkPhysicalDevice physicalDevice) {
-     struct loader_physical_device_tramp *phys_dev = (struct loader_physical_device_tramp *)physicalDevice;
-@@ -94,7 +96,7 @@ VkResult loader_validate_instance_extensions(struct loader_instance *inst, const
+     if (VK_NULL_HANDLE == physicalDevice) {
+@@ -96,7 +98,7 @@ VkResult loader_validate_instance_extensions(struct loader_instance *inst, const
                                               const struct loader_envvar_all_filters *layer_filters,
                                               const VkInstanceCreateInfo *pCreateInfo);
  
@@ -72,7 +72,7 @@ index 0dc4227da..e7fcea06f 100644
  // All set through CMake
  #define VER_FILE_VERSION ${LOADER_VER_FILE_VERSION}
 diff --git a/loader/vk_loader_platform.h b/loader/vk_loader_platform.h
-index 987337c93..5acc00f77 100644
+index e02d99e17..89fbf9f6d 100644
 --- a/loader/vk_loader_platform.h
 +++ b/loader/vk_loader_platform.h
 @@ -71,15 +71,12 @@

@@ -1,4 +1,4 @@
-From 8830d0a4128a77eeef1dbf682dad7e188afc46b5 Mon Sep 17 00:00:00 2001
+From 1cfe2ef16832f382ad6ff5cc2ea3e0280ca6fab7 Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:38:44 -0500
 Subject: [PATCH 4/6] loader: Static library name related hacks
@@ -11,7 +11,7 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  1 file changed, 11 insertions(+), 7 deletions(-)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index c392c966f..6797e86bb 100644
+index 383ef83fa..10d7b032a 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
 @@ -387,14 +387,18 @@ if(WIN32)
@@ -39,7 +39,7 @@ index c392c966f..6797e86bb 100644
          # let the linker just fix up the stdcall mangling, like on msvc
          if(CMAKE_SIZEOF_VOID_P EQUAL 4)
              target_link_options(vulkan PRIVATE "-Wl,--enable-stdcall-fixup")
-@@ -559,7 +563,7 @@ if (PKG_CONFIG_FOUND)
+@@ -564,7 +568,7 @@ if (PKG_CONFIG_FOUND)
          set(PRIVATE_LIBS "Libs.private: ${PRIVATE_LIBS}")
      endif()
  
