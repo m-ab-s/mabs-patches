@@ -10,10 +10,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  2 files changed, 3 insertions(+)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 10d7b032a..78a3e08da 100644
+index f9c7886..f268c55 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -372,6 +372,7 @@ if(WIN32)
+@@ -388,6 +388,7 @@ if(WIN32)
  
      if (BUILD_STATIC_LOADER)
          set(VULKAN_LIBRARY_TYPE STATIC)
@@ -22,7 +22,7 @@ index 10d7b032a..78a3e08da 100644
          set(VULKAN_LIBRARY_TYPE SHARED)
      endif()
 diff --git a/loader/loader_windows.c b/loader/loader_windows.c
-index 310a905b7..e906f45e8 100644
+index 1701818..abe507f 100644
 --- a/loader/loader_windows.c
 +++ b/loader/loader_windows.c
 @@ -95,6 +95,7 @@ void windows_initialization(void) {
@@ -39,8 +39,8 @@ index 310a905b7..e906f45e8 100644
  }
 +#endif
  
- bool windows_add_json_entry(const struct loader_instance *inst,
-                             char **reg_data,    // list of JSON files
+ VkResult windows_add_json_entry(const struct loader_instance *inst, struct loader_string_list *search_paths,
+                                 LPCSTR key_name,  // key name - used for debug prints - i.e. VulkanDriverName
 -- 
 2.52.0
 
