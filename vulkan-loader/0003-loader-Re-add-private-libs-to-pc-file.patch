@@ -1,4 +1,4 @@
-From ff8622d0bee33a2c41ead6bae927200e7f93ec9c Mon Sep 17 00:00:00 2001
+From 26b129268b0f5aabc5cabf1e96fa3292eb0fdf2a Mon Sep 17 00:00:00 2001
 From: Christopher Degawa <ccom@randomderp.com>
 Date: Mon, 2 Oct 2023 01:35:10 -0500
 Subject: [PATCH 3/6] loader: Re-add private libs to pc file
@@ -12,10 +12,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  2 files changed, 13 insertions(+)
 
 diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
-index 53a7484d2..124a9b7d8 100644
+index d9a4a92e0..6a6594311 100644
 --- a/loader/CMakeLists.txt
 +++ b/loader/CMakeLists.txt
-@@ -574,6 +574,18 @@ install(FILES "${version_config}" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulk
+@@ -573,6 +573,18 @@ install(FILES "${version_config}" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulk
  find_package(PkgConfig)
  if (PKG_CONFIG_FOUND)
      set(PRIVATE_LIBS "")
@@ -45,5 +45,5 @@ index 6a285f267..05d4bf230 100644
 +@PRIVATE_LIBS@
  Cflags: -I${includedir}
 -- 
-2.55.0
+2.56.0.windows.4
 
